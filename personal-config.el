@@ -19,6 +19,11 @@
 (add-hook 'org-mode-hook
           (lambda ()
             (org-bullets-mode 1)))
+;; Prelude uses S-arrow for windmove keybindings which conflicts with org-mode
+;; basics. Therefore we use C-arrow prefix instead. On macOS this appears to
+;; only work with right-command, as left-control (on laptop) has different
+;; result.
+(windmove-default-keybindings 'ctrl)
 
 ;; Set Org-mode indentation
 (setq org-adapt-indentation t)
@@ -82,9 +87,6 @@
 ;; Sets up org-mode files for capture/refile.
 (setq org-agenda-files '("~/org"))
 (setq org-default-notes-file (expand-file-name "~/org/notes.org"))
-(setq org-agenda-files (list "~/org/research.org"
-			     "~/org/academics.org"
-			     "~/org/personal.org"))
 
 (setq org-refile-targets
       '((nil :maxlevel . 3)
