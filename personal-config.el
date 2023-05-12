@@ -110,7 +110,10 @@
 (setq preview-gs-command "/usr/local/bin/gs")
 
 ;; Tells emacs where to find LaTeX.
-(let ((my-path (expand-file-name "/usr/local/bin:/usr/local/texlive/2023/bin/universal-darwin")))
+(let
+    ((my-path
+      (expand-file-name
+       "/usr/local/bin:/usr/local/texlive/2023/bin/universal-darwin")))
     (setenv "PATH" (concat my-path ":" (getenv "PATH")))
     (add-to-list 'exec-path my-path))
 
