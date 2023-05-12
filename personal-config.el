@@ -28,10 +28,8 @@
 (global-set-key "\C-cc" 'org-capture)
 (global-set-key "\C-cb" 'org-iswitchb)
 
-(setq org-agenda-files '("~/Google Drive/org"))
-(setq org-default-notes-file (concat org-directory "/notes.org"))
-(setq org-refile-targets (quote ((nil :maxlevel . 9)
-                                 (org-agenda-files :maxlevel . 9))))
+;;(setq org-default-notes-file (concat org-directory "/notes.org"))
+
 
 ;;Changes TODO to done automatically if children tasks are done
 (defun org-summary-todo (n-done n-not-done)
@@ -82,6 +80,7 @@
 (global-set-key "\C-c\C-wg" 'writegood-mode)
 
 ;; Sets up org-mode files for capture/refile.
+(setq org-agenda-files '("~/org"))
 (setq org-default-notes-file (expand-file-name "~/org/notes.org"))
 (setq org-agenda-files (list "~/org/research.org"
 			     "~/org/academics.org"
