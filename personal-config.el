@@ -13,7 +13,7 @@
  ;; If there is more than one, they won't work right.
  )
 
-
+;;;; Org settings
 (use-package org-bullets
   :ensure t)
 (add-hook 'org-mode-hook
