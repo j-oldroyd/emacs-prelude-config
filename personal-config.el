@@ -77,8 +77,16 @@
 
 ;;(global-set-key (kbd "M-x") 'smex)
 ;;(global-set-key (kbd "M-x") 'execute-extended-command)
-;; Sets up ispell.
+;; Sets up Ispell.
 ;;(setq ispell-program-name "/usr/local/Cellar/ispell/3.4.05/bin/ispell")
+
+;; Set up aspell
+(setq ispell-extra-args '("--lang=en_US"))
+
+;; For use with MacBook trackpad. This allows the track pad to be used with
+;; fly spell-mode. This uses Option+click for Mouse-2 and Cmd+click for
+;; mouse-3.
+(setq mac-emulate-three-button-mouse t)
 
 ;; Enables writegood-mode.
 (use-package writegood-mode :ensure t)
