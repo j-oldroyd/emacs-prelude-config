@@ -92,6 +92,12 @@
 (use-package writegood-mode :ensure t)
 (global-set-key "\C-c\C-wg" 'writegood-mode)
 
+;; Org mode 80 character limit
+;; Taken from
+;; https://emacs.stackexchange.com/questions/35266/org-mode-auto-new-line-at-80th-column
+(add-hook 'org-mode-hook '(lambda () (setq fill-column 80)))
+(add-hook 'org-mode-hook 'auto-fill-mode)
+
 ;; Sets up org-mode files for capture/refile.
 (setq org-agenda-files '("~/org"))
 (setq org-default-notes-file (expand-file-name "~/org/notes.org"))
@@ -130,9 +136,13 @@
 ;; AucTeX
 (add-hook 'LaTeX-mode-hook 'visual-line-mode)
 (add-hook 'LaTeX-mode-hook 'flyspell-mode)
-(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+;;(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode) ;; Might interfere with Prelude
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 (setq reftex-plug-into-AUCTeX t)
+
+;; Reset TeX-open/close-quote from Prelude definitions
+(setq TeX-open-quote "``")
+(setq TeX-close-quote "''")
 
 ;; Use Skim as viewer, enable source <-> PDF sync
 ;; make latexmk available via C-c C-c
@@ -147,6 +157,26 @@
 ;; use Skim as default pdf viewer
 ;; Skim's displayline is used for forward search (from .tex to .pdf)
 ;; option -b highlights the current line; option -g opens Skim in the background
-(setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
-(setq TeX-view-program-list
-      '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b  %n %o %b")))
+;;(setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
+;;(setq TeX-view-program-list
+;;      '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b  %n %o %b")))
+
+;; Install pdf-tools for use with LaTeX.
+;; Taken fromhttps://www.reddit.com/r/emacs/comments/gm1c2p/pdftools_installation/
+(use-package pdf-tools
+  :defer t
+  :config
+  (pdf-tools-install)
+  (setq-default pdf-view-display-size 'fit-page))
+
+;; Code below is taken from
+;; https://emacs.stackexchange.com/questions/19472/how-to-let-auctex-open-pdf-with-pdf-tools
+;; Use pdf-tools to open PDF files
+(setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+      TeX-source-correlate-mode t
+      TeX-source-correlate-start-server t
+      TeX-source-correlate-method (quote synctex))
+
+;; Update PDF buffers after successful LaTeX runs
+(add-hook 'TeX-after-compilation-finished-functions
+          #'TeX-revert-document-buffer)
