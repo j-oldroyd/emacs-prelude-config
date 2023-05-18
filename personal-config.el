@@ -13,6 +13,10 @@
  ;; If there is more than one, they won't work right.
  )
 
+;;;; Emacs GUI settings
+;; Prelude hides the toolbar, so turn it back on.
+(tool-bar-mode 1)
+
 ;;;; Org settings
 (use-package org-bullets
   :ensure t)
