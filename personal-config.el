@@ -195,3 +195,7 @@ Around advice for FUN with ARGS."
 ;; Update PDF buffers after successful LaTeX runs
 (add-hook 'TeX-after-compilation-finished-functions
           #'TeX-revert-document-buffer)
+
+;; emacs-sage-shell
+(use-package sage-shell-mode
+  :ensure t)
