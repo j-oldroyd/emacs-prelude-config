@@ -168,10 +168,21 @@
 ;; Install pdf-tools for use with LaTeX.
 ;; Taken fromhttps://www.reddit.com/r/emacs/comments/gm1c2p/pdftools_installation/
 (use-package pdf-tools
-  :defer t
+  :ensure t
   :config
   (pdf-tools-install)
   (setq-default pdf-view-display-size 'fit-page))
+
+;; Apparently line numbers break horizontal scrolling in PDF Tools.
+;; Code below taken from
+;; emacs.stackexchange.com/questions/74317/how-can-i-get-horizontal-scrolling-in-pdfview-to-work
+(defun bugfix-display-line-numbers--turn-on (fun &rest args)
+  "Avoid `display-line-numbers-mode' in `image-mode' and related.
+Around advice for FUN with ARGS."
+  (unless (derived-mode-p 'image-mode 'docview-mode 'pdf-view-mode)
+    (apply fun args)))
+
+(advice-add 'display-line-numbers--turn-on :around #'bugfix-display-line-numbers--turn-on)
 
 ;; Code below is taken from
 ;; https://emacs.stackexchange.com/questions/19472/how-to-let-auctex-open-pdf-with-pdf-tools
