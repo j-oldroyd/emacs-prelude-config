@@ -40,7 +40,7 @@
 ;;(setq org-default-notes-file (concat org-directory "/notes.org"))
 
 
-;;Changes TODO to done automatically if children tasks are done
+;;Changes TODO to done automatically if children tasks done
 (defun org-summary-todo (n-done n-not-done)
   "Switch entry to DONE when all subentries are done, to TODO otherwise."
   (let (org-log-done org-log-states)   ; turn off logging
@@ -72,7 +72,7 @@
 (setq org-latex-create-formula-image-program 'dvipng)
 
 
-;; Sets up smex. This is used for "fuzzy search" in M-x entries.
+;; Sets up smex. This is for "fuzzy search" in M-x entries.
 ;; Only use if also using ido in prelude-modules instead of vertico.
 ;;(use-package smex :ensure t)
 ;;(autoload 'smex "smex"
@@ -103,8 +103,9 @@
 (add-hook 'org-mode-hook 'auto-fill-mode)
 
 ;; Sets up org-mode files for capture/refile.
-(setq org-agenda-files '("~/org"))
-(setq org-default-notes-file (expand-file-name "~/org/notes.org"))
+(setq org-agenda-files '("~/Library/Mobile Documents/com~apple~CloudDocs/Documents/org"))
+(setq org-default-notes-file
+      (expand-file-name "~/Library/Mobile\ Documents/com~apple~CloudDocs/Documents/org/notes.org"))
 
 (setq org-refile-targets
       '((nil :maxlevel . 3)
