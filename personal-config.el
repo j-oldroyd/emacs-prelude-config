@@ -17,6 +17,19 @@
 ;; Prelude hides the toolbar, so turn it back on.
 (tool-bar-mode 1)
 
+;;;; Completion settings
+;; Configure directory extension for vertico to look more like ido.
+(use-package vertico-directory
+  :after vertico
+  :ensure nil
+  ;; More convenient directory navigation commands
+  :bind (:map vertico-map
+              ("RET" . vertico-directory-enter)
+              ("DEL" . vertico-directory-delete-char)
+              ("M-DEL" . vertico-directory-delete-word))
+  ;; Tidy shadowed file names
+  :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+
 ;;;; Org settings
 (use-package org-bullets
   :ensure t)
@@ -127,6 +140,7 @@
   :ensure t)
 (yas-global-mode 1)
 
+;;;; AucTeX/LaTeX
 ;; Gets live preview to work right.
 (setq preview-gs-command "/usr/local/bin/gs")
 
@@ -149,6 +163,7 @@
 (setq TeX-open-quote "``")
 (setq TeX-close-quote "''")
 
+;;;; latexmk
 ;; Use Skim as viewer, enable source <-> PDF sync
 ;; make latexmk available via C-c C-c
 ;; Note: SyncTeX is setup via ~/.latexmkrc (see below)
@@ -159,6 +174,7 @@
     TeX-command-list)))
 (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk")))
 
+;;;; Skim PDF
 ;; use Skim as default pdf viewer
 ;; Skim's displayline is used for forward search (from .tex to .pdf)
 ;; option -b highlights the current line; option -g opens Skim in the background
@@ -166,6 +182,7 @@
 ;;(setq TeX-view-program-list
 ;;      '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b  %n %o %b")))
 
+;;;; PDF Tools
 ;; Install pdf-tools for use with LaTeX.
 ;; Taken fromhttps://www.reddit.com/r/emacs/comments/gm1c2p/pdftools_installation/
 (use-package pdf-tools
