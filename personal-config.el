@@ -103,9 +103,9 @@
 (add-hook 'org-mode-hook 'auto-fill-mode)
 
 ;; Sets up org-mode files for capture/refile.
-(setq org-agenda-files '("~/Library/Mobile Documents/com~apple~CloudDocs/Documents/org"))
+(setq org-agenda-files '("~/Documents/org"))
 (setq org-default-notes-file
-      (expand-file-name "~/Library/Mobile\ Documents/com~apple~CloudDocs/Documents/org/notes.org"))
+      (expand-file-name "~/Documents/org/notes.org"))
 
 (setq org-refile-targets
       '((nil :maxlevel . 3)
