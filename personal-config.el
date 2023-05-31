@@ -3,9 +3,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(mac-command-modifier 'super)
- '(mac-option-modifier 'meta)
- '(mac-right-command-modifier 'meta))
+)
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -13,6 +11,18 @@
  ;; If there is more than one, they won't work right.
  )
 
+;;;; Emacs keybindings
+;; macOS bindings assume use of karabiner to remap caps lock and
+;; return to control. Note that left option key is left unbound. Note
+;; that control cannot be rebound without overwriting karabiner binds.
+(when (eq system-type 'darwin)
+  (setq mac-right-command-modifier 'meta
+        mac-right-option-modifier 'super
+        mac-control-modifier 'control
+        mac-option-modifier nil))
+
+(global-set-key "\M-p" 'backward-paragraph)
+(global-set-key "\M-n" 'forward-paragraph)
 ;;;; Emacs GUI settings
 ;; Prelude hides the toolbar, so turn it back on.
 (tool-bar-mode 1)
