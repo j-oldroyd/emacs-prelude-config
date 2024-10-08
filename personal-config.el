@@ -152,7 +152,10 @@
 
 ;;;; AucTeX/LaTeX
 ;; Gets live preview to work right.
-(setq preview-gs-command "/usr/local/bin/gs")
+(when (eq system-type 'darwin)
+  (setq preview-gs-command "/usr/local/bin/gs"))
+(when (eq system-type 'windows-nt)
+  (setq preview-gs-command "c:/Users/oldroyd.j/AppData/Local/Programs/MiKTeX/miktex/bin/x64/rungs.exe"))
 
 ;; Tells emacs where to find LaTeX.
 (let
