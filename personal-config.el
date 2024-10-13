@@ -185,7 +185,7 @@
 (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk")))
 
 ;;;; Skim PDF
-;; use Skim as default pdf viewer
+;; Use Skim as default pdf viewer
 ;; Skim's displayline is used for forward search (from .tex to .pdf)
 ;; option -b highlights the current line; option -g opens Skim in the background
 ;;(setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
