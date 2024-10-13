@@ -126,9 +126,11 @@
 (add-hook 'org-mode-hook 'auto-fill-mode)
 
 ;; Sets up org-mode files for capture/refile.
-(setq org-agenda-files '("~/Documents/org"))
-(setq org-default-notes-file
-      (expand-file-name "~/Documents/org/notes.org"))
+(when (eq system-type 'darwin)
+  (setq org-agenda-files '("~/Documents/org"))
+  (setq org-default-notes-file
+        (expand-file-name "~/Documents/org/notes.org"))
+  )
 
 (setq org-refile-targets
       '((nil :maxlevel . 3)
