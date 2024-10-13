@@ -152,7 +152,13 @@
 
 ;;;; AucTeX/LaTeX
 ;; Gets live preview to work right.
-(setq preview-gs-command "/usr/local/bin/gs")
+(when (eq system-type 'darwin)
+  (setq preview-gs-command "/usr/local/bin/gs"))
+(when (eq system-type 'windows-nt)
+  (setq preview-gs-command "C:\\msys64\\ucrt64\\bin\\gs.exe")
+;;  (setq TeX-command "C:\\msys64\\ucrt64\\bin\\tex.exe")
+;;  (setq LaTeX-command "latex")
+  )
 
 ;; Tells emacs where to find LaTeX.
 (let
@@ -182,7 +188,11 @@
     '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
       :help "Run latexmk on file")
     TeX-command-list)))
-(add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk")))
+;;AucTeX and latexmk don't get along on Windows
+(when (eq system-type 'darwin)
+  (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk"))))
+(when (eq system-type 'windows-nt)
+  (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default LaTeX-command))))
 
 ;;;; Skim PDF
 ;; Use Skim as default pdf viewer
