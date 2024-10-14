@@ -126,9 +126,11 @@
 (add-hook 'org-mode-hook 'auto-fill-mode)
 
 ;; Sets up org-mode files for capture/refile.
-(setq org-agenda-files '("~/Documents/org"))
-(setq org-default-notes-file
-      (expand-file-name "~/Documents/org/notes.org"))
+(when (eq system-type 'darwin)
+  (setq org-agenda-files '("~/Documents/org"))
+  (setq org-default-notes-file
+        (expand-file-name "~/Documents/org/notes.org"))
+  )
 
 (setq org-refile-targets
       '((nil :maxlevel . 3)
@@ -197,7 +199,7 @@
   (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default LaTeX-command))))
 
 ;;;; Skim PDF
-;; use Skim as default pdf viewer
+;; Use Skim as default pdf viewer
 ;; Skim's displayline is used for forward search (from .tex to .pdf)
 ;; option -b highlights the current line; option -g opens Skim in the background
 ;;(setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
