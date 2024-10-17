@@ -142,8 +142,8 @@
 (set-face-foreground 'highlight nil)
 
 ;; Enables YASnippet.
-(add-to-list 'load-path
-              "~/.emacs.d/plugins/yasnippet")
+;; (add-to-list 'load-path
+              ;; "~/.emacs.d/plugins/yasnippet")
 (use-package yasnippet
   :ensure t)
 (yas-global-mode 1)
@@ -169,7 +169,7 @@
 (setq reftex-plug-into-AUCTeX t)
 
 ;; Change inline math delimiters that AUCTeX and CDLaTeX
-;; insert
+;; insert from $...$ to \(...\)
 (setq TeX-electric-math (cons "\\(" ""))
 (setq cdlatex-use-dollar-to-ensure-math nil)
 
