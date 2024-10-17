@@ -160,6 +160,12 @@
 
 ;; (use-package org-noter)
 
+;; Enables YASnippet.
+;; (add-to-list 'load-path
+              ;; "~/.emacs.d/plugins/yasnippet")
+;; (use-package yasnippet
+;;  :ensure t)
+
 ;; ;; Enables rainbow-highlighters for LaTeX.
 ;; (add-hook 'LaTeX-mode-hook #'rainbow-delimiters-mode)
 ;; (add-hook 'TeX-mode-hook #'rainbow-delimiters-mode)
@@ -180,6 +186,11 @@
 ;; ;; Gets live preview to work right.
 ;; (when (eq system-type 'darwin)
 ;;   (setq preview-gs-command "/usr/local/bin/gs"))
+
+;; Change inline math delimiters that AUCTeX and CDLaTeX
+;; insert from $...$ to \(...\)
+;; (setq TeX-electric-math (cons "\\(" ""))
+;; (setq cdlatex-use-dollar-to-ensure-math nil)
 
 ;; ;; Tells emacs where to find LaTeX.
 ;; ;; (let
