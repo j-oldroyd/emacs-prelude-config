@@ -154,12 +154,12 @@
   (setq preview-gs-command "/usr/local/bin/gs"))
 
 ;; Tells emacs where to find LaTeX.
-(let
-    ((my-path
-      (expand-file-name
-       "/usr/local/bin:/usr/local/texlive/2023/bin/universal-darwin")))
-    (setenv "PATH" (concat my-path ":" (getenv "PATH")))
-    (add-to-list 'exec-path my-path))
+;; (let
+;;     ((my-path
+;;       (expand-file-name
+;;        "/usr/local/bin:/usr/local/texlive/2023/bin/universal-darwin")))
+;;     (setenv "PATH" (concat my-path ":" (getenv "PATH")))
+;;     (add-to-list 'exec-path my-path))
 
 ;; AucTeX
 (add-hook 'LaTeX-mode-hook 'visual-line-mode)
@@ -167,6 +167,11 @@
 ;;(add-hook 'LaTeX-mode-hook 'LaTeX-math-mode) ;; Might interfere with Prelude
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 (setq reftex-plug-into-AUCTeX t)
+
+;; Change inline math delimiters that AUCTeX and CDLaTeX
+;; insert
+(setq TeX-electric-math (cons "\\(" ""))
+(setq cdlatex-use-dollar-to-ensure-math nil)
 
 ;; Reset TeX-open/close-quote from Prelude definitions
 (setq TeX-open-quote "``")
