@@ -104,11 +104,6 @@
 
 ;;(global-set-key (kbd "M-x") 'smex)
 ;;(global-set-key (kbd "M-x") 'execute-extended-command)
-;; Sets up Ispell.
-;;(setq ispell-program-name "/usr/local/Cellar/ispell/3.4.05/bin/ispell")
-
-;; Set up aspell
-(setq ispell-extra-args '("--lang=en_US"))
 
 ;; For use with MacBook trackpad. This allows the track pad to be used with
 ;; fly spell-mode. This uses Option+click for Mouse-2 and Cmd+click for
@@ -127,7 +122,8 @@
 
 ;; Sets up org-mode files for capture/refile.
 (when (eq system-type 'darwin)
-  (setq org-agenda-files '("~/Documents/org"))
+  (setq org-agenda-files '("~/Documents/org"
+                           "~/Google Drive/My Drive/org"))
   (setq org-default-notes-file
         (expand-file-name "~/Documents/org/notes.org"))
   )
@@ -156,11 +152,6 @@
 ;; Gets live preview to work right.
 (when (eq system-type 'darwin)
   (setq preview-gs-command "/usr/local/bin/gs"))
-(when (eq system-type 'windows-nt)
-  (setq preview-gs-command "C:\\msys64\\ucrt64\\bin\\gs.exe")
-;;  (setq TeX-command "C:\\msys64\\ucrt64\\bin\\tex.exe")
-;;  (setq LaTeX-command "latex")
-  )
 
 ;; Tells emacs where to find LaTeX.
 (let
