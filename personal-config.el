@@ -192,6 +192,9 @@
 (when (eq system-type 'windows-nt)
   (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default LaTeX-command))))
 
+;; Prettify symbols in TeX
+(add-hook 'TeX-mode-hook #'prettify-symbols-mode)
+
 ;;;; Skim PDF
 ;; Use Skim as default pdf viewer
 ;; Skim's displayline is used for forward search (from .tex to .pdf)
