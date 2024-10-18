@@ -212,6 +212,17 @@
 ;; (setq TeX-electric-math (cons "\\(" ""))
 ;; (setq cdlatex-use-dollar-to-ensure-math nil)
 
+;; Prettify symbols in TeX
+;; (add-hook 'TeX-mode-hook #'prettify-symbols-mode)
+
+;;;; Skim PDF
+;; Use Skim as default pdf viewer
+;; Skim's displayline is used for forward search (from .tex to .pdf)
+;; option -b highlights the current line; option -g opens Skim in the background
+;;(setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
+;;(setq TeX-view-program-list
+;;      '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b  %n %o %b")))
+
 ;; ;; Reset TeX-open/close-quote from Prelude definitions
 ;; (setq TeX-open-quote "``")
 ;; (setq TeX-close-quote "''")
