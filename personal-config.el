@@ -74,6 +74,7 @@
 
 ;; (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
 
+<<<<<<< HEAD
 ;; ;; Define the custum capture templates
 ;; (setq org-capture-templates
 ;;       '(("t" "Todo" entry (file org-default-notes-file)
@@ -86,6 +87,20 @@
 ;;          "* %? :IDEA: \n%t" :clock-in t :clock-resume t)
 ;;         ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
 ;;          "** NEXT %? \nDEADLINE: %t") ))
+=======
+;; Define the custum capture templates
+(setq org-capture-templates
+       '(("t" "Todo" entry (file org-default-notes-file)
+	  "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
+	 ("m" "Meeting" entry (file org-default-notes-file)
+	  "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
+	 ("d" "Diary" entry (file+datetree "~/org/diary.org")
+	  "* %?\n%U\n" :clock-in t :clock-resume t)
+	 ("i" "Idea" entry (file org-default-notes-file)
+	  "* %? :IDEA: \n%t" :clock-in t :clock-resume t)
+	 ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
+	  "** NEXT %? \nDEADLINE: %t") ))
+>>>>>>> d292e93 (Add org-roam and org-noter to config.)
 
 ;; (when window-system
 ;;   (global-hl-line-mode))
@@ -135,9 +150,32 @@
 ;;       '((nil :maxlevel . 3)
 ;;         (org-agenda-files :maxlevel . 3)))
 
-;; ;; Org-noter and Org-roam initialization
-;; ;; First, remove Crux keybind for C-c n
-;; ;;(global-set-key "\C-c n" nil)
+
+;; Org-noter and Org-roam initialization
+;; (use-package org-roam
+;;   :ensure t
+;;   :custom
+;;   (org-roam-directory "~/Documents/org/roam")
+;;   :bind (("C-c n l" . org-roam-buffer-toggle)
+;;          ("C-c n f" . org-roam-node-find)
+;;          ("C-c n g" . org-roam-graph)
+;;          ("C-c n i" . org-roam-node-insert)
+;;          ("C-c n c" . org-roam-capture)
+;;          ;; Dailies
+;;          ("C-c n j" . org-roam-dailies-capture-today))
+;;   :config
+;;   ;; If you're using a vertical completion framework, you might want a
+;;   ;; more informative completion interface
+;;   (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+;;   (org-roam-db-autosync-mode)
+;;   ;; If using org-roam-protocol
+;;   (require 'org-roam-protocol))
+
+;; (use-package org-noter)
+
+;; Enables rainbow-highlighters for LaTeX.
+;; (add-hook 'LaTeX-mode-hook #'rainbow-delimiters-mode)
+;; (add-hook 'TeX-mode-hook #'rainbow-delimiters-mode)
 
 ;; (use-package org-roam
 ;;   :ensure t
