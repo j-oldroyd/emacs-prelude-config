@@ -5,6 +5,56 @@ This file describes my ~emacs~ configuration, which is built on top of
 with Org mode, particularly via ~org-noter~ and ~org-roam~. Support for BibTeX
 will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][~citar~]], [[https://github.com/emacs-citar/citar-org-roam][~citar-org-roam~]] and ~org-cite~.
 
+* AUCTeX
+  These are settings for working with LaTeX documents in emacs. This requires
+  AUCTeX, which is included with Prelude modules.
+  #+BEGIN_SRC emacs-lisp
+    ;; LaTeX-mode settings
+    (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+    (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+    (setq reftex-plug-into-AUCTeX t)
+
+    ;; Enables rainbow-highlighters for LaTeX.
+    (add-hook 'LaTeX-mode-hook #'rainbow-delimiters-mode)
+    (add-hook 'TeX-mode-hook #'rainbow-delimiters-mode)
+
+    ;; AUCTeX's live preview requires ghostscript, so we tell AUCTeX where to
+    ;; find it on macOS. Live preview on Windows is very troublesome, so we
+    ;; don't worry about it.
+    (when (eq system-type 'darwin)
+      (setq preview-gs-command "/usr/local/bin/gs"))
+
+
+    ;; Change inline math delimiters that AUCTeX and CDLaTeX
+    ;; insert from $...$ to \(...\)
+    (setq TeX-electric-math (cons "\\(" ""))
+    (setq cdlatex-use-dollar-to-ensure-math nil)
+
+    ;; Reset TeX-open/close-quote from Prelude definitions
+    (setq TeX-open-quote "``")
+    (setq TeX-close-quote "''")
+
+    ;; latexmk settings
+    ;; Use Skim as viewer, enable source <-> PDF sync
+    ;; make latexmk available via C-c C-c
+    ;; Note: SyncTeX is setup via ~/.latexmkrc (see below)
+    (add-hook 'LaTeX-mode-hook (lambda ()
+                                 (push
+                                  '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
+                                    :help "Run latexmk on file")
+                                  TeX-command-list)))
+
+    ;; AucTeX and latexmk don't get along on Windows, so don't worry about
+    ;; setting up AUCTeX for latexmk on Windows
+    (when (eq system-type 'darwin)
+      (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk"))))
+    (when (eq system-type 'windows-nt)
+      (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default LaTeX-command))))
+
+    ;; Prettify symbols in TeX
+    (add-hook 'TeX-mode-hook #'prettify-symbols-mode)
+  #+END_SRC
 * Org mode
 ** Note-taking
    This config is adapted from the recommended config for [[https://github.com/org-roam/org-roam-bibtex][~org-roam~]]. The
