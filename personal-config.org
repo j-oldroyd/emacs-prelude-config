@@ -5,6 +5,93 @@ This file describes my ~emacs~ configuration, which is built on top of
 with Org mode, particularly via ~org-noter~ and ~org-roam~. Support for BibTeX
 will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][~citar~]], [[https://github.com/emacs-citar/citar-org-roam][~citar-org-roam~]] and ~org-cite~.
 
+* General settings and packages
+** UI settings
+   #+begin_src emacs-lisp
+     ;; Enables highlighted lines.
+     (global-hl-line-mode 1)
+     (set-face-background 'hl-line "009999")
+     (set-face-foreground 'highlight nil)
+
+     ;; Prelude hides the toolbar, so turn it back on.
+     (tool-bar-mode 1)
+   #+end_src
+** Keybinds
+   We need to tell emacs how to interpret certain keys on MacBook
+   keyboards. While we're at it, we'll set up some useful keybinds for moving
+   through paragraphs.
+   #+begin_src emacs-lisp
+     ;; macOS bindings assume use of karabiner to remap caps lock and
+     ;; return to control. Note that left option key is left unbound. Note
+     ;; that control cannot be rebound without overwriting karabiner binds.
+     (when (eq system-type 'darwin)
+       (setq mac-right-command-modifier 'meta
+             mac-right-option-modifier 'super
+             mac-control-modifier 'control
+             mac-option-modifier nil))
+
+     (global-set-key "\M-p" 'backward-paragraph)
+     (global-set-key "\M-n" 'forward-paragraph)
+
+     ;; Prelude uses S-arrow for windmove keybindings which conflicts with org-mode
+     ;; basics. Therefore we use C-arrow prefix instead. On macOS this appears to
+     ;; only work with right-command, as left-control (on laptop) has different
+     ;; result.
+     (windmove-default-keybindings 'ctrl)
+
+     ;; For use with MacBook trackpad. This allows the track pad to be used with
+     ;; fly spell-mode. This uses Option+click for Mouse-2 and Cmd+click for
+     ;; mouse-3.
+     (setq mac-emulate-three-button-mouse t)
+   #+end_src
+** Completion and templates/snippets
+   We use ~vertico~ and ~yasnippet~ from Prelude. These might be redundant.
+   #+begin_src emacs-lisp
+     ;; Configure directory extension for vertico to look more like ido.
+     (use-package vertico-directory
+       :after vertico
+       :ensure nil
+       ;; More convenient directory navigation commands
+       :bind (:map vertico-map
+                   ("RET" . vertico-directory-enter)
+                   ("DEL" . vertico-directory-delete-char)
+                   ("M-DEL" . vertico-directory-delete-word))
+       ;; Tidy shadowed file names
+       :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+
+     ;; Enable YASnippet.
+     (use-package yasnippet
+       :ensure t)
+     (yas-global-mode 1)
+   #+end_src
+** Shells
+   Settings for enhancing the shell in emacs. Note that ~sage-shell-mode~
+   requires SageMath, which is tricky to get on Windows.
+   #+begin_src emacs-lisp
+     ;;  emacs-sage-shell
+     (use-package sage-shell-mode
+       :ensure t)
+
+     ;; AucTeX keybindings for SageTeX with emacs-sage-shell
+     ;; From Github documentation
+     (eval-after-load "latex"
+       '(mapc (lambda (key-cmd) (define-key LaTeX-mode-map (car key-cmd) (cdr key-cmd)))
+              `((,(kbd "C-c s c") . sage-shell-sagetex:compile-current-file)
+                (,(kbd "C-c s C") . sage-shell-sagetex:compile-file)
+                (,(kbd "C-c s r") . sage-shell-sagetex:run-latex-and-load-current-file)
+                (,(kbd "C-c s R") . sage-shell-sagetex:run-latex-and-load-file)
+                (,(kbd "C-c s l") . sage-shell-sagetex:load-current-file)
+                (,(kbd "C-c s L") . sage-shell-sagetex:load-file)
+                (,(kbd "C-c C-z") . sage-shell-edit:pop-to-process-buffer))))
+   #+end_src
+** Miscellaneous packages
+   Packages that don't fit anywhere else just yet.
+   #+begin_src emacs-lisp
+     ;; Enables writegood-mode.
+     (use-package writegood-mode
+       :ensure t)
+     (global-set-key "\C-c\C-wg" 'writegood-mode)
+   #+end_src
 * Enhancing modes for files
   The packages here improve/replace how emacs handles certain files.
 ** PDF-tools
@@ -94,6 +181,31 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][~
                #'TeX-revert-document-buffer)
    #+END_SRC
 * Org mode
+** UI settings
+   It's easier to read if we limit horizontal text to 80 characters wide. We
+   also want to enable flyspell in Org buffers along with LaTeX previews.
+   #+begin_src emacs-lisp
+     ;; Org mode 80 character limit
+     ;; Taken from
+     ;; https://emacs.stackexchange.com/questions/35266/org-mode-auto-new-line-at-80th-column
+     (add-hook 'org-mode-hook '(lambda () (setq fill-column 80)))
+     (add-hook 'org-mode-hook 'auto-fill-mode)
+
+     ;; Make Org bullets a little nicer
+     (use-package org-bullets
+       :ensure t)
+     (add-hook 'org-mode-hook
+               (lambda ()
+                 (org-bullets-mode 1)))
+
+     ;; Buffer previews and spellcheck
+     (setq org-src-fontify-natively t)
+     (add-hook 'org-mode-hook 'flyspell-mode)
+     (setq org-latex-create-formula-image-program 'dvipng)
+
+     ;; Set Org-mode indentation
+     (setq org-adapt-indentation t)
+   #+end_src
 ** Agenda and capture settings
    Org-agenda is one of the best reasons to become familiar with Org mode. We
    need to set up our agenda files and capture templates/keybinds.
