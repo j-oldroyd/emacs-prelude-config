@@ -3,7 +3,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
-)
+ )
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -73,19 +73,19 @@
 
 ;; Define the custum capture templates
 (setq org-capture-templates
-       '(("t" "Todo" entry (file org-default-notes-file)
-	  "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
-	 ("m" "Meeting" entry (file org-default-notes-file)
-	  "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
-	 ("d" "Diary" entry (file+datetree "~/org/diary.org")
-	  "* %?\n%U\n" :clock-in t :clock-resume t)
-	 ("i" "Idea" entry (file org-default-notes-file)
-	  "* %? :IDEA: \n%t" :clock-in t :clock-resume t)
-	 ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
-	  "** NEXT %? \nDEADLINE: %t") ))
+      '(("t" "Todo" entry (file org-default-notes-file)
+         "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
+        ("m" "Meeting" entry (file org-default-notes-file)
+         "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
+        ("d" "Diary" entry (file+datetree "~/org/diary.org")
+         "* %?\n%U\n" :clock-in t :clock-resume t)
+        ("i" "Idea" entry (file org-default-notes-file)
+         "* %? :IDEA: \n%t" :clock-in t :clock-resume t)
+        ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
+         "** NEXT %? \nDEADLINE: %t") ))
 
 (when window-system
-    (global-hl-line-mode))
+  (global-hl-line-mode))
 
 
 (setq org-src-fontify-natively t)
@@ -133,17 +133,20 @@
         (org-agenda-files :maxlevel . 3)))
 
 ;; Org-noter and Org-roam initialization
+;; First, remove Crux keybind for C-c n
+;;(global-set-key "\C-c n" nil)
+
 (use-package org-roam
   :ensure t
   :custom
   (org-roam-directory "~/Documents/org/roam")
-  :bind (("C-c n l" . org-roam-buffer-toggle)
-         ("C-c n f" . org-roam-node-find)
-         ("C-c n g" . org-roam-graph)
-         ("C-c n i" . org-roam-node-insert)
-         ("C-c n c" . org-roam-capture)
+  :bind (("C-c m l" . org-roam-buffer-toggle)
+         ("C-c m f" . org-roam-node-find)
+         ("C-c m g" . org-roam-graph)
+         ("C-c m i" . org-roam-node-insert)
+         ("C-c m c" . org-roam-capture)
          ;; Dailies
-         ("C-c n j" . org-roam-dailies-capture-today))
+         ("C-c m j" . org-roam-dailies-capture-today))
   :config
   ;; If you're using a vertical completion framework, you might want a
   ;; more informative completion interface
@@ -165,7 +168,7 @@
 
 ;; Enables YASnippet.
 ;; (add-to-list 'load-path
-              ;; "~/.emacs.d/plugins/yasnippet")
+;; "~/.emacs.d/plugins/yasnippet")
 (use-package yasnippet
   :ensure t)
 (yas-global-mode 1)
@@ -204,10 +207,10 @@
 ;; make latexmk available via C-c C-c
 ;; Note: SyncTeX is setup via ~/.latexmkrc (see below)
 (add-hook 'LaTeX-mode-hook (lambda ()
-  (push
-    '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
-      :help "Run latexmk on file")
-    TeX-command-list)))
+                             (push
+                              '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
+                                :help "Run latexmk on file")
+                              TeX-command-list)))
 ;;AucTeX and latexmk don't get along on Windows
 (when (eq system-type 'darwin)
   (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk"))))
