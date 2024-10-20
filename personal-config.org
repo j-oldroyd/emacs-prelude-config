@@ -5,57 +5,137 @@ This file describes my ~emacs~ configuration, which is built on top of
 with Org mode, particularly via ~org-noter~ and ~org-roam~. Support for BibTeX
 will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][~citar~]], [[https://github.com/emacs-citar/citar-org-roam][~citar-org-roam~]] and ~org-cite~.
 
-* AUCTeX
-  These are settings for working with LaTeX documents in emacs. This requires
-  AUCTeX, which is included with Prelude modules.
-  #+BEGIN_SRC emacs-lisp
-    ;; LaTeX-mode settings
-    (add-hook 'LaTeX-mode-hook 'visual-line-mode)
-    (add-hook 'LaTeX-mode-hook 'flyspell-mode)
-    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-    (setq reftex-plug-into-AUCTeX t)
+* Enhancing modes for files
+  The packages here improve/replace how emacs handles certain files.
+** PDF-tools
+   The ~pdf-tools~ package replaces emacs' own DocView mode for viewing PDF
+   files (and others) within emacs itself. This will need to be configured to
+   work with AUCTeX below.
+   #+BEGIN_SRC emacs-lisp
+     ;; Taken from
+     ;; https://www.reddit.com/r/emacs/comments/gm1c2p/pdftools_installation/
+     (use-package pdf-tools
+       :ensure t
+       :config
+       (pdf-tools-install)
+       (setq-default pdf-view-display-size 'fit-page))
 
-    ;; Enables rainbow-highlighters for LaTeX.
-    (add-hook 'LaTeX-mode-hook #'rainbow-delimiters-mode)
-    (add-hook 'TeX-mode-hook #'rainbow-delimiters-mode)
+     ;; Apparently line numbers break horizontal scrolling in PDF Tools.
+     ;; Code below taken from
+     ;; emacs.stackexchange.com/questions/74317/how-can-i-get-horizontal-scrolling-in-pdfview-to-work
+     (defun bugfix-display-line-numbers--turn-on (fun &rest args)
+       "Avoid `display-line-numbers-mode' in `image-mode' and related.
+     Around advice for FUN with ARGS."
+       (unless (derived-mode-p 'image-mode 'docview-mode 'pdf-view-mode)
+         (apply fun args)))
 
-    ;; AUCTeX's live preview requires ghostscript, so we tell AUCTeX where to
-    ;; find it on macOS. Live preview on Windows is very troublesome, so we
-    ;; don't worry about it.
-    (when (eq system-type 'darwin)
-      (setq preview-gs-command "/usr/local/bin/gs"))
+     (advice-add 'display-line-numbers--turn-on :around #'bugfix-display-line-numbers--turn-on)
+   #+END_SRC
+** AUCTeX
+   These are settings for working with LaTeX documents in emacs. This requires
+   AUCTeX, which is included with Prelude modules.
+   #+BEGIN_SRC emacs-lisp
+     ;; LaTeX-mode settings
+     (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+     (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+     (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+     (setq reftex-plug-into-AUCTeX t)
+
+     ;; Enables rainbow-highlighters for LaTeX.
+     (add-hook 'LaTeX-mode-hook #'rainbow-delimiters-mode)
+     (add-hook 'TeX-mode-hook #'rainbow-delimiters-mode)
+
+     ;; AUCTeX's live preview requires ghostscript, so we tell AUCTeX where to
+     ;; find it on macOS. Live preview on Windows is very troublesome, so we
+     ;; don't worry about it.
+     (when (eq system-type 'darwin)
+       (setq preview-gs-command "/usr/local/bin/gs"))
 
 
-    ;; Change inline math delimiters that AUCTeX and CDLaTeX
-    ;; insert from $...$ to \(...\)
-    (setq TeX-electric-math (cons "\\(" ""))
-    (setq cdlatex-use-dollar-to-ensure-math nil)
+     ;; Change inline math delimiters that AUCTeX and CDLaTeX
+     ;; insert from $...$ to \(...\)
+     (setq TeX-electric-math (cons "\\(" ""))
+     (setq cdlatex-use-dollar-to-ensure-math nil)
 
-    ;; Reset TeX-open/close-quote from Prelude definitions
-    (setq TeX-open-quote "``")
-    (setq TeX-close-quote "''")
+     ;; Reset TeX-open/close-quote from Prelude definitions
+     (setq TeX-open-quote "``")
+     (setq TeX-close-quote "''")
 
-    ;; latexmk settings
-    ;; Use Skim as viewer, enable source <-> PDF sync
-    ;; make latexmk available via C-c C-c
-    ;; Note: SyncTeX is setup via ~/.latexmkrc (see below)
-    (add-hook 'LaTeX-mode-hook (lambda ()
-                                 (push
-                                  '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
-                                    :help "Run latexmk on file")
-                                  TeX-command-list)))
+     ;; latexmk settings
+     ;; Use Skim as viewer, enable source <-> PDF sync
+     ;; make latexmk available via C-c C-c
+     ;; Note: SyncTeX is setup via ~/.latexmkrc (see below)
+     (add-hook 'LaTeX-mode-hook (lambda ()
+                                  (push
+                                   '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
+                                     :help "Run latexmk on file")
+                                   TeX-command-list)))
 
-    ;; AucTeX and latexmk don't get along on Windows, so don't worry about
-    ;; setting up AUCTeX for latexmk on Windows
-    (when (eq system-type 'darwin)
-      (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk"))))
-    (when (eq system-type 'windows-nt)
-      (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default LaTeX-command))))
+     ;; AucTeX and latexmk don't get along on Windows, so don't worry about
+     ;; setting up AUCTeX for latexmk on Windows
+     (when (eq system-type 'darwin)
+       (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk"))))
+     (when (eq system-type 'windows-nt)
+       (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default LaTeX-command))))
 
-    ;; Prettify symbols in TeX
-    (add-hook 'TeX-mode-hook #'prettify-symbols-mode)
-  #+END_SRC
+     ;; Prettify symbols in TeX
+     (add-hook 'TeX-mode-hook #'prettify-symbols-mode)
+
+     ;; Code below is taken from
+     ;; https://emacs.stackexchange.com/questions/19472/how-to-let-auctex-open-pdf-with-pdf-tools
+     ;; Use pdf-tools to open PDF files
+     (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+           TeX-source-correlate-mode t
+           TeX-source-correlate-start-server t
+           TeX-source-correlate-method (quote synctex))
+
+     ;; Update PDF buffers after successful LaTeX runs
+     (add-hook 'TeX-after-compilation-finished-functions
+               #'TeX-revert-document-buffer)
+   #+END_SRC
 * Org mode
+** Agenda and capture settings
+   Org-agenda is one of the best reasons to become familiar with Org mode. We
+   need to set up our agenda files and capture templates/keybinds.
+   #+BEGIN_SRC emacs-lisp
+     ;; This is for key bindings to invoke agenda mode (see line-2)
+     (global-set-key "\C-cl" 'org-store-link)
+     (global-set-key "\C-ca" 'org-agenda)
+     (global-set-key "\C-cc" 'org-capture)
+     (global-set-key "\C-cb" 'org-iswitchb)
+
+     ;;Changes TODO to done automatically if children tasks done
+     (defun org-summary-todo (n-done n-not-done)
+       "Switch entry to DONE when all subentries are done, to TODO otherwise."
+       (let (org-log-done org-log-states)   ; turn off logging
+         (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+
+     (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+
+     ;; Define the custum capture templates
+     (setq org-capture-templates
+           '(("t" "Todo" entry (file org-default-notes-file)
+              "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
+             ("m" "Meeting" entry (file org-default-notes-file)
+              "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
+             ("d" "Diary" entry (file+datetree "~/org/diary.org")
+              "* %?\n%U\n" :clock-in t :clock-resume t)
+             ("i" "Idea" entry (file org-default-notes-file)
+              "* %? :IDEA: \n%t" :clock-in t :clock-resume t)
+             ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
+              "** NEXT %? \nDEADLINE: %t") ))
+
+     ;; Sets up org-mode files for capture/refile.
+     (when (eq system-type 'darwin)
+       (setq org-agenda-files '("~/Documents/org"
+                                "~/Google Drive/My Drive/org"))
+       (setq org-default-notes-file
+             (expand-file-name "~/Documents/org/notes.org")))
+
+     (setq org-refile-targets
+           '((nil :maxlevel . 3)
+             (org-agenda-files :maxlevel . 3)))
+   #+END_SRC
 ** Note-taking
    This config is adapted from the recommended config for [[https://github.com/org-roam/org-roam-bibtex][~org-roam~]]. The
    keybinds need to be modified slightly so as not to conflict with Prelude's
