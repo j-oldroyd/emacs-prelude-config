@@ -90,6 +90,7 @@
 =======
 ;; Define the custum capture templates
 (setq org-capture-templates
+<<<<<<< HEAD
        '(("t" "Todo" entry (file org-default-notes-file)
 	  "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
 	 ("m" "Meeting" entry (file org-default-notes-file)
@@ -104,6 +105,21 @@
 
 ;; (when window-system
 ;;   (global-hl-line-mode))
+=======
+      '(("t" "Todo" entry (file org-default-notes-file)
+         "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
+        ("m" "Meeting" entry (file org-default-notes-file)
+         "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
+        ("d" "Diary" entry (file+datetree "~/org/diary.org")
+         "* %?\n%U\n" :clock-in t :clock-resume t)
+        ("i" "Idea" entry (file org-default-notes-file)
+         "* %? :IDEA: \n%t" :clock-in t :clock-resume t)
+        ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
+         "** NEXT %? \nDEADLINE: %t") ))
+
+(when window-system
+  (global-hl-line-mode))
+>>>>>>> db78d96 (Add org-roam keybinds)
 
 
 ;; (setq org-src-fontify-natively t)
@@ -200,9 +216,16 @@
 
 ;; Enables YASnippet.
 ;; (add-to-list 'load-path
+<<<<<<< HEAD
               ;; "~/.emacs.d/plugins/yasnippet")
 ;; (use-package yasnippet
 ;;  :ensure t)
+=======
+;; "~/.emacs.d/plugins/yasnippet")
+(use-package yasnippet
+  :ensure t)
+(yas-global-mode 1)
+>>>>>>> db78d96 (Add org-roam keybinds)
 
 ;; ;; Enables rainbow-highlighters for LaTeX.
 ;; (add-hook 'LaTeX-mode-hook #'rainbow-delimiters-mode)
@@ -238,6 +261,7 @@
 ;; ;;     (setenv "PATH" (concat my-path ":" (getenv "PATH")))
 ;; ;;     (add-to-list 'exec-path my-path))
 
+<<<<<<< HEAD
 ;; ;; AucTeX
 ;; (add-hook 'LaTeX-mode-hook 'visual-line-mode)
 ;; (add-hook 'LaTeX-mode-hook 'flyspell-mode)
@@ -249,6 +273,22 @@
 ;; ;; insert from $...$ to \(...\)
 ;; (setq TeX-electric-math (cons "\\(" ""))
 ;; (setq cdlatex-use-dollar-to-ensure-math nil)
+=======
+;;;; latexmk
+;; Use Skim as viewer, enable source <-> PDF sync
+;; make latexmk available via C-c C-c
+;; Note: SyncTeX is setup via ~/.latexmkrc (see below)
+(add-hook 'LaTeX-mode-hook (lambda ()
+                             (push
+                              '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
+                                :help "Run latexmk on file")
+                              TeX-command-list)))
+;;AucTeX and latexmk don't get along on Windows
+(when (eq system-type 'darwin)
+  (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk"))))
+(when (eq system-type 'windows-nt)
+  (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default LaTeX-command))))
+>>>>>>> db78d96 (Add org-roam keybinds)
 
 ;; Prettify symbols in TeX
 ;; (add-hook 'TeX-mode-hook #'prettify-symbols-mode)
