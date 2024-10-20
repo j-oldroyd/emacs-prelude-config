@@ -7,6 +7,9 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][~
 
 * Org mode
 ** Note-taking
+   This config is adapted from the recommended config for [[https://github.com/org-roam/org-roam-bibtex][~org-roam~]]. The
+   keybinds need to be modified slightly so as not to conflict with Prelude's
+   ~crux~ keybinds.
    #+BEGIN_SRC emacs-lisp
      (use-package org-roam
        :ensure t
@@ -30,3 +33,27 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][~
      (use-package org-noter)
    #+END_SRC
 ** BibTeX
+   The location of the bibliography file needs to be set. We can use the
+   variable ~bib-file~ which is part of ~bib-mode.el~. This might be used by
+   AUCTeX as well, so why not set it here. The location of the Google Drive file
+   probably depends on the OS, so we account for that here as well.
+   #+BEGIN_SRC emacs-lisp
+     (when (eq system-type 'darwin)
+       (setq bib-file '("~/Google Drive/My Drive/research/library.bib")))
+     (use-package citar
+       :custom
+       (citar-bibliography bib-file)
+       :hook
+       (LaTeX-mode . citar-capf-setup)
+       (org-mode . citar-capf-setup))
+     (use-package citar-org-roam
+       :after (citar org-roam)
+       :config (citar-org-roam-mode))
+   #+END_SRC
+* Packages to consider adding
+** ~embark~
+   Apparently improves commands in minibuffer. Can be used with ~citar~ via
+   ~citar-embark~.
+** ~ledger-mode~
+   This would be part of a larger project making use of the ~ledger~ CLI program
+   to keep track of my finances and budget. One example of use is located [[https://www.reddit.com/r/emacs/comments/8x4xtt/tip_how_i_use_ledger_to_track_my_money/][here]].
