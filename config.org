@@ -10,14 +10,17 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][~
    #+begin_src emacs-lisp
      ;; Enables highlighted lines.
      (global-hl-line-mode 1)
-     (set-face-background 'hl-line "009999")
+     (set-face-background 'hl-line "#2f3849")
      (set-face-foreground 'highlight nil)
 
      ;; Prelude hides the toolbar, so turn it back on.
      (tool-bar-mode 1)
 
      ;; Set fontface and size
-     (set-face-attribute 'default nil :font "FiraCode Nerd Font" :height 140)
+     (when (eq system-type 'windows-nt)
+       (set-face-attribute 'default nil :font "Consolas" :height 140))
+     (when (eq system-type 'darwin)
+       (set-face-attribute 'default nil :font "FiraCode Nerd Font" :height 140))
 
      ;; Default to vertical split instead of horizontal split
      (setq split-width-threshold 1)
@@ -27,10 +30,6 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][~
      (setq ns-use-native-fullscreen :true)
      (add-to-list 'default-frame-alist '(fullscreen . fullscreen))
    #+end_src
-
-   #+RESULTS:
-   : ((fullscreen . fullscreen))
-
 ** Keybinds
    We need to tell emacs how to interpret certain keys on MacBook
    keyboards. While we're at it, we'll set up some useful keybinds for moving
@@ -297,6 +296,8 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][~
    #+BEGIN_SRC emacs-lisp
      (when (eq system-type 'darwin)
        (setq bib-file '("~/Google Drive/My Drive/research/library.bib")))
+     (when (eq system-type 'windows-nt)
+       (setq bib-file '("~/My Drive/research/library.bib")))
      (use-package citar
        :custom
        (citar-bibliography bib-file)
