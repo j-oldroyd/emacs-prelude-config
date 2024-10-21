@@ -15,7 +15,13 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][~
 
      ;; Prelude hides the toolbar, so turn it back on.
      (tool-bar-mode 1)
+
+     ;; Set fontface and size
+     (set-face-attribute 'default nil :font "FiraCode Nerd Font" :height 140)
    #+end_src
+
+   #+RESULTS:
+
 ** Keybinds
    We need to tell emacs how to interpret certain keys on MacBook
    keyboards. While we're at it, we'll set up some useful keybinds for moving
