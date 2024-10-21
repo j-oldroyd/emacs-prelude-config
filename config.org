@@ -1,0 +1,316 @@
+#+TITLE: Jesse Oldroyd's emacs/Prelude configuration
+
+This file describes my ~emacs~ configuration, which is built on top of
+[[https://github.com/bbatsov/prelude?tab=readme-ov-file][Prelude]]. This file currently focuses on including resources for creating notes
+with Org mode, particularly via ~org-noter~ and ~org-roam~. Support for BibTeX
+will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][~citar~]], [[https://github.com/emacs-citar/citar-org-roam][~citar-org-roam~]] and ~org-cite~.
+
+* General settings and packages
+** UI settings
+   #+begin_src emacs-lisp
+     ;; Enables highlighted lines.
+     (global-hl-line-mode 1)
+     (set-face-background 'hl-line "009999")
+     (set-face-foreground 'highlight nil)
+
+     ;; Prelude hides the toolbar, so turn it back on.
+     (tool-bar-mode 1)
+
+     ;; Set fontface and size
+     (set-face-attribute 'default nil :font "FiraCode Nerd Font" :height 140)
+
+     ;; Default to vertical split instead of horizontal split
+     (setq split-width-threshold 1)
+
+     ;; Default to fullscreen. Taken from
+     ;; https://stackoverflow.com/questions/78245398/how-can-i-make-emacsclient-open-in-native-fullscreen-every-time-i-launch-it-fr
+     (setq ns-use-native-fullscreen :true)
+     (add-to-list 'default-frame-alist '(fullscreen . fullscreen))
+   #+end_src
+
+   #+RESULTS:
+   : ((fullscreen . fullscreen))
+
+** Keybinds
+   We need to tell emacs how to interpret certain keys on MacBook
+   keyboards. While we're at it, we'll set up some useful keybinds for moving
+   through paragraphs.
+   #+begin_src emacs-lisp
+     ;; macOS bindings assume use of karabiner to remap caps lock and
+     ;; return to control. Note that left option key is left unbound. Note
+     ;; that control cannot be rebound without overwriting karabiner binds.
+     (when (eq system-type 'darwin)
+       (setq mac-right-command-modifier 'meta
+             mac-right-option-modifier 'super
+             mac-control-modifier 'control
+             mac-option-modifier nil))
+
+     (global-set-key "\M-p" 'backward-paragraph)
+     (global-set-key "\M-n" 'forward-paragraph)
+
+     ;; Prelude uses S-arrow for windmove keybindings which conflicts with org-mode
+     ;; basics. Therefore we use C-arrow prefix instead. On macOS this appears to
+     ;; only work with right-command, as left-control (on laptop) has different
+     ;; result.
+     (windmove-default-keybindings 'ctrl)
+
+     ;; For use with MacBook trackpad. This allows the track pad to be used with
+     ;; fly spell-mode. This uses Option+click for Mouse-2 and Cmd+click for
+     ;; mouse-3.
+     (setq mac-emulate-three-button-mouse t)
+   #+end_src
+** Completion and templates/snippets
+   We use ~vertico~ and ~yasnippet~ from Prelude. These might be redundant.
+   #+begin_src emacs-lisp
+     ;; Configure directory extension for vertico to look more like ido.
+     (use-package vertico-directory
+       :after vertico
+       :ensure nil
+       ;; More convenient directory navigation commands
+       :bind (:map vertico-map
+                   ("RET" . vertico-directory-enter)
+                   ("DEL" . vertico-directory-delete-char)
+                   ("M-DEL" . vertico-directory-delete-word))
+       ;; Tidy shadowed file names
+       :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+
+     ;; Enable YASnippet.
+     (use-package yasnippet
+       :ensure t)
+     (yas-global-mode 1)
+   #+end_src
+** Shells
+   Settings for enhancing the shell in emacs. Note that ~sage-shell-mode~
+   requires SageMath, which is tricky to get on Windows.
+   #+begin_src emacs-lisp
+     ;;  emacs-sage-shell
+     (use-package sage-shell-mode
+       :ensure t)
+
+     ;; AucTeX keybindings for SageTeX with emacs-sage-shell
+     ;; From Github documentation
+     (eval-after-load "latex"
+       '(mapc (lambda (key-cmd) (define-key LaTeX-mode-map (car key-cmd) (cdr key-cmd)))
+              `((,(kbd "C-c s c") . sage-shell-sagetex:compile-current-file)
+                (,(kbd "C-c s C") . sage-shell-sagetex:compile-file)
+                (,(kbd "C-c s r") . sage-shell-sagetex:run-latex-and-load-current-file)
+                (,(kbd "C-c s R") . sage-shell-sagetex:run-latex-and-load-file)
+                (,(kbd "C-c s l") . sage-shell-sagetex:load-current-file)
+                (,(kbd "C-c s L") . sage-shell-sagetex:load-file)
+                (,(kbd "C-c C-z") . sage-shell-edit:pop-to-process-buffer))))
+   #+end_src
+** Miscellaneous packages
+   Packages that don't fit anywhere else just yet.
+   #+begin_src emacs-lisp
+     ;; Enables writegood-mode.
+     (use-package writegood-mode
+       :ensure t)
+     (global-set-key "\C-c\C-wg" 'writegood-mode)
+   #+end_src
+* Enhancing modes for files
+  The packages here improve/replace how emacs handles certain files.
+** PDF-tools
+   The ~pdf-tools~ package replaces emacs' own DocView mode for viewing PDF
+   files (and others) within emacs itself. This will need to be configured to
+   work with AUCTeX below.
+   #+BEGIN_SRC emacs-lisp
+     ;; Taken from
+     ;; https://www.reddit.com/r/emacs/comments/gm1c2p/pdftools_installation/
+     (use-package pdf-tools
+       :ensure t
+       :config
+       (pdf-tools-install)
+       (setq-default pdf-view-display-size 'fit-page))
+
+     ;; Apparently line numbers break horizontal scrolling in PDF Tools.
+     ;; Code below taken from
+     ;; emacs.stackexchange.com/questions/74317/how-can-i-get-horizontal-scrolling-in-pdfview-to-work
+     (defun bugfix-display-line-numbers--turn-on (fun &rest args)
+       "Avoid `display-line-numbers-mode' in `image-mode' and related.
+     Around advice for FUN with ARGS."
+       (unless (derived-mode-p 'image-mode 'docview-mode 'pdf-view-mode)
+         (apply fun args)))
+
+     (advice-add 'display-line-numbers--turn-on :around #'bugfix-display-line-numbers--turn-on)
+   #+END_SRC
+** AUCTeX
+   These are settings for working with LaTeX documents in emacs. This requires
+   AUCTeX, which is included with Prelude modules.
+   #+BEGIN_SRC emacs-lisp
+     ;; LaTeX-mode settings
+     (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+     (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+     (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+     (setq reftex-plug-into-AUCTeX t)
+
+     ;; Enables rainbow-highlighters for LaTeX.
+     (add-hook 'LaTeX-mode-hook #'rainbow-delimiters-mode)
+     (add-hook 'TeX-mode-hook #'rainbow-delimiters-mode)
+
+     ;; AUCTeX's live preview requires ghostscript, so we tell AUCTeX where to
+     ;; find it on macOS. Live preview on Windows is very troublesome, so we
+     ;; don't worry about it.
+     (when (eq system-type 'darwin)
+       (setq preview-gs-command "/usr/local/bin/gs"))
+
+
+     ;; Change inline math delimiters that AUCTeX and CDLaTeX
+     ;; insert from $...$ to \(...\)
+     (setq TeX-electric-math (cons "\\(" ""))
+     (setq cdlatex-use-dollar-to-ensure-math nil)
+
+     ;; Reset TeX-open/close-quote from Prelude definitions
+     (setq TeX-open-quote "``")
+     (setq TeX-close-quote "''")
+
+     ;; latexmk settings
+     ;; Use Skim as viewer, enable source <-> PDF sync
+     ;; make latexmk available via C-c C-c
+     ;; Note: SyncTeX is setup via ~/.latexmkrc (see below)
+     (add-hook 'LaTeX-mode-hook (lambda ()
+                                  (push
+                                   '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
+                                     :help "Run latexmk on file")
+                                   TeX-command-list)))
+
+     ;; AucTeX and latexmk don't get along on Windows, so don't worry about
+     ;; setting up AUCTeX for latexmk on Windows
+     (when (eq system-type 'darwin)
+       (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk"))))
+     (when (eq system-type 'windows-nt)
+       (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default LaTeX-command))))
+
+     ;; Prettify symbols in TeX
+     (add-hook 'TeX-mode-hook #'prettify-symbols-mode)
+
+     ;; Code below is taken from
+     ;; https://emacs.stackexchange.com/questions/19472/how-to-let-auctex-open-pdf-with-pdf-tools
+     ;; Use pdf-tools to open PDF files
+     (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+           TeX-source-correlate-mode t
+           TeX-source-correlate-start-server t
+           TeX-source-correlate-method (quote synctex))
+
+     ;; Update PDF buffers after successful LaTeX runs
+     (add-hook 'TeX-after-compilation-finished-functions
+               #'TeX-revert-document-buffer)
+   #+END_SRC
+* Org mode
+** UI settings
+   It's easier to read if we limit horizontal text to 80 characters wide. We
+   also want to enable flyspell in Org buffers along with LaTeX previews.
+   #+begin_src emacs-lisp
+     ;; Org mode 80 character limit
+     ;; Taken from
+     ;; https://emacs.stackexchange.com/questions/35266/org-mode-auto-new-line-at-80th-column
+     (add-hook 'org-mode-hook '(lambda () (setq fill-column 80)))
+     (add-hook 'org-mode-hook 'auto-fill-mode)
+
+     ;; Make Org bullets a little nicer
+     (use-package org-bullets
+       :ensure t)
+     (add-hook 'org-mode-hook
+               (lambda ()
+                 (org-bullets-mode 1)))
+
+     ;; Buffer previews and spellcheck
+     (setq org-src-fontify-natively t)
+     (add-hook 'org-mode-hook 'flyspell-mode)
+     (setq org-latex-create-formula-image-program 'dvipng)
+
+     ;; Set Org-mode indentation
+     (setq org-adapt-indentation t)
+   #+end_src
+** Agenda and capture settings
+   Org-agenda is one of the best reasons to become familiar with Org mode. We
+   need to set up our agenda files and capture templates/keybinds.
+   #+BEGIN_SRC emacs-lisp
+     ;; This is for key bindings to invoke agenda mode (see line-2)
+     (global-set-key "\C-cl" 'org-store-link)
+     (global-set-key "\C-ca" 'org-agenda)
+     (global-set-key "\C-cc" 'org-capture)
+     (global-set-key "\C-cb" 'org-iswitchb)
+
+     ;;Changes TODO to done automatically if children tasks done
+     (defun org-summary-todo (n-done n-not-done)
+       "Switch entry to DONE when all subentries are done, to TODO otherwise."
+       (let (org-log-done org-log-states)   ; turn off logging
+         (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+
+     (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+
+     ;; Define the custum capture templates
+     (setq org-capture-templates
+           '(("t" "Todo" entry (file org-default-notes-file)
+              "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
+             ("m" "Meeting" entry (file org-default-notes-file)
+              "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
+             ("d" "Diary" entry (file+datetree "~/org/diary.org")
+              "* %?\n%U\n" :clock-in t :clock-resume t)
+             ("i" "Idea" entry (file org-default-notes-file)
+              "* %? :IDEA: \n%t" :clock-in t :clock-resume t)
+             ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
+              "** NEXT %? \nDEADLINE: %t") ))
+
+     ;; Sets up org-mode files for capture/refile.
+     (when (eq system-type 'darwin)
+       (setq org-agenda-files '("~/Documents/org"
+                                "~/Google Drive/My Drive/org"))
+       (setq org-default-notes-file
+             (expand-file-name "~/Documents/org/notes.org")))
+
+     (setq org-refile-targets
+           '((nil :maxlevel . 3)
+             (org-agenda-files :maxlevel . 3)))
+   #+END_SRC
+** Note-taking
+   This config is adapted from the recommended config for [[https://github.com/org-roam/org-roam-bibtex][~org-roam~]]. The
+   keybinds need to be modified slightly so as not to conflict with Prelude's
+   ~crux~ keybinds.
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-roam
+       :ensure t
+       :custom
+       (org-roam-directory "~/Documents/org/roam")
+       :bind (("C-c m l" . org-roam-buffer-toggle)
+              ("C-c m f" . org-roam-node-find)
+              ("C-c m g" . org-roam-graph)
+              ("C-c m i" . org-roam-node-insert)
+              ("C-c m c" . org-roam-capture)
+              ;; Dailies
+              ("C-c m j" . org-roam-dailies-capture-today))
+       :config
+       ;; If you're using a vertical completion framework, you might want a
+       ;; more informative completion interface
+       (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+       (org-roam-db-autosync-mode)
+       ;; If using org-roam-protocol
+       (require 'org-roam-protocol))
+
+     (use-package org-noter)
+   #+END_SRC
+** BibTeX
+   The location of the bibliography file needs to be set. We can use the
+   variable ~bib-file~ which is part of ~bib-mode.el~. This might be used by
+   AUCTeX as well, so why not set it here. The location of the Google Drive file
+   probably depends on the OS, so we account for that here as well.
+   #+BEGIN_SRC emacs-lisp
+     (when (eq system-type 'darwin)
+       (setq bib-file '("~/Google Drive/My Drive/research/library.bib")))
+     (use-package citar
+       :custom
+       (citar-bibliography bib-file)
+       :hook
+       (LaTeX-mode . citar-capf-setup)
+       (org-mode . citar-capf-setup))
+     (use-package citar-org-roam
+       :after (citar org-roam)
+       :config (citar-org-roam-mode))
+   #+END_SRC
+* Packages to consider adding
+** ~embark~
+   Apparently improves commands in minibuffer. Can be used with ~citar~ via
+   ~citar-embark~.
+** ~ledger-mode~
+   This would be part of a larger project making use of the ~ledger~ CLI program
+   to keep track of my finances and budget. One example of use is located [[https://www.reddit.com/r/emacs/comments/8x4xtt/tip_how_i_use_ledger_to_track_my_money/][here]].
