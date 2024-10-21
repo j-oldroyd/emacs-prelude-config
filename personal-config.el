@@ -12,7 +12,7 @@
  )
 
 (require 'org)
-(org-babel-load-file )
+(org-babel-load-file "~/.emacs.d/personal/config.org")
 
 ;; ;;;; Emacs keybindings
 ;; ;; macOS bindings assume use of karabiner to remap caps lock and
