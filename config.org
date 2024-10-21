@@ -217,6 +217,14 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][~
      (add-hook 'org-mode-hook 'flyspell-mode)
      (setq org-latex-create-formula-image-program 'dvipng)
 
+     ;; Default dvipng alist setting caused issues with org LaTeX previews. This
+     ;; is fixed by implementing code below, taken from:
+     ;; https://emacs.stackexchange.com/questions/57898/getting-latex-preview-to-work-with-org-mode-dvi-not-found
+     (let ((png (cdr (assoc 'dvipng org-preview-latex-process-alist))))
+       (plist-put png :latex-compiler '("latex -interaction nonstopmode -output-directory %o %F"))
+       (plist-put png :image-converter '("dvipng -D %D -T tight -o %O %F"))
+       (plist-put png :transparent-image-converter '("dvipng -D %D -T tight -bg Transparent -o %O %F")))
+
      ;; Set Org-mode indentation
      (setq org-adapt-indentation t)
    #+end_src
