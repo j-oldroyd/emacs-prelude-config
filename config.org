@@ -18,9 +18,18 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][~
 
      ;; Set fontface and size
      (set-face-attribute 'default nil :font "FiraCode Nerd Font" :height 140)
+
+     ;; Default to vertical split instead of horizontal split
+     (setq split-width-threshold 1)
+
+     ;; Default to fullscreen. Taken from
+     ;; https://stackoverflow.com/questions/78245398/how-can-i-make-emacsclient-open-in-native-fullscreen-every-time-i-launch-it-fr
+     (setq ns-use-native-fullscreen :true)
+     (add-to-list 'default-frame-alist '(fullscreen . fullscreen))
    #+end_src
 
    #+RESULTS:
+   : ((fullscreen . fullscreen))
 
 ** Keybinds
    We need to tell emacs how to interpret certain keys on MacBook
