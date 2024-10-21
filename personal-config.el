@@ -216,16 +216,11 @@
 
 ;; Enables YASnippet.
 ;; (add-to-list 'load-path
-<<<<<<< HEAD
-              ;; "~/.emacs.d/plugins/yasnippet")
-;; (use-package yasnippet
-;;  :ensure t)
-=======
+
 ;; "~/.emacs.d/plugins/yasnippet")
-(use-package yasnippet
-  :ensure t)
-(yas-global-mode 1)
->>>>>>> db78d96 (Add org-roam keybinds)
+;; (use-package yasnippet
+;;   :ensure t)
+;; (yas-global-mode 1)
 
 ;; ;; Enables rainbow-highlighters for LaTeX.
 ;; (add-hook 'LaTeX-mode-hook #'rainbow-delimiters-mode)
