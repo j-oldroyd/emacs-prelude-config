@@ -1,9 +1,9 @@
 #+TITLE: Jesse Oldroyd's emacs/Prelude configuration
 
-This file describes my ~emacs~ configuration, which is built on top of
+This file describes my =emacs= configuration, which is built on top of
 [[https://github.com/bbatsov/prelude?tab=readme-ov-file][Prelude]]. This file currently focuses on including resources for creating notes
-with Org mode, particularly via ~org-noter~ and ~org-roam~. Support for BibTeX
-will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][~citar~]], [[https://github.com/emacs-citar/citar-org-roam][~citar-org-roam~]] and ~org-cite~.
+with Org mode, particularly via =org-noter= and =org-roam=. Support for BibTeX
+will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=citar=]], [[https://github.com/emacs-citar/citar-org-roam][=citar-org-roam=]] and =org-cite=.
 
 * General settings and packages
 ** UI settings
@@ -59,7 +59,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][~
      (setq mac-emulate-three-button-mouse t)
    #+end_src
 ** Completion and templates/snippets
-   We use ~vertico~ and ~yasnippet~ from Prelude. These might be redundant.
+   We use =vertico= and =yasnippet= from Prelude. These might be redundant.
    #+begin_src emacs-lisp
      ;; Configure directory extension for vertico to look more like ido.
      (use-package vertico-directory
@@ -79,7 +79,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][~
      (yas-global-mode 1)
    #+end_src
 ** Shells
-   Settings for enhancing the shell in emacs. Note that ~sage-shell-mode~
+   Settings for enhancing the shell in emacs. Note that =sage-shell-mode=
    requires SageMath, which is tricky to get on Windows.
    #+begin_src emacs-lisp
      ;;  emacs-sage-shell
@@ -109,7 +109,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][~
 * Enhancing modes for files
   The packages here improve/replace how emacs handles certain files.
 ** PDF-tools
-   The ~pdf-tools~ package replaces emacs' own DocView mode for viewing PDF
+   The =pdf-tools= package replaces emacs' own DocView mode for viewing PDF
    files (and others) within emacs itself. This will need to be configured to
    work with AUCTeX below.
    #+BEGIN_SRC emacs-lisp
@@ -271,9 +271,9 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][~
              (org-agenda-files :maxlevel . 3)))
    #+END_SRC
 ** Note-taking
-   This config is adapted from the recommended config for [[https://github.com/org-roam/org-roam-bibtex][~org-roam~]]. The
+   This config is adapted from the recommended config for [[https://github.com/org-roam/org-roam-bibtex][=org-roam=]]. The
    keybinds need to be modified slightly so as not to conflict with Prelude's
-   ~crux~ keybinds.
+   =crux= keybinds.
    #+BEGIN_SRC emacs-lisp
      (use-package org-roam
        :ensure t
@@ -298,7 +298,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][~
    #+END_SRC
 ** BibTeX
    The location of the bibliography file needs to be set. We can use the
-   variable ~bib-file~ which is part of ~bib-mode.el~. This might be used by
+   variable =bib-file= which is part of =bib-mode.el=. This might be used by
    AUCTeX as well, so why not set it here. The location of the Google Drive file
    probably depends on the OS, so we account for that here as well.
    #+BEGIN_SRC emacs-lisp
@@ -317,9 +317,11 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][~
        :config (citar-org-roam-mode))
    #+END_SRC
 * Packages to consider adding
-** ~embark~
-   Apparently improves commands in minibuffer. Can be used with ~citar~ via
-   ~citar-embark~.
-** ~ledger-mode~
-   This would be part of a larger project making use of the ~ledger~ CLI program
+** =embark=
+   Apparently improves commands in minibuffer. Can be used with =citar= via
+   =citar-embark=.
+** =ledger-mode=
+   This would be part of a larger project making use of the =ledger= CLI program
    to keep track of my finances and budget. One example of use is located [[https://www.reddit.com/r/emacs/comments/8x4xtt/tip_how_i_use_ledger_to_track_my_money/][here]].
+** =elfeed=
+   This looks like a good way to keep track of arXiv papers.
