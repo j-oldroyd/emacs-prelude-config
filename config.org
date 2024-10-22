@@ -6,6 +6,14 @@ with Org mode, particularly via =org-noter= and =org-roam=. Support for BibTeX
 will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=citar=]], [[https://github.com/emacs-citar/citar-org-roam][=citar-org-roam=]] and =org-cite=.
 
 * General settings and packages
+** =emacs= settings
+   General settings for =emacs=.
+   #+begin_src emacs-lisp
+     ;; On Windows, commands like rgrep appear to use the wrong "find" command:
+     ;; https://stackoverflow.com/questions/3918341/find-parameter-format-not-correct
+     (when (eq system-type 'windows-nt)
+       (setq find-program "C:\\msys64\\usr\\bin\\find.exe"))
+   #+end_src
 ** UI settings
    #+begin_src emacs-lisp
      ;; Enables highlighted lines.
