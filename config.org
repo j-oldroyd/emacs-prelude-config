@@ -106,14 +106,23 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
                 (,(kbd "C-c s L") . sage-shell-sagetex:load-file)
                 (,(kbd "C-c C-z") . sage-shell-edit:pop-to-process-buffer))))
    #+end_src
-** Miscellaneous packages
+** Miscellaneous packages and settings
    Packages that don't fit anywhere else just yet.
    #+begin_src emacs-lisp
      ;; Enables writegood-mode.
      (use-package writegood-mode
        :ensure t)
      (global-set-key "\C-c\C-wg" 'writegood-mode)
+
+     ;; Set flyspell to use mouse-3 instead of mouse-2.
+     ;; Taken from
+     ;; https://emacs.stackexchange.com/a/32930
+     (eval-after-load "flyspell"
+       '(progn
+          (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
+          (define-key flyspell-mouse-map [mouse-3] #'undefined)))
    #+end_src
+
 * Enhancing modes for files
   The packages here improve/replace how emacs handles certain files.
 ** PDF-tools
@@ -333,3 +342,5 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    to keep track of my finances and budget. One example of use is located [[https://www.reddit.com/r/emacs/comments/8x4xtt/tip_how_i_use_ledger_to_track_my_money/][here]].
 ** =elfeed=
    This looks like a good way to keep track of arXiv papers.
+
+#  LocalWords:  Keybinds
