@@ -383,6 +383,13 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
                         (push escaped filenames))))))
               (nreverse filenames)))))
    #+END_SRC
+** =org-babel= settings
+   We need to configure =org-babel= for evaluation of ~SRC~ blocks in Org mode.
+   #+begin_src emacs-lisp
+     (org-babel-do-load-languages
+      'org-babel-load-languages
+      '((octave . t)))
+   #+end_src
 
 * Packages to consider adding
 ** =embark=
