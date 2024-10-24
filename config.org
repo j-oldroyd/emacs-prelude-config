@@ -393,5 +393,9 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    to keep track of my finances and budget. One example of use is located [[https://www.reddit.com/r/emacs/comments/8x4xtt/tip_how_i_use_ledger_to_track_my_money/][here]].
 ** =elfeed=
    This looks like a good way to keep track of arXiv papers.
+** =org-reveal=
+   Create ~reveal.js~ based slideshows using Org mode.
+** =matlab=mode=
+   This will be useful for using MATLAB in Org files.
 
    #  LocalWords:  Keybinds
