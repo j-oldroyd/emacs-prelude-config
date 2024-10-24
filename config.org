@@ -121,6 +121,9 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
        '(progn
           (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
           (define-key flyspell-mouse-map [mouse-3] #'undefined)))
+
+     ;; Create nice html exports of buffers
+     (use-package htmlize)
    #+end_src
 
 * Enhancing modes for files
@@ -322,7 +325,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      (when (eq system-type 'darwin)
        (setq bib-file '("~/Google Drive/My Drive/research/library.bib")))
      (when (eq system-type 'windows-nt)
-       (setq bib-file '("~/My Drive/research/library.bib")))
+       (setq bib-file '("C:\\Users\\oldroyd.j\\My Drive\\research\\library.bib")))
      (use-package citar
        :custom
        (citar-bibliography bib-file)
@@ -333,6 +336,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
        :after (citar org-roam)
        :config (citar-org-roam-mode))
    #+END_SRC
+
 * Packages to consider adding
 ** =embark=
    Apparently improves commands in minibuffer. Can be used with =citar= via
