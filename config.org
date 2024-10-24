@@ -1,12 +1,12 @@
-#+TITLE: Jesse Oldroyd's emacs/Prelude configuration
+#+TITLE: Jesse Oldroyd's Emacs/Prelude configuration
 
-This file describes my =emacs= configuration, which is built on top of
+This file describes my =Emacs= configuration, which is built on top of
 [[https://github.com/bbatsov/prelude?tab=readme-ov-file][Prelude]]. This file currently focuses on including resources for creating notes
 with Org mode, particularly via =org-noter= and =org-roam=. Support for BibTeX
 will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=citar=]], [[https://github.com/emacs-citar/citar-org-roam][=citar-org-roam=]] and =org-cite=.
 
 * General settings and packages
-** =emacs= settings
+** =Emacs= settings
    General settings for =emacs=.
    #+begin_src emacs-lisp
      ;; On Windows, commands like rgrep appear to use the wrong "find" command:
@@ -113,6 +113,10 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      (use-package writegood-mode
        :ensure t)
      (global-set-key "\C-c\C-wg" 'writegood-mode)
+
+     ;; Set ispell and args for spellchecking
+     (setq ispell-program-name "aspell")
+     (setq ispell-extra-args '("--lang=en_US"))
 
      ;; Set flyspell to use mouse-3 instead of mouse-2.
      ;; Taken from
