@@ -126,6 +126,18 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
           (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
           (define-key flyspell-mouse-map [mouse-3] #'undefined)))
 
+     ;; Tell ispell to chill so it doesn't slow down my buffer.
+     ;; Taken from
+     ;; https://github.com/syl20bnr/spacemacs/issues/311#issuecomment-215110131
+     (with-eval-after-load 'flyspell
+       (require 'flyspell-lazy)
+       (flyspell-lazy-mode 1)
+       (setq ;; Be a little more aggressive than the lazy defaults
+        flyspell-lazy-idle-seconds 2 ;; This scans just the recent changes
+        flyspell-lazy-window-idle-seconds 6 ;; This scans the whole window
+        )
+       )
+
      ;; Create nice html exports of buffers
      (use-package htmlize)
    #+end_src
@@ -339,6 +351,37 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      (use-package citar-org-roam
        :after (citar org-roam)
        :config (citar-org-roam-mode))
+
+     ;; Set library paths for Citar and specify JabRef behavior on Windows
+     (when (eq system-type 'windows-nt)
+       (setq citar-library-paths '("C:\\Users\\oldroyd.j\\My Drive\\research"))
+
+       ;; On Windows I use JabRef, so I need to tell Citar how to parse JabRef
+       ;; file links
+       (eval-after-load "citar"
+         '(defun citar-file--parser-triplet (file-field)
+            "Return a list of files from DIRS and a FILE-FIELD formatted as a triplet.
+
+     This is file-field format seen in, for example, Calibre and Mendeley.
+
+     NEW EXAMPLE: '<phrase>:/path/to/paper.pdf:PDF:<url>
+     Example: ':/path/to/test.pdf:PDF'."
+            (let (filenames)
+              (dolist (sepchar '(?\; ?,))         ; Mendeley and Zotero use ;, Calibre uses ,
+                (dolist (substring (citar-file--split-escaped-string file-field sepchar))
+                  (let* ((triplet (citar-file--split-escaped-string substring ?:))
+                         (len (length triplet)))
+                    (when (>= len 3)
+                      ;; If there are more than three components, we probably split on unescaped : in the filename.
+                      ;; Take all but the first and last components of TRIPLET and join them with :
+                      ;; (let* ((escaped (string-join (butlast (cdr triplet)) ":"))
+                      (let* ((escaped (string-join (butlast (cdr triplet) 2) ":")) ;; JabRef has extra :, so drop last two elements
+                             (filename (replace-regexp-in-string "\\\\\\(.\\)" "\\1" escaped)))
+                        ;; Calibre doesn't escape file names in BIB files, so try both
+                        ;; See https://github.com/kovidgoyal/calibre/blob/master/src/calibre/library/catalogs/bibtex.py
+                        (push filename filenames)
+                        (push escaped filenames))))))
+              (nreverse filenames)))))
    #+END_SRC
 
 * Packages to consider adding
@@ -351,4 +394,4 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
 ** =elfeed=
    This looks like a good way to keep track of arXiv papers.
 
-#  LocalWords:  Keybinds
+   #  LocalWords:  Keybinds
