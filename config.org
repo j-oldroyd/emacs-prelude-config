@@ -104,6 +104,8 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
        :bind (:map minibuffer-local-map
                    ("M-A" . marginalia-cycle))
 
+
+
        ;; The :init section is always executed.
        :init
 
@@ -321,6 +323,37 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
 
      ;; rename files when moving - needed for mbsync:
      (setq mu4e-change-filenames-when-moving t)
+   #+end_src
+   We also need to configure =mu4e= for multiple accounts. This configuration is
+   adapted from [[https://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and/#configuring-mu4e][this blog post]]. It looks like we need to set ~tls_starttls = on~
+   for this to work properly.
+   #+begin_src emacs-lisp
+     (setq send-mail-function 'sendmail-send-it
+           sendmail-program "/opt/homebrew/bin/msmtp"
+           mail-specify-envelope-from t
+           message-sendmail-envelope-from 'header
+           mail-envelope-from 'header)
+
+     (setq mu4e-contexts
+           `( ,(make-mu4e-context
+                :name "gmail"
+                :match-func (lambda (msg) (when msg
+                                            (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+                :vars '(
+                        (mu4e-trash-folder . "/gmail/[Gmail]/Trash")
+                        (mu4e-refile-folder . "/gmail/[Gmail]/Archive")
+                        (user-mail-address . "math.oldroyd@gmail.com")
+                        ))
+              ,(make-mu4e-context
+                :name "icloud"
+                :match-func (lambda (msg) (when msg
+                                            (string-prefix-p "/icloud" (mu4e-message-field msg :maildir))))
+                :vars '(
+                        (mu4e-trash-folder . "/icloud/Deleted Messages")
+                        (mu4e-refile-folder . "/icloud/Archive")
+                        (user-mail-address . "j.oldroyd@icloud.com")
+                        ))
+              ))
    #+end_src
 
 * Org mode
