@@ -14,7 +14,8 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      (when (eq system-type 'windows-nt)
        (setq find-program "C:\\msys64\\usr\\bin\\find.exe"))
    #+end_src
-** UI settings
+** UI and navigation settings
+   See karthink's [[https://karthinks.com/software/avy-can-do-anything/][blog post]] for ideas on using Avy and its associated commands.
    #+begin_src emacs-lisp
      ;; Enables highlighted lines.
      (global-hl-line-mode 1)
@@ -37,6 +38,9 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      ;; https://stackoverflow.com/questions/78245398/how-can-i-make-emacsclient-open-in-native-fullscreen-every-time-i-launch-it-fr
      (setq ns-use-native-fullscreen :true)
      (add-to-list 'default-frame-alist '(fullscreen . fullscreen))
+
+     ;; I follow karthink's suggestion and combine Avy with Isearch.
+     (define-key isearch-mode-map (kbd "M-j") 'avy-isearch)
    #+end_src
 ** Keybinds
    We need to tell emacs how to interpret certain keys on MacBook
@@ -68,6 +72,12 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    #+end_src
 ** Completion and templates/snippets
    We use =vertico= and =yasnippet= from Prelude. These might be redundant.
+
+   I'm also using Marginalia to provide =marginalia-mode= to provide more
+   information on completions. On top of this, I include Embark for the
+   =embark-act= function. This also needs to be integrated with Consult which is
+   provided by Prelude. The configuration for both of these is the suggested
+   config on GitHub.
    #+begin_src emacs-lisp
      ;; Configure directory extension for vertico to look more like ido.
      (use-package vertico-directory
@@ -85,7 +95,60 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      (use-package yasnippet
        :ensure t)
      (yas-global-mode 1)
+
+     ;; Enable rich annotations using the Marginalia package
+     (use-package marginalia
+       ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
+       ;; available in the *Completions* buffer, add it to the
+       ;; `completion-list-mode-map'.
+       :bind (:map minibuffer-local-map
+                   ("M-A" . marginalia-cycle))
+
+       ;; The :init section is always executed.
+       :init
+
+       ;; Marginalia must be activated in the :init section of use-package such that
+       ;; the mode gets enabled right away. Note that this forces loading the
+       ;; package.
+       (marginalia-mode))
+
+     (use-package embark
+       :ensure t
+
+       :bind
+       (("C-." . embark-act)         ;; pick some comfortable binding
+        ("C-;" . embark-dwim)        ;; good alternative: M-.
+        ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+
+       :init
+
+       ;; Optionally replace the key help with a completing-read interface
+       (setq prefix-help-command #'embark-prefix-help-command)
+
+       ;; Show the Embark target at point via Eldoc. You may adjust the
+       ;; Eldoc strategy, if you want to see the documentation from
+       ;; multiple providers. Beware that using this can be a little
+       ;; jarring since the message shown in the minibuffer can be more
+       ;; than one line, causing the modeline to move up and down:
+
+       ;; (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
+       ;; (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
+
+       :config
+
+       ;; Hide the mode line of the Embark live/completions buffers
+       (add-to-list 'display-buffer-alist
+                    '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                      nil
+                      (window-parameters (mode-line-format . none)))))
+
+     ;; Consult users will also want the embark-consult package.
+     (use-package embark-consult
+       :ensure t ; only need to install it, embark loads it after consult if found
+       :hook
+       (embark-collect-mode . consult-preview-at-point-mode))
    #+end_src
+
 ** Shells
    Settings for enhancing the shell in emacs. Note that =sage-shell-mode=
    requires SageMath, which is tricky to get on Windows.
@@ -346,11 +409,14 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    variable =bib-file= which is part of =bib-mode.el=. This might be used by
    AUCTeX as well, so why not set it here. The location of the Google Drive file
    probably depends on the OS, so we account for that here as well.
+
+   For =citar=, we also configure it to work with =org-roam= and =embark=.
    #+BEGIN_SRC emacs-lisp
      (when (eq system-type 'darwin)
        (setq bib-file '("~/Google Drive/My Drive/research/library.bib")))
      (when (eq system-type 'windows-nt)
        (setq bib-file '("C:\\Users\\oldroyd.j\\My Drive\\research\\library.bib")))
+
      (use-package citar
        :custom
        (citar-bibliography bib-file)
@@ -360,6 +426,10 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      (use-package citar-org-roam
        :after (citar org-roam)
        :config (citar-org-roam-mode))
+     (use-package citar-embark
+       :after citar embark
+       :no-require
+       :config (citar-embark-mode))
 
      ;; Set library paths for Citar and specify JabRef behavior on Windows
      (cond
@@ -374,10 +444,10 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
        '(defun citar-file--parser-triplet (file-field)
           "Return a list of files from DIRS and a FILE-FIELD formatted as a triplet.
 
-     This is file-field format seen in, for example, Calibre and Mendeley.
+             This is file-field format seen in, for example, Calibre and Mendeley.
 
-     NEW EXAMPLE: '<phrase>:/path/to/paper.pdf:PDF:<url>
-     Example: ':/path/to/test.pdf:PDF'."
+             NEW EXAMPLE: '<phrase>:/path/to/paper.pdf:PDF:<url>
+             Example: ':/path/to/test.pdf:PDF'."
           (let (filenames)
             (dolist (sepchar '(?\; ?,))         ; Mendeley and Zotero use ;, Calibre uses ,
               (dolist (substring (citar-file--split-escaped-string file-field sepchar))
