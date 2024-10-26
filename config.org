@@ -296,10 +296,31 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
 ** =mu4e=
    Mail configuration with =emacs=, =mu= and =mu4e=. At the moment this is just
    =macOS= specific. This is adapted from this [[https://macowners.club/posts/email-emacs-mu4e-macos/#initial-sync][blog post]]. Setting up =mbsync=
-   also required setting an app specific password for iCloud. Not tracked by
-   =git= for *TOP SECRET* privacy reasons.
+   also required setting an app specific password for iCloud.
    #+begin_src emacs-lisp
-     (load-file "~/.emacs.d/personal/mail.el")
+     (use-package mu4e
+       :load-path  "/opt/homebrew/share/emacs/site-lisp/mu/mu4e")
+
+     ;; for sending mails
+     (require 'smtpmail)
+
+     ;; we installed this with homebrew
+     (setq mu4e-mu-binary (executable-find "mu"))
+
+     ;; this is the directory we created before:
+     ;; (setq mu4e-maildir "~/.maildir")
+
+     ;; this command is called to sync imap servers:
+     (setq mu4e-get-mail-command (concat (executable-find "mbsync") " -a"))
+     ;; how often to call it in seconds:
+     (setq mu4e-update-interval 300)
+
+     ;; save attachment to desktop by default
+     ;; or another choice of yours:
+     (setq mu4e-attachment-dir "~/Desktop")
+
+     ;; rename files when moving - needed for mbsync:
+     (setq mu4e-change-filenames-when-moving t)
    #+end_src
 
 * Org mode
