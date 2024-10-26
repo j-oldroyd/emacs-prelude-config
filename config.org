@@ -230,6 +230,15 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      (add-hook 'TeX-after-compilation-finished-functions
                #'TeX-revert-document-buffer)
    #+END_SRC
+** =mu4e=
+   Mail configuration with =emacs=, =mu= and =mu4e=. At the moment this is just
+   =macOS= specific. This is adapted from this [[https://macowners.club/posts/email-emacs-mu4e-macos/#initial-sync][blog post]]. Setting up =mbsync=
+   also required setting an app specific password for iCloud. Not tracked by
+   =git= for *TOP SECRET* privacy reasons.
+   #+begin_src emacs-lisp
+     (load-file "~/.emacs.d/personal/mail.el")
+   #+end_src
+
 * Org mode
 ** UI settings
    It's easier to read if we limit horizontal text to 80 characters wide. We
@@ -386,6 +395,9 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
                       (push escaped filenames))))))
             (nreverse filenames))))
    #+END_SRC
+
+   #+RESULTS:
+   : citar-file--parser-triplet
 
 ** =org-babel= settings
    We need to configure =org-babel= for evaluation of ~SRC~ blocks in Org mode.
