@@ -323,6 +323,9 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
 
      ;; rename files when moving - needed for mbsync:
      (setq mu4e-change-filenames-when-moving t)
+
+     ;; Change HTML display for dark color schemes
+     (setq shr-color-visible-luminance-min 80)
    #+end_src
    We also need to configure =mu4e= for multiple accounts. This configuration is
    adapted from [[https://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and/#configuring-mu4e][this blog post]]. It looks like we need to set ~tls_starttls = on~
@@ -394,50 +397,54 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    Org-agenda is one of the best reasons to become familiar with Org mode. We
    need to set up our agenda files and capture templates/keybinds.
    #+BEGIN_SRC emacs-lisp
-          ;; This is for key bindings to invoke agenda mode (see line-2)
-          (global-set-key "\C-cl" 'org-store-link)
-          (global-set-key "\C-ca" 'org-agenda)
-          (global-set-key "\C-cc" 'org-capture)
-          (global-set-key "\C-cb" 'org-iswitchb)
+     ;; This is for key bindings to invoke agenda mode (see line-2)
+     (global-set-key "\C-cl" 'org-store-link)
+     (global-set-key "\C-ca" 'org-agenda)
+     (global-set-key "\C-cc" 'org-capture)
+     (global-set-key "\C-cb" 'org-iswitchb)
 
-          ;;Changes TODO to done automatically if children tasks done
-          (defun org-summary-todo (n-done n-not-done)
-            "Switch entry to DONE when all subentries are done, to TODO otherwise."
-            (let (org-log-done org-log-states)   ; turn off logging
-              (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+     ;;Changes TODO to done automatically if children tasks done
+     (defun org-summary-todo (n-done n-not-done)
+       "Switch entry to DONE when all subentries are done, to TODO otherwise."
+       (let (org-log-done org-log-states)   ; turn off logging
+         (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
 
-          (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+     (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
 
-          ;; Define the custum capture templates
-          (setq org-capture-templates
-                '(("t" "Todo" entry (file org-default-notes-file)
-                   "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
-                  ("m" "Meeting" entry (file org-default-notes-file)
-                   "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
-                  ("d" "Diary" entry (file+datetree "~/org/diary.org")
-                   "* %?\n%U\n" :clock-in t :clock-resume t)
-                  ("i" "Idea" entry (file org-default-notes-file)
-                   "* %? :IDEA: \n%t" :clock-in t :clock-resume t)
-                  ("f" "Fleeting note" entry  (file "~/notes/inbox.org")
-                   "* TODO %^{Note title}\nContext: %a\n%?" :empty-lines-before 1 )
-                  ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
-                   "** NEXT %? \nDEADLINE: %t") ))
+     ;; Define the custum capture templates
+     (setq org-capture-templates
+           '(("t" "Todo" entry (file org-default-notes-file)
+              "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
+             ("m" "Meeting" entry (file org-default-notes-file)
+              "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
+             ("d" "Diary" entry (file+datetree "~/org/diary.org")
+              "* %?\n%U\n" :clock-in t :clock-resume t)
+             ("i" "Idea" entry (file org-default-notes-file)
+              "* %? :IDEA: \n%t" :clock-in t :clock-resume t)
+             ("f" "Fleeting note" entry  (file "~/notes/inbox.org")
+              "* TODO %^{Note title}\nContext: %a\n%?" :empty-lines-before 1 )
+             ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
+              "** NEXT %? \nDEADLINE: %t") ))
 
-          ;; Sets up org-mode files for capture/refile.
-          (when (eq system-type 'darwin)
-            (setq org-agenda-files '("~/Documents/org"
-                                     "~/Google Drive/My Drive/org"))
-            (setq org-default-notes-file
-                  (expand-file-name "~/Documents/org/notes.org")))
+     ;; Sets up org-mode files for capture/refile.
+     (when (eq system-type 'darwin)
+       (setq org-agenda-files '("~/Documents/org"
+                                "~/Google Drive/My Drive/org"))
+       (setq org-default-notes-file
+             (expand-file-name "~/Documents/org/notes.org")))
 
-          (setq org-refile-targets
-                '((nil :maxlevel . 3)
-                  (org-agenda-files :maxlevel . 3)))
+     (setq org-refile-targets
+           '((nil :maxlevel . 3)
+             (org-agenda-files :maxlevel . 3)))
    #+END_SRC
 ** Note-taking
    This config is adapted from the recommended config for [[https://github.com/org-roam/org-roam-bibtex][=org-roam=]]. The
    keybinds need to be modified slightly so as not to conflict with Prelude's
-   =crux= keybinds.
+   =crux= keybinds. To avoid cursing like a sailor, note that =org-roam= is
+   activated by visiting an appropriate node and then using
+   ~org-roam-buffer-toggle~, which is bound to ~C-c m l~ below. This will
+   activate another window that shows backlinks for a given node where the point
+   is.
    #+BEGIN_SRC emacs-lisp
      (use-package org-roam
        :ensure t
@@ -466,7 +473,22 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    AUCTeX as well, so why not set it here. The location of the Google Drive file
    probably depends on the OS, so we account for that here as well.
 
-   For =citar=, we also configure it to work with =org-roam= and =embark=.
+   For =citar=, we also configure it to work with =org-roam= and =embark=. For
+   now, a decent workflow seems to be the following:
+   1. Open a file using ~citar-open~. With the =org-roam= integration, this file
+      should ideally be an =org-roam= file. With a fair amount of profanity this
+      can be made to happen.
+   2. In the file just opened, use ~org-noter~ to associate it with the
+      corresponding PDF (if it exists). Be sure to add in any relevant
+      =org-roam= nodes as well. Using keywords from the article and placing
+      corresponding nodes under ~:PROPERTIES:~ (say, with a ~:KEYWORDS:~
+      property) for =org-roam= to refer to might be the best approach here.
+   3. Take any relevant notes on the paper with =org-noter=. Be sure to
+      highlight appropriately using ~C-c C-a h~ and place precise notes with
+      ~M-i~. Highlighted sections are probably best used for placing notes
+      specific to the paper (such as explaining some mathematical computation)
+      while annotation with =org-noter= should focus on observations that I wish
+      to refer to outside of the paper.
    #+BEGIN_SRC emacs-lisp
      (when (eq system-type 'darwin)
        (setq bib-file '("~/Google Drive/My Drive/research/library.bib")))
@@ -476,6 +498,10 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      (use-package citar
        :custom
        (citar-bibliography bib-file)
+       (org-cite-global-bibliography bib-file)
+       (org-cite-insert-processor 'citar)
+       (org-cite-follow-processor 'citar)
+       (org-cite-activate-processor 'citar)
        :hook
        (LaTeX-mode . citar-capf-setup)
        (org-mode . citar-capf-setup))
@@ -493,6 +519,8 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
        (setq citar-library-paths '("C:\\Users\\oldroyd.j\\My Drive\\research")))
       ((eq system-type 'darwin)
        (setq citar-library-paths '("~/Google Drive/My Drive/research"))))
+     (when (eq system-type 'darwin)
+         (setq citar-notes-paths '("~/Google Drive/My Drive/research")))
 
      ;; On Windows I use JabRef, so I need to tell Citar how to parse JabRef
      ;; file links
@@ -500,10 +528,10 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
        '(defun citar-file--parser-triplet (file-field)
           "Return a list of files from DIRS and a FILE-FIELD formatted as a triplet.
 
-             This is file-field format seen in, for example, Calibre and Mendeley.
+                  This is file-field format seen in, for example, Calibre and Mendeley.
 
-             NEW EXAMPLE: '<phrase>:/path/to/paper.pdf:PDF:<url>
-             Example: ':/path/to/test.pdf:PDF'."
+                  NEW EXAMPLE: '<phrase>:/path/to/paper.pdf:PDF:<url>
+                  Example: ':/path/to/test.pdf:PDF'."
           (let (filenames)
             (dolist (sepchar '(?\; ?,))         ; Mendeley and Zotero use ;, Calibre uses ,
               (dolist (substring (citar-file--split-escaped-string file-field sepchar))
@@ -522,9 +550,6 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
             (nreverse filenames))))
    #+END_SRC
 
-   #+RESULTS:
-   : citar-file--parser-triplet
-
 ** =org-babel= settings
    We need to configure =org-babel= for evaluation of ~SRC~ blocks in Org mode.
    #+begin_src emacs-lisp
@@ -534,9 +559,6 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    #+end_src
 
 * Packages to consider adding
-** =embark=
-   Apparently improves commands in minibuffer. Can be used with =citar= via
-   =citar-embark=.
 ** =ledger-mode=
    This would be part of a larger project making use of the =ledger= CLI program
    to keep track of my finances and budget. One example of use is located [[https://www.reddit.com/r/emacs/comments/8x4xtt/tip_how_i_use_ledger_to_track_my_money/][here]].
