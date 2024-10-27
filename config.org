@@ -13,6 +13,11 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      ;; https://stackoverflow.com/questions/3918341/find-parameter-format-not-correct
      (when (eq system-type 'windows-nt)
        (setq find-program "C:\\msys64\\usr\\bin\\find.exe"))
+
+     ;; Move deleted files to trash in Dired instead of deleting them outright.
+     (setq delete-by-moving-to-trash t)
+     (if (eq system-type 'darwin)
+         (setq trash-directory "~/.Trash"))
    #+end_src
 ** UI and navigation settings
    See karthink's [[https://karthinks.com/software/avy-can-do-anything/][blog post]] for ideas on using Avy and its associated commands.
