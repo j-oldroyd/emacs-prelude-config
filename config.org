@@ -421,7 +421,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
               "* %?\n%U\n" :clock-in t :clock-resume t)
              ("i" "Idea" entry (file org-default-notes-file)
               "* %? :IDEA: \n%t" :clock-in t :clock-resume t)
-             ("f" "Fleeting note" entry  (file "~/notes/inbox.org")
+             ("f" "Fleeting note" entry  (file org-default-notes-file)
               "* TODO %^{Note title}\nContext: %a\n%?" :empty-lines-before 1 )
              ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
               "** NEXT %? \nDEADLINE: %t") ))
@@ -429,7 +429,8 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      ;; Sets up org-mode files for capture/refile.
      (when (eq system-type 'darwin)
        (setq org-agenda-files '("~/Documents/org"
-                                "~/Google Drive/My Drive/org"))
+                                "~/Google Drive/My Drive/org"
+                                "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/org"))
        (setq org-default-notes-file
              (expand-file-name "~/Documents/org/notes.org")))
 
@@ -520,7 +521,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
       ((eq system-type 'darwin)
        (setq citar-library-paths '("~/Google Drive/My Drive/research"))))
      (when (eq system-type 'darwin)
-         (setq citar-notes-paths '("~/Google Drive/My Drive/research")))
+       (setq citar-notes-paths '("~/Google Drive/My Drive/research")))
 
      ;; On Windows I use JabRef, so I need to tell Citar how to parse JabRef
      ;; file links
