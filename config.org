@@ -326,7 +326,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    #+end_src
    We also need to configure =mu4e= for multiple accounts. This configuration is
    adapted from [[https://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and/#configuring-mu4e][this blog post]]. It looks like we need to set ~tls_starttls = on~
-   for this to work properly.
+   in the ~.msmtprc~ file for this to work properly.
    #+begin_src emacs-lisp
      (setq send-mail-function 'sendmail-send-it
            sendmail-program "/opt/homebrew/bin/msmtp"
@@ -394,43 +394,45 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    Org-agenda is one of the best reasons to become familiar with Org mode. We
    need to set up our agenda files and capture templates/keybinds.
    #+BEGIN_SRC emacs-lisp
-     ;; This is for key bindings to invoke agenda mode (see line-2)
-     (global-set-key "\C-cl" 'org-store-link)
-     (global-set-key "\C-ca" 'org-agenda)
-     (global-set-key "\C-cc" 'org-capture)
-     (global-set-key "\C-cb" 'org-iswitchb)
+          ;; This is for key bindings to invoke agenda mode (see line-2)
+          (global-set-key "\C-cl" 'org-store-link)
+          (global-set-key "\C-ca" 'org-agenda)
+          (global-set-key "\C-cc" 'org-capture)
+          (global-set-key "\C-cb" 'org-iswitchb)
 
-     ;;Changes TODO to done automatically if children tasks done
-     (defun org-summary-todo (n-done n-not-done)
-       "Switch entry to DONE when all subentries are done, to TODO otherwise."
-       (let (org-log-done org-log-states)   ; turn off logging
-         (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+          ;;Changes TODO to done automatically if children tasks done
+          (defun org-summary-todo (n-done n-not-done)
+            "Switch entry to DONE when all subentries are done, to TODO otherwise."
+            (let (org-log-done org-log-states)   ; turn off logging
+              (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
 
-     (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+          (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
 
-     ;; Define the custum capture templates
-     (setq org-capture-templates
-           '(("t" "Todo" entry (file org-default-notes-file)
-              "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
-             ("m" "Meeting" entry (file org-default-notes-file)
-              "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
-             ("d" "Diary" entry (file+datetree "~/org/diary.org")
-              "* %?\n%U\n" :clock-in t :clock-resume t)
-             ("i" "Idea" entry (file org-default-notes-file)
-              "* %? :IDEA: \n%t" :clock-in t :clock-resume t)
-             ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
-              "** NEXT %? \nDEADLINE: %t") ))
+          ;; Define the custum capture templates
+          (setq org-capture-templates
+                '(("t" "Todo" entry (file org-default-notes-file)
+                   "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
+                  ("m" "Meeting" entry (file org-default-notes-file)
+                   "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
+                  ("d" "Diary" entry (file+datetree "~/org/diary.org")
+                   "* %?\n%U\n" :clock-in t :clock-resume t)
+                  ("i" "Idea" entry (file org-default-notes-file)
+                   "* %? :IDEA: \n%t" :clock-in t :clock-resume t)
+                  ("f" "Fleeting note" entry  (file "~/notes/inbox.org")
+                   "* TODO %^{Note title}\nContext: %a\n%?" :empty-lines-before 1 )
+                  ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
+                   "** NEXT %? \nDEADLINE: %t") ))
 
-     ;; Sets up org-mode files for capture/refile.
-     (when (eq system-type 'darwin)
-       (setq org-agenda-files '("~/Documents/org"
-                                "~/Google Drive/My Drive/org"))
-       (setq org-default-notes-file
-             (expand-file-name "~/Documents/org/notes.org")))
+          ;; Sets up org-mode files for capture/refile.
+          (when (eq system-type 'darwin)
+            (setq org-agenda-files '("~/Documents/org"
+                                     "~/Google Drive/My Drive/org"))
+            (setq org-default-notes-file
+                  (expand-file-name "~/Documents/org/notes.org")))
 
-     (setq org-refile-targets
-           '((nil :maxlevel . 3)
-             (org-agenda-files :maxlevel . 3)))
+          (setq org-refile-targets
+                '((nil :maxlevel . 3)
+                  (org-agenda-files :maxlevel . 3)))
    #+END_SRC
 ** Note-taking
    This config is adapted from the recommended config for [[https://github.com/org-roam/org-roam-bibtex][=org-roam=]]. The
