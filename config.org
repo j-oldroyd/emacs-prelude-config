@@ -348,13 +348,23 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
                         (user-mail-address . "math.oldroyd@gmail.com")
                         ))
               ,(make-mu4e-context
+                :name "wvwc-mail"
+                :match-func (lambda (msg) (when msg
+                                            (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+                :vars '(
+                        (mu4e-trash-folder . "/wvwc-mail/[wvwc-mail]/Trash")
+                        (mu4e-refile-folder . "/wvwc-mail/[wvwc-mail]/Archive")
+                        (user-mail-address . "oldroyd.j@wvwc.edu")
+                        ))
+              ,(make-mu4e-context
                 :name "icloud"
                 :match-func (lambda (msg) (when msg
                                             (string-prefix-p "/icloud" (mu4e-message-field msg :maildir))))
                 :vars '(
                         (mu4e-trash-folder . "/icloud/Deleted Messages")
                         (mu4e-refile-folder . "/icloud/Archive")
-                        (user-mail-address . "j.oldroyd@icloud.com")
+                        (user-
+                         mail-address . "j.oldroyd@icloud.com")
                         ))
               ))
    #+end_src
@@ -456,7 +466,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
               ("C-c m g" . org-roam-graph)
               ("C-c m i" . org-roam-node-insert)
               ("C-c m c" . org-roam-capture)
-              ;; Dailies
+              ;; Dailies for journaling
               ("C-c m j" . org-roam-dailies-capture-today))
        :config
        ;; If you're using a vertical completion framework, you might want a
