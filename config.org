@@ -24,7 +24,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    #+begin_src emacs-lisp
      ;; Enables highlighted lines.
      (global-hl-line-mode 1)
-     (set-face-background 'hl-line "#2f3849")
+     (set-face-background 'hl-line "#d0d6ec")
      (set-face-foreground 'highlight nil)
 
      ;; Prelude hides the toolbar, so turn it back on.
@@ -447,12 +447,25 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
                                 "~/Google Drive/My Drive/org"
                                 "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/org"))
        (setq org-default-notes-file
-             (expand-file-name "~/Documents/org/notes.org")))
+             (expand-file-name "/Users/jesseoldroyd/Library/Mobile Documents/com~apple~CloudDocs/Documents/org/notes.org")))
 
      (setq org-refile-targets
            '((nil :maxlevel . 3)
              (org-agenda-files :maxlevel . 3)))
    #+END_SRC
+** Calendar and diary settings
+   We also make use of the =Emacs= diary to schedule appointments and check for
+   sunrise/sunset times if necessary (as any text editor should be capable of
+   doing). Currently, diary settings have been adjusted using
+   ~customize-variable~ via =M-x=. This includes integration of diary
+   appointments with Org agenda. We also include the =calfw= suite of packages
+   for improving the calendar view. This requires using the ~cfw:*~ commands via
+   =M-x= for now, but could become a keyboard shortcut later.
+   #+begin_src emacs-lisp
+     (require 'calfw)
+     (require 'calfw-org)
+     (require 'calfw-cal)
+   #+end_src
 ** Note-taking
    This config is adapted from the recommended config for [[https://github.com/org-roam/org-roam-bibtex][=org-roam=]]. The
    keybinds need to be modified slightly so as not to conflict with Prelude's
@@ -584,5 +597,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    Create ~reveal.js~ based slideshows using Org mode.
 ** =matlab=mode=
    This will be useful for using MATLAB in Org files.
+** =org-super-agenda=
+   This package will improve Org agenda views. See [[https://github.com/alphapapa/org-super-agenda][=org-super-agenda=]].
 
    #  LocalWords:  Keybinds
