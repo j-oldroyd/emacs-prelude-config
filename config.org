@@ -477,8 +477,6 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    #+BEGIN_SRC emacs-lisp
      (use-package org-roam
        :ensure t
-       :custom
-       (org-roam-directory "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/org/roam")
        :bind (("C-c m l" . org-roam-buffer-toggle)
               ("C-c m f" . org-roam-node-find)
               ("C-c m g" . org-roam-graph)
@@ -494,8 +492,15 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
        ;; If using org-roam-protocol
        (require 'org-roam-protocol))
 
+     ;; Set directory for roam notes based on Windows or Mac.
+     ;; This assumes that the Windows machine is using iCloud Drive!
+     (if (eq system-type 'darwin)
+       (setq org-roam-directory "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/org/roam")
+       (setq org-roam-directory "C:\\Users\\oldroyd.j\\iCloudDrive\\Documents\\org\\roam"))
+
      (use-package org-noter)
    #+END_SRC
+
 ** BibTeX
    The location of the bibliography file needs to be set. We can use the
    variable =bib-file= which is part of =bib-mode.el=. This might be used by
