@@ -177,7 +177,11 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
                 (,(kbd "C-c C-z") . sage-shell-edit:pop-to-process-buffer))))
    #+end_src
 ** Miscellaneous packages and settings
-   Packages that don't fit anywhere else just yet.
+   Packages that don't fit anywhere else just yet. Note that ~nroff~ errors on
+   Windows appear to be caused by the MSYS2 installation of ~aspell~. We need to
+   tell ~aspell~ where exactly it can find the necessary modes by creating an
+   appropriate ~config~ file ~~/.aspell.conf~ in the MSYS2/UCRT64 shell. See
+   [[https://github.com/msys2/MSYS2-packages/issues/2088#issuecomment-1726339967][this post]] for more information.
    #+begin_src emacs-lisp
      ;; Enables writegood-mode.
      (use-package writegood-mode
@@ -186,7 +190,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
 
      ;; Set ispell and args for spellchecking
      (setq ispell-program-name "aspell")
-     (setq ispell-extra-args '("--lang=en_US"))
+     ;;(setq ispell-extra-args '("--lang=en_US"))
 
      ;; Set flyspell to use mouse-3 instead of mouse-2.
      ;; Taken from
@@ -199,18 +203,20 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      ;; Tell ispell to chill so it doesn't slow down my buffer.
      ;; Taken from
      ;; https://github.com/syl20bnr/spacemacs/issues/311#issuecomment-215110131
-     (with-eval-after-load 'flyspell
-       (require 'flyspell-lazy)
-       (flyspell-lazy-mode 1)
-       (setq ;; Be a little more aggressive than the lazy defaults
-        flyspell-lazy-idle-seconds 2 ;; This scans just the recent changes
-        flyspell-lazy-window-idle-seconds 6 ;; This scans the whole window
-        )
-       )
+     ;; (with-eval-after-load 'flyspell
+     ;;   (require 'flyspell-lazy)
+     ;;   (flyspell-lazy-mode 1)
+     ;;   (setq ;; Be a little more aggressive than the lazy defaults
+     ;;    flyspell-lazy-idle-seconds 2 ;; This scans just the recent changes
+     ;;    flyspell-lazy-window-idle-seconds 6 ;; This scans the whole window
+     ;;    )
+     ;;   )
 
      ;; Create nice html exports of buffers
      (use-package htmlize)
    #+end_src
+
+   #+RESULTS:
 
 * Enhancing modes for files
   The packages here improve/replace how emacs handles certain files.
