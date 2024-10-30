@@ -101,18 +101,6 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
        :ensure t)
      (yas-global-mode 1)
 
-     ;;;; The code below is stolen from karthinks' LaTeX config:
-     ;;;; https://karthinks.com/software/latex-input-for-impatient-scholars/
-     ;; Function that tries to autoexpand YaSnippets
-     ;; The double quoting is NOT a typo!
-     (defun my/yas-try-expanding-auto-snippets ()
-       (when (bound-and-true-p 'yas-minor-mode)
-         (let ((yas-buffer-local-condition ''(require-snippet-condition . auto)))
-           (yas-expand))))
-
-     ;; Try after every insertion
-     (add-hook 'post-self-insert-hook #'my/yas-try-expanding-auto-snippets)
-
      ;; Enable rich annotations using the Marginalia package
      (use-package marginalia
        ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
