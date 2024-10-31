@@ -1,5 +1,6 @@
 #+TITLE: Jesse Oldroyd's Emacs/Prelude configuration
 
+
 This file describes my =Emacs= configuration, which is built on top of
 [[https://github.com/bbatsov/prelude?tab=readme-ov-file][Prelude]]. This file currently focuses on including resources for creating notes
 with Org mode, particularly via =org-noter= and =org-roam=. Support for BibTeX
@@ -100,6 +101,15 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      (use-package yasnippet
        :ensure t)
      (yas-global-mode 1)
+
+     ;; Try to set up auto-expansion for certain snippets.
+     ;; Taken from
+     ;; https://www.reddit.com/r/emacs/comments/o5ewqc/is_automatic_snippet_expansion_with_yasnippet/
+     (defun my-yas-try-expanding-auto-snippets ()
+       (when yas-minor-mode
+         (let ((yas-buffer-local-condition ''(require-snippet-condition . auto)))
+           (yas-expand))))
+     (add-hook 'post-command-hook #'my-yas-try-expanding-auto-snippets)
 
      ;; Enable rich annotations using the Marginalia package
      (use-package marginalia
@@ -306,6 +316,11 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      (add-hook 'TeX-after-compilation-finished-functions
                #'TeX-revert-document-buffer)
    #+END_SRC
+   =CDLaTeX= also allows for extensive customizations and abbreviations.
+   #+begin_src emacs-lisp
+     (setq cdlatex-math-symbol-alist
+           '((?0 ("\\emptyset" "\\varnothing"))))
+   #+end_src
 ** =mu4e=
    Mail configuration with =emacs=, =mu= and =mu4e=. At the moment this is just
    =macOS= specific. This is adapted from this [[https://macowners.club/posts/email-emacs-mu4e-macos/#initial-sync][blog post]]. Setting up =mbsync=
@@ -501,7 +516,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      ;; Set directory for roam notes based on Windows or Mac.
      ;; This assumes that the Windows machine is using iCloud Drive!
      (if (eq system-type 'darwin)
-       (setq org-roam-directory "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/org/roam")
+         (setq org-roam-directory "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/org/roam")
        (setq org-roam-directory "C:\\Users\\oldroyd.j\\iCloudDrive\\Documents\\org\\roam"))
 
      (use-package org-noter)
