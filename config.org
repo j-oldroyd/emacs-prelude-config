@@ -441,7 +441,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    Mail configuration with =emacs=, =mu= and =mu4e=. At the moment this is just
    =macOS= specific. This is adapted from this [[https://macowners.club/posts/email-emacs-mu4e-macos/#initial-sync][blog post]]. Setting up =mbsync=
    also required setting an app specific password for iCloud.
-   #+begin_src emacs-lisp :eval (if (eq system-type 'windows-nt) "no")
+   #+begin_src emacs-lisp :tangle (if (eq system-type 'windows-nt) "no")
      (use-package mu4e
        :if (eq system-type 'darwin)          ;Only load on macOS
        :load-path  "/opt/homebrew/share/emacs/site-lisp/mu/mu4e")
@@ -474,7 +474,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    We also need to configure =mu4e= for multiple accounts. This configuration is
    adapted from [[https://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and/#configuring-mu4e][this blog post]]. It looks like we need to set ~tls_starttls = on~
    in the ~.msmtprc~ file for this to work properly.
-   #+begin_src emacs-lisp :eval (if (eq system-type 'windows-nt) "no") :results silent
+   #+begin_src emacs-lisp :tangle (if (eq system-type 'windows-nt) "no") :results silent
      (setq send-mail-function 'sendmail-send-it
            sendmail-program "/opt/homebrew/bin/msmtp"
            mail-specify-envelope-from t
