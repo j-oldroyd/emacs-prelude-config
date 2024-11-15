@@ -395,7 +395,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      ;; (when (eq system-type 'darwin)
      ;; (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk"))))
      (when (eq system-type 'windows-nt)
-       (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default LaTeX-command))))
+       (add-hook 'TeX-mode-hook (lambda () (setq TeX-command-default LaTeX-command))))
 
      ;; Prettify symbols in TeX
      (add-hook 'TeX-mode-hook #'prettify-symbols-mode)
@@ -610,7 +610,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      ;; Org mode 80 character limit
      ;; Taken from
      ;; https://emacs.stackexchange.com/questions/35266/org-mode-auto-new-line-at-80th-column
-     (add-hook 'org-mode-hook '(lambda () (setq fill-column 80)))
+     (add-hook 'org-mode-hook (lambda () (setq fill-column 80)))
      (add-hook 'org-mode-hook 'auto-fill-mode)
 
      ;; Make Org bullets a little nicer
