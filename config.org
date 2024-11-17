@@ -166,6 +166,14 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
         '("'" . repeat)
         '("<escape>" . ignore)))
 
+     ;; LaTeX settings for meow. Taken from
+     ;; https://aatmunbaxi.netlify.app/comp/configuring_meow_friendly_latex/
+     (meow-thing-register 'inline-math
+                          '(pair ("\\(") ("\\)"))
+                          '(pair ("\\(") ("\\)") ) )
+
+     (add-to-list 'meow-char-thing-table '(?m . inline-math))
+
      (require 'meow)
      (meow-setup)
      (meow-global-mode 1)
