@@ -80,6 +80,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      (setq mac-emulate-three-button-mouse t)
 
      ;; Meow-mode setup.
+     (require 'meow)
      (defun meow-setup ()
        (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
        (meow-motion-overwrite-define-key
@@ -174,7 +175,6 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
 
      (add-to-list 'meow-char-thing-table '(?m . inline-math))
 
-     (require 'meow)
      (meow-setup)
      (meow-global-mode 1)
    #+end_src
@@ -728,7 +728,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
        ;; If using org-roam-protocol
        (require 'org-roam-protocol))
 
-     ;; Set directory for roam notes based on Windows or Mac.
+     ;; Set directory for roam notes based on Windows, WSL or Mac.
      ;; This assumes that the Windows machine is using iCloud Drive!
      (cond
       ((eq system-type 'darwin) (setq org-roam-directory "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/org/roam"))
@@ -760,67 +760,67 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
       specific to the paper (such as explaining some mathematical computation)
       while annotation with =org-noter= should focus on observations that I wish
       to refer to outside of the paper.
-   #+BEGIN_SRC emacs-lisp
-     (when (eq system-type 'darwin)
-       (setq bib-file '("~/Google Drive/My Drive/research/library.bib")))
-     (when (eq system-type 'windows-nt)
-       (setq bib-file '("C:\\Users\\oldroyd.j\\My Drive\\research\\library.bib")))
+      #+BEGIN_SRC emacs-lisp
+        (when (eq system-type 'darwin)
+          (setq bib-file '("~/Google Drive/My Drive/research/library.bib")))
+        (when (eq system-type 'windows-nt)
+          (setq bib-file '("C:\\Users\\oldroyd.j\\My Drive\\research\\library.bib")))
 
-     (use-package citar
-       :ensure t
-       :custom
-       (citar-bibliography bib-file)
-       (org-cite-global-bibliography bib-file)
-       (org-cite-insert-processor 'citar)
-       (org-cite-follow-processor 'citar)
-       (org-cite-activate-processor 'citar)
-       :hook
-       (LaTeX-mode . citar-capf-setup)
-       (org-mode . citar-capf-setup))
-     (use-package citar-org-roam
-       :after (citar org-roam)
-       :config (citar-org-roam-mode))
-     (use-package citar-embark
-       :after citar embark
-       :no-require
-       :config (citar-embark-mode))
+        (use-package citar
+          :ensure t
+          :custom
+          (citar-bibliography bib-file)
+          (org-cite-global-bibliography bib-file)
+          (org-cite-insert-processor 'citar)
+          (org-cite-follow-processor 'citar)
+          (org-cite-activate-processor 'citar)
+          :hook
+          (LaTeX-mode . citar-capf-setup)
+          (org-mode . citar-capf-setup))
+        (use-package citar-org-roam
+          :after (citar org-roam)
+          :config (citar-org-roam-mode))
+        (use-package citar-embark
+          :after citar embark
+          :no-require
+          :config (citar-embark-mode))
 
-     ;; Set library paths for Citar and specify JabRef behavior on Windows
-     (cond
-      ((eq system-type 'windows-nt)
-       (setq citar-library-paths '("C:\\Users\\oldroyd.j\\My Drive\\research")))
-      ((eq system-type 'darwin)
-       (setq citar-library-paths '("~/Google Drive/My Drive/research"))))
-     (when (eq system-type 'darwin)
-       (setq citar-notes-paths '("~/Google Drive/My Drive/research")))
+        ;; Set library paths for Citar and specify JabRef behavior on Windows
+        (cond
+         ((eq system-type 'windows-nt)
+          (setq citar-library-paths '("C:\\Users\\oldroyd.j\\My Drive\\research")))
+         ((eq system-type 'darwin)
+          (setq citar-library-paths '("~/Google Drive/My Drive/research"))))
+        (when (eq system-type 'darwin)
+          (setq citar-notes-paths '("~/Google Drive/My Drive/research")))
 
-     ;; On Windows I use JabRef, so I need to tell Citar how to parse JabRef
-     ;; file links
-     (eval-after-load "citar"
-       '(defun citar-file--parser-triplet (file-field)
-          "Return a list of files from DIRS and a FILE-FIELD formatted as a triplet.
+        ;; On Windows I use JabRef, so I need to tell Citar how to parse JabRef
+        ;; file links
+        (eval-after-load "citar"
+          '(defun citar-file--parser-triplet (file-field)
+             "Return a list of files from DIRS and a FILE-FIELD formatted as a triplet.
 
-                  This is file-field format seen in, for example, Calibre and Mendeley.
+                     This is file-field format seen in, for example, Calibre and Mendeley.
 
-                  NEW EXAMPLE: '<phrase>:/path/to/paper.pdf:PDF:<url>
-                  Example: ':/path/to/test.pdf:PDF'."
-          (let (filenames)
-            (dolist (sepchar '(?\; ?,))         ; Mendeley and Zotero use ;, Calibre uses ,
-              (dolist (substring (citar-file--split-escaped-string file-field sepchar))
-                (let* ((triplet (citar-file--split-escaped-string substring ?:))
-                       (len (length triplet)))
-                  (when (>= len 3)
-                    ;; If there are more than three components, we probably split on unescaped : in the filename.
-                    ;; Take all but the first and last components of TRIPLET and join them with :
-                    ;; (let* ((escaped (string-join (butlast (cdr triplet)) ":"))
-                    (let* ((escaped (string-join (butlast (cdr triplet) 2) ":")) ;; JabRef has extra :, so drop last two elements
-                           (filename (replace-regexp-in-string "\\\\\\(.\\)" "\\1" escaped)))
-                      ;; Calibre doesn't escape file names in BIB files, so try both
-                      ;; See https://github.com/kovidgoyal/calibre/blob/master/src/calibre/library/catalogs/bibtex.py
-                      (push filename filenames)
-                      (push escaped filenames))))))
-            (nreverse filenames))))
-   #+END_SRC
+                     NEW EXAMPLE: '<phrase>:/path/to/paper.pdf:PDF:<url>
+                     Example: ':/path/to/test.pdf:PDF'."
+             (let (filenames)
+               (dolist (sepchar '(?\; ?,))         ; Mendeley and Zotero use ;, Calibre uses ,
+                 (dolist (substring (citar-file--split-escaped-string file-field sepchar))
+                   (let* ((triplet (citar-file--split-escaped-string substring ?:))
+                          (len (length triplet)))
+                     (when (>= len 3)
+                       ;; If there are more than three components, we probably split on unescaped : in the filename.
+                       ;; Take all but the first and last components of TRIPLET and join them with :
+                       ;; (let* ((escaped (string-join (butlast (cdr triplet)) ":"))
+                       (let* ((escaped (string-join (butlast (cdr triplet) 2) ":")) ;; JabRef has extra :, so drop last two elements
+                              (filename (replace-regexp-in-string "\\\\\\(.\\)" "\\1" escaped)))
+                         ;; Calibre doesn't escape file names in BIB files, so try both
+                         ;; See https://github.com/kovidgoyal/calibre/blob/master/src/calibre/library/catalogs/bibtex.py
+                         (push filename filenames)
+                         (push escaped filenames))))))
+               (nreverse filenames))))
+      #+END_SRC
 
 ** =org-babel= settings
    We need to configure =org-babel= for evaluation of ~SRC~ blocks in Org mode.
