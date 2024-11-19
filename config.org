@@ -86,7 +86,8 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
        (meow-motion-overwrite-define-key
         '("j" . meow-next)
         '("k" . meow-prev)
-        '("<escape>" . ignore))
+        '("/" . consult-line))
+       '("<escape>" . ignore)
        (meow-leader-define-key
         ;; SPC j/k will run the original command in MOTION state.
         '("j" . "H-j")
