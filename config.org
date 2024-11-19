@@ -790,6 +790,8 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
         (cond
          ((eq system-type 'windows-nt)
           (setq citar-library-paths '("C:\\Users\\oldroyd.j\\My Drive\\research")))
+         ((eq system-type 'gnu/linux)
+          (setq citar-library-paths '("/mnt/c/Users/oldroyd.j/My Drive/research")))
          ((eq system-type 'darwin)
           (setq citar-library-paths '("~/Google Drive/My Drive/research"))))
         (when (eq system-type 'darwin)
