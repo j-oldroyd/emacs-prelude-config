@@ -764,6 +764,8 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
       #+BEGIN_SRC emacs-lisp
         (when (eq system-type 'darwin)
           (setq bib-file '("~/Google Drive/My Drive/research/library.bib")))
+        (when (eq system-type 'gnu/linux)
+          (setq bib-file '("/mnt/c/Users/oldroyd.j/My Drive/research/library.bib")))
         (when (eq system-type 'windows-nt)
           (setq bib-file '("C:\\Users\\oldroyd.j\\My Drive\\research\\library.bib")))
 
