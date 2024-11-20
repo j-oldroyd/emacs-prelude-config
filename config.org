@@ -92,6 +92,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
         ;; SPC j/k will run the original command in MOTION state.
         '("j" . "H-j")
         '("k" . "H-k")
+        '("/" . "H-/")
         ;; Use SPC (0-9) for digit arguments.
         '("1" . meow-digit-argument)
         '("2" . meow-digit-argument)
