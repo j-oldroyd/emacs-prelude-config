@@ -31,11 +31,11 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      ;; Prelude hides the toolbar, so turn it back on.
      (tool-bar-mode 1)
 
-     ;; Set fontface and size
-     (when (eq system-type 'windows-nt)
-       (set-face-attribute 'default nil :font "Consolas" :height 140))
-     (when (eq system-type 'darwin)
-       (set-face-attribute 'default nil :font "FiraCode Nerd Font" :height 140))
+     ;; ;; Set fontface and size
+     ;; (when (eq system-type 'windows-nt)
+     ;;   (set-face-attribute 'default nil :font "Consolas" :height 140))
+     ;; (when (eq system-type 'darwin)
+     ;;   (set-face-attribute 'default nil :font "FiraCode Nerd Font" :height 140))
 
      ;; Default to vertical split instead of horizontal split
      ;; (setq split-width-threshold 1)
