@@ -446,8 +446,9 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    argument. In particular, we replace ~sage_tex_load~.
    =CDLaTeX= also allows for extensive customizations and abbreviations.
    #+begin_src emacs-lisp
+     (add-hook 'LaTeX-mode-hook #'cdlatex-mode)
      (setq cdlatex-math-symbol-alist
-           '((?0 ("\\emptyset" "\\varnothing"))))
+                '((?0 ("\\emptyset" "\\varnothing"))))
    #+end_src
 ** =mu4e=
    Mail configuration with =emacs=, =mu= and =mu4e=. At the moment this is just
