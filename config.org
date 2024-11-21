@@ -371,7 +371,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      (setq reftex-plug-into-AUCTeX t)
 
      ;; Enables rainbow-highlighters for LaTeX.
-     (add-hook 'LaTeX-mode-hook #'rainbow-delimiters-mode)
+     ;; (add-hook 'LaTeX-mode-hook #'rainbow-delimiters-mode)
      (add-hook 'TeX-mode-hook #'rainbow-delimiters-mode)
 
      ;; AUCTeX's live preview requires ghostscript, so we tell AUCTeX where to
@@ -448,7 +448,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    #+begin_src emacs-lisp
      (add-hook 'LaTeX-mode-hook #'cdlatex-mode)
      (setq cdlatex-math-symbol-alist
-                '((?0 ("\\emptyset" "\\varnothing"))))
+           '((?0 ("\\emptyset" "\\varnothing"))))
    #+end_src
 ** =mu4e=
    Mail configuration with =emacs=, =mu= and =mu4e=. At the moment this is just
