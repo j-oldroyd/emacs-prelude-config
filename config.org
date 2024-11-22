@@ -1,6 +1,4 @@
 #+TITLE: Jesse Oldroyd's Emacs/Prelude configuration
-
-
 This file describes my =Emacs= configuration, which is built on top of
 [[https://github.com/bbatsov/prelude?tab=readme-ov-file][Prelude]]. This file currently focuses on including resources for creating notes
 with Org mode, particularly via =org-noter= and =org-roam=. Support for BibTeX
