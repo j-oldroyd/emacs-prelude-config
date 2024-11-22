@@ -450,8 +450,8 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
            '((?0 ("\\emptyset" "\\varnothing"))))
    #+end_src
 ** =mu4e=
-   Mail configuration with =emacs=, =mu= and =mu4e=. At the moment this is just
-   =macOS= specific. This is adapted from this [[https://macowners.club/posts/email-emacs-mu4e-macos/#initial-sync][blog post]]. Setting up =mbsync=
+   Mail configuration with =emacs=, =mu= and =mu4e=.  At the moment this is just
+   =macOS= specific. This is adapted from this [[https://macowners.club/posts/email-emacs-mu4e-macos/#initial-sync][blog post]].  Setting up =mbsync=
    also required setting an app specific password for iCloud.
    #+begin_src emacs-lisp :tangle (unless (eq system-type 'darwin) "no") :results silent
      (use-package mu4e
