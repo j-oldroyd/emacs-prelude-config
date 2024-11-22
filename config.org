@@ -60,6 +60,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      ;; that control cannot be rebound without overwriting karabiner binds.
      (when (eq system-type 'darwin)
        (setq mac-right-command-modifier 'meta
+             mac-command-modifier 'hyper
              mac-right-option-modifier 'super
              mac-control-modifier 'control
              mac-option-modifier nil))
