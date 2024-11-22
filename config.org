@@ -1,4 +1,5 @@
 #+TITLE: Jesse Oldroyd's Emacs/Prelude configuration
+#+property: header-args:emacs-lisp :tangle (concat (file-name-sans-extension (buffer-file-name)) ".el")
 This file describes my =Emacs= configuration, which is built on top of
 [[https://github.com/bbatsov/prelude?tab=readme-ov-file][Prelude]]. This file currently focuses on including resources for creating notes
 with Org mode, particularly via =org-noter= and =org-roam=. Support for BibTeX
