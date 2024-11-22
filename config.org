@@ -27,9 +27,6 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      ;; (set-face-background 'hl-line "#d0d6ec")
      (set-face-foreground 'highlight nil)
 
-     ;; Turn on visual line mode.
-     (global-visual-line-mode 1)
-
      ;; Prelude hides the toolbar, so turn it back on.
      (tool-bar-mode 1)
 
