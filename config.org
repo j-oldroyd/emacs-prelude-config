@@ -1,6 +1,5 @@
 #+TITLE: Jesse Oldroyd's Emacs/Prelude configuration
-
-
+#+property: header-args:emacs-lisp :tangle (concat (file-name-sans-extension (buffer-file-name)) ".el")
 This file describes my =Emacs= configuration, which is built on top of
 [[https://github.com/bbatsov/prelude?tab=readme-ov-file][Prelude]]. This file currently focuses on including resources for creating notes
 with Org mode, particularly via =org-noter= and =org-roam=. Support for BibTeX
@@ -168,6 +167,11 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
         '("z" . meow-pop-selection)
         '("'" . repeat)
         '("<escape>" . ignore)))
+
+     ;; Meow hints are disabled in Org mode by default. Since I only use
+     ;; fixed-width fonts and the same size, this shouldn't be an
+     ;; issue. This can be done by removing org-mode from the variable
+     ;; meow-expand-exclude-mode-list.
 
      ;; LaTeX settings for meow. Taken from
      ;; https://aatmunbaxi.netlify.app/comp/configuring_meow_friendly_latex/
@@ -452,8 +456,8 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    #+end_src
 
 ** =mu4e=
-   Mail configuration with =emacs=, =mu= and =mu4e=. At the moment this is just
-   =macOS= specific. This is adapted from this [[https://macowners.club/posts/email-emacs-mu4e-macos/#initial-sync][blog post]]. Setting up =mbsync=
+   Mail configuration with =emacs=, =mu= and =mu4e=.  At the moment this is just
+   =macOS= specific. This is adapted from this [[https://macowners.club/posts/email-emacs-mu4e-macos/#initial-sync][blog post]].  Setting up =mbsync=
    also required setting an app specific password for iCloud.
    #+begin_src emacs-lisp :results silent
      (use-package mu4e
