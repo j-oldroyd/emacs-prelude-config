@@ -184,6 +184,10 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
 
      (meow-setup)
      (meow-global-mode 1)
+
+     ;; But I don't want this mode on in mu4e modes.  This should also turn
+     ;; it off for other similar buffers, like a buffer mode buffer.
+     (add-hook 'special-mode-hook (lambda () (meow-mode -1)))
    #+end_src
 
 ** Completion and templates/snippets
