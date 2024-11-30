@@ -846,7 +846,14 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
       'org-babel-load-languages
       '((octave . t)))
    #+end_src
-
+** Export settings
+*** =ox-hugo=
+    We can use =ox-hugo= to quickly generate and preview websites created using
+    Hugo.
+    #+begin_src emacs-lisp :results silent
+      (with-eval-after-load 'ox
+        (require 'ox-hugo))
+    #+end_src
 * Packages to consider adding
 ** =ledger-mode=
    This would be part of a larger project making use of the =ledger= CLI program
