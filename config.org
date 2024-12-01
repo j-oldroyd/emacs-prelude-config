@@ -860,8 +860,10 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
     We can use =ox-hugo= to quickly generate and preview websites created using
     Hugo.
     #+begin_src emacs-lisp :results silent
-      (with-eval-after-load 'ox
-        (require 'ox-hugo))
+      (use-package ox-hugo
+        :ensure t   ;Auto-install the package from Melpa
+        :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
+        :after ox)
     #+end_src
 * Packages to consider adding
 ** =ledger-mode=
