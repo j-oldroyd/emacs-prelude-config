@@ -45,9 +45,11 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      (add-to-list 'default-frame-alist '(fullscreen . fullscreen))
 
      ;;; Avy bindings
-     (global-set-key (kbd "M-j") 'avy-goto-char-timer)
-     ;; I follow karthink's suggestion and combine Avy with Isearch.
-     (define-key isearch-mode-map (kbd "M-j") 'avy-isearch)
+     (use-package avy
+       :ensure t
+       :bind (("M-j"   .   avy-goto-char-2)
+              :map isearch-mode-map
+              ("M-j"     . avy-isearch)))
    #+end_src
 
 ** Keybinds
@@ -669,6 +671,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
       'magit-insert-tracked-files
       nil
       'append)
+   #+end_src
 ** PreTeXt
    PreTeXt uses XML markup to produce documents in multiple formats.
    #+begin_src emacs-lisp :results silent
