@@ -666,11 +666,12 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
 ** Magit
    I want to be able to access tracked files via ~j t~ from ~magit-dispatch~.
    #+begin_src emacs-lisp :results silent
-     (magit-add-section-hook
-      'magit-status-sections-hook
-      'magit-insert-tracked-files
-      nil
-      'append)
+     (with-eval-after-load "magit"
+       (magit-add-section-hook
+        'magit-status-sections-hook
+        'magit-insert-tracked-files
+        nil
+        'append))
    #+end_src
 ** PreTeXt
    PreTeXt uses XML markup to produce documents in multiple formats.
