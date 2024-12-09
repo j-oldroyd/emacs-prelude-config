@@ -45,9 +45,11 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      (add-to-list 'default-frame-alist '(fullscreen . fullscreen))
 
      ;;; Avy bindings
+     ;; Override smartparens use of "M-j" so I can use it.
+     (sp-override-key-bindings '(("M-j")))
      (use-package avy
        :ensure t
-       :bind (("M-j"   .   avy-goto-char-2)
+       :bind (("M-j"   .   avy-goto-char-timer)
               :map isearch-mode-map
               ("M-j"     . avy-isearch)))
    #+end_src
