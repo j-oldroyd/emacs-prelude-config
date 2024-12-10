@@ -586,7 +586,6 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    with =hledger= journal files in Emacs. These settings are adapted from the
    provided configuration for =hledger-mode=.
    #+begin_src emacs-lisp :results silent
-
      (use-package hledger-mode
        :mode ("\\.journal\\'" "\\.hledger\\'")
        :commands hledger-enable-reporting
