@@ -11,8 +11,8 @@
  ;; If there is more than one, they won't work right.
  )
 
-(require 'org)
-(org-babel-load-file "~/.emacs.d/personal/config.org")
+;; (require 'org)
+;; (org-babel-load-file "~/.emacs.d/personal/config.org")
 
 ;; ;;;; Emacs keybindings
 ;; ;; macOS bindings assume use of karabiner to remap caps lock and

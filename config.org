@@ -7,7 +7,8 @@ creating notes with Org mode, particularly via =org-noter= and
 [[https://github.com/emacs-citar/citar-org-roam][=citar-org-roam=]] and =org-cite=.  This is also based in part on Prot's
 Emacs configuration, which uses ~org-babel-tangle~ to produce ~.el~
 files instead of loading one potentially large ~.org~ file.  See [[https://github.com/protesilaos/dotfiles/blob/master/emacs/.emacs.d/prot-emacs.org][this
-Github page]].
+Github page]].  This command needs to be re-run each time the
+configuration changes.
 
 #+begin_src emacs-lisp :tangle "no" :results none
   (org-babel-tangle)
