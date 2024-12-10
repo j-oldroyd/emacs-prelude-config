@@ -668,7 +668,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
 ** Magit
    I want to be able to access tracked files via ~j t~ from ~magit-dispatch~.
    #+begin_src emacs-lisp :results silent
-     (with-eval-after-load "magit"
+     (with-eval-after-load 'magit
        (magit-add-section-hook
         'magit-status-sections-hook
         'magit-insert-tracked-files
