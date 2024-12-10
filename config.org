@@ -34,20 +34,10 @@ configuration changes.
    #+begin_src emacs-lisp :tangle "general-settings.el"
      ;; Enables highlighted lines.
      (global-hl-line-mode 1)
-     ;; (set-face-background 'hl-line "#d0d6ec")
      (set-face-foreground 'highlight nil)
 
      ;; Prelude hides the toolbar, so turn it back on.
      (tool-bar-mode 1)
-
-     ;; ;; Set fontface and size
-     ;; (when (eq system-type 'windows-nt)
-     ;;   (set-face-attribute 'default nil :font "Consolas" :height 140))
-     ;; (when (eq system-type 'darwin)
-     ;;   (set-face-attribute 'default nil :font "FiraCode Nerd Font" :height 140))
-
-     ;; Default to vertical split instead of horizontal split
-     ;; (setq split-width-threshold 1)
 
      ;; Default to fullscreen. Taken from
      ;; https://stackoverflow.com/questions/78245398/how-can-i-make-emacsclient-open-in-native-fullscreen-every-time-i-launch-it-fr
@@ -64,9 +54,6 @@ configuration changes.
               :map isearch-mode-map
               ("M-j"     . avy-isearch)))
    #+end_src
-
-   #+RESULTS:
-   : avy-isearch
 
 ** Keybinds
    We need to tell emacs how to interpret certain keys on MacBook
@@ -209,14 +196,13 @@ configuration changes.
    #+end_src
 
 ** Completion and templates/snippets
-   We use =vertico= and =yasnippet= from Prelude. These might be redundant.
-
-   I'm also using Marginalia to provide =marginalia-mode= to provide more
+   We use =vertico= and =yasnippet= from Prelude. These might be redundant.  I'm
+   also using Marginalia to provide =marginalia-mode= to provide more
    information on completions. On top of this, I include Embark for the
    =embark-act= function. This also needs to be integrated with Consult which is
    provided by Prelude. The configuration for both of these is the suggested
    config on GitHub.
-   #+begin_src emacs-lisp :tangle "general-settings.el"
+   #+begin_src emacs-lisp :tangle "completion-settings.el"
      ;; Configure directory extension for vertico to look more like ido.
      (use-package vertico-directory
        :after vertico
@@ -234,7 +220,8 @@ configuration changes.
        :ensure t)
      (yas-global-mode 1)
 
-     ;; karthink's code for integrating CDLaTeX with YASnippet.
+     ;; karthink's code for integrating CDLaTeX with YASnippet.  Taken from
+     ;; https://gist.github.com/karthink/7d89df35ee9b7ac0c93d0177b862dadb
      (use-package cdlatex
        :hook ((cdlatex-tab . yas-expand)
               (cdlatex-tab . cdlatex-in-yas-field))
@@ -290,8 +277,6 @@ configuration changes.
        :bind (:map minibuffer-local-map
                    ("M-A" . marginalia-cycle))
 
-
-
        ;; The :init section is always executed.
        :init
 
@@ -340,7 +325,7 @@ configuration changes.
 ** Shells
    Settings for enhancing the shell in emacs. Note that =sage-shell-mode=
    requires SageMath, which is tricky to get on Windows.
-   #+begin_src emacs-lisp :tangle "general-settings.el"
+   #+begin_src emacs-lisp :tangle "shell-settings.el"
      ;;  emacs-sage-shell
      (use-package sage-shell-mode
        :ensure t)
@@ -357,6 +342,7 @@ configuration changes.
                 (,(kbd "C-c s L") . sage-shell-sagetex:load-file)
                 (,(kbd "C-c C-z") . sage-shell-edit:pop-to-process-buffer))))
    #+end_src
+
 ** Miscellaneous packages and settings
    Packages that don't fit anywhere else just yet. Note that ~nroff~ errors on
    Windows appear to be caused by the MSYS2 installation of ~aspell~. We need to
@@ -401,6 +387,41 @@ configuration changes.
 
 * Enhancing modes for files
   The packages here improve/replace how emacs handles certain files.
+** Language server protocol
+   A language server protocol (LSP) can be used to provide completions for
+   various file types including =.tex= files.  Another alternative is to use
+   =eglot=, which is a built-in package.
+   #+begin_src emacs-lisp :tangle "lsp-settings.el"
+     (use-package lsp-mode
+       :init
+       ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+       ;; (setq lsp-keymap-prefix "C-c l")
+       :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+              (python-mode . lsp-deferred)
+              (latex-mode . lsp-deferred)
+              ;; if you want which-key integration
+              (lsp-mode . lsp-enable-which-key-integration))
+       :commands lsp)
+
+     ;; optionally
+     (use-package lsp-ui :commands lsp-ui-mode)
+     ;; if you are helm user
+     ;; (use-package helm-lsp :commands helm-lsp-workspace-symbol)
+     ;; if you are ivy user
+     ;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+     ;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+
+     ;; optionally if you want to use debugger
+     ;; (use-package dap-mode)
+     ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+     (use-package which-key
+       :config
+       (which-key-mode))
+
+     ;; Make Emacs/digestif aware of TeX info paths.
+     (add-to-list 'Info-directory-list "/usr/local/texlive/2024/texmf-dist/doc/info")
+   #+end_src
 ** PDF-tools
    The =pdf-tools= package replaces emacs' own DocView mode for viewing PDF
    files (and others) within emacs itself. This will need to be configured to
@@ -459,18 +480,20 @@ configuration changes.
      ;; Use Skim as viewer, enable source <-> PDF sync
      ;; make latexmk available via C-c C-c
      ;; Note: SyncTeX is setup via ~/.latexmkrc (see below)
-     (add-hook 'LaTeX-mode-hook (lambda ()
-                                  (push
-                                   '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
-                                     :help "Run latexmk on file")
-                                   TeX-command-list)))
+     (add-hook 'LaTeX-mode-hook
+               (lambda ()
+                 (push
+                  '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
+                    :help "Run latexmk on file")
+                  TeX-command-list)))
 
      ;; AucTeX and latexmk don't get along on Windows, so don't worry about
      ;; setting up AUCTeX for latexmk on Windows
      ;; (when (eq system-type 'darwin)
      ;; (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk"))))
      (when (eq system-type 'windows-nt)
-       (add-hook 'TeX-mode-hook (lambda () (setq TeX-command-default LaTeX-command))))
+       (add-hook 'TeX-mode-hook
+                 (lambda () (setq TeX-command-default LaTeX-command))))
 
      ;; Prettify symbols in TeX
      (add-hook 'TeX-mode-hook #'prettify-symbols-mode)
@@ -508,8 +531,8 @@ configuration changes.
    #+END_SRC
    The above fix for =sage-shell-mode= also requires editing
    =sage-shell-mode.py= within the package since the fix breaks a path
-   argument. In particular, we replace ~sage_tex_load~.
-   =CDLaTeX= also allows for extensive customizations and abbreviations.
+   argument. In particular, we replace ~sage_tex_load~.  =CDLaTeX= also allows
+   for extensive customizations and abbreviations.
    #+begin_src emacs-lisp :tangle "latex-settings.el"
      (add-hook 'LaTeX-mode-hook #'cdlatex-mode)
      (setq cdlatex-math-symbol-alist
@@ -549,7 +572,6 @@ configuration changes.
      ;; Change HTML display for dark color schemes
      (setq shr-color-visible-luminance-min 80)
    #+end_src
-
    We also need to configure =mu4e= for multiple accounts. This configuration is
    adapted from [[https://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and/#configuring-mu4e][this blog post]]. It looks like we need to set ~tls_starttls = on~
    in the ~.msmtprc~ file for this to work properly.
@@ -565,8 +587,7 @@ configuration changes.
                 :name "gmail"
                 :match-func (lambda (msg) (when msg
                                             (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
-                :vars '(
-                        (mu4e-trash-folder . "/gmail/[Gmail]/Trash")
+                :vars '((mu4e-trash-folder . "/gmail/[Gmail]/Trash")
                         (mu4e-refile-folder . "/gmail/[Gmail]/Archive")
                         (user-mail-address . "math.oldroyd@gmail.com")
                         (mu4e-maildir-shortcuts . ( ("/gmail/INBOX" . ?i)))
@@ -575,8 +596,7 @@ configuration changes.
                 :name "wvwc-mail"
                 :match-func (lambda (msg) (when msg
                                             (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
-                :vars '(
-                        (mu4e-trash-folder . "/wvwc-mail/[wvwc-mail]/Trash")
+                :vars '((mu4e-trash-folder . "/wvwc-mail/[wvwc-mail]/Trash")
                         (mu4e-refile-folder . "/wvwc-mail/[wvwc-mail]/Archive")
                         (user-mail-address . "oldroyd.j@wvwc.edu")
                         (mu4e-maildir-shortcuts . ( ("/wvwc-mail/INBOX" . ?i)))
@@ -679,11 +699,10 @@ configuration changes.
                    (setq-local company-idle-delay 0.1))))
    #+end_src
 
-   #+RESULTS:
-   : t
-
 ** Magit
    I want to be able to access tracked files via ~j t~ from ~magit-dispatch~.
+   We need to load these settings after =magit= is loaded, otherwise Emacs
+   complains about the hook not existing.
    #+begin_src emacs-lisp :tangle "magit-settings.el"
      (with-eval-after-load "magit"
        (magit-add-section-hook
@@ -693,7 +712,11 @@ configuration changes.
         'append))
    #+end_src
 ** PreTeXt
-   PreTeXt uses XML markup to produce documents in multiple formats.
+   PreTeXt uses XML markup to produce documents in multiple formats.  Emacs
+   already had an =nxml-mode= with schema support that we can use with PreTeXt.
+   For pretty-printing, there is also =sgml-mode= which contains the function
+   =sgml-pretty-print=.  This is on top of command line utilities such as
+   ~xmllint~ and ~tidy~.
    #+begin_src emacs-lisp :tangle "pretext-settings.el"
      ;; fill-paragraph does not respect XML tags, so we use this code adapted from
      ;; https://stackoverflow.com/a/1042118/3901257
@@ -746,10 +769,10 @@ configuration changes.
    #+end_src
 
 ** Agenda and capture settings
-   Org-agenda is one of the best reasons to become familiar with Org mode. We
+   Org-agenda is one of the best reasons to become familiar with Org mode.  We
    need to set up our agenda files and capture templates/keybinds.
    #+BEGIN_SRC emacs-lisp :tangle "org-settings.el"
-     ;; This is for key bindings to invoke agenda mode (see line-2)
+     ;; This is for key bindings to invoke agenda mode
      (global-set-key "\C-cl" 'org-store-link)
      (global-set-key "\C-ca" 'org-agenda)
      (global-set-key "\C-cc" 'org-capture)
@@ -790,6 +813,7 @@ configuration changes.
            '((nil :maxlevel . 3)
              (org-agenda-files :maxlevel . 3)))
    #+END_SRC
+
 ** Calendar and diary settings
    We also make use of the =Emacs= diary to schedule appointments and check for
    sunrise/sunset times if necessary (as any text editor should be capable of
@@ -803,6 +827,7 @@ configuration changes.
      (require 'calfw-org)
      (require 'calfw-cal)
    #+end_src
+
 ** Note-taking
    This config is adapted from the recommended config for [[https://github.com/org-roam/org-roam-bibtex][=org-roam=]]. The
    keybinds need to be modified slightly so as not to conflict with Prelude's
@@ -934,6 +959,7 @@ configuration changes.
       'org-babel-load-languages
       '((octave . t)))
    #+end_src
+
 ** Export settings
 *** =ox-hugo=
     We can use =ox-hugo= to quickly generate and preview websites created using
@@ -944,10 +970,8 @@ configuration changes.
         :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
         :after ox)
     #+end_src
+
 * Packages to consider adding
-** =ledger-mode=
-   This would be part of a larger project making use of the =ledger= CLI program
-   to keep track of my finances and budget. One example of use is located [[https://www.reddit.com/r/emacs/comments/8x4xtt/tip_how_i_use_ledger_to_track_my_money/][here]].
 ** =elfeed=
    This looks like a good way to keep track of arXiv papers.
 ** =org-reveal=
@@ -956,38 +980,3 @@ configuration changes.
    This will be useful for using MATLAB in Org files.
 ** =org-super-agenda=
    This package will improve Org agenda views. See [[https://github.com/alphapapa/org-super-agenda][=org-super-agenda=]].
-
-   #  LocalWords:  Keybinds
-** LSP
-   Example code for activating LSP in Emacs.
-   #+begin_src emacs-lisp :tangle "lsp-settings.el"
-     (use-package lsp-mode
-       :init
-       ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-       ;; (setq lsp-keymap-prefix "C-c l")
-       :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-              (python-mode . lsp-deferred)
-              (latex-mode . lsp-deferred)
-              ;; if you want which-key integration
-              (lsp-mode . lsp-enable-which-key-integration))
-       :commands lsp)
-
-     ;; optionally
-     (use-package lsp-ui :commands lsp-ui-mode)
-     ;; if you are helm user
-     ;; (use-package helm-lsp :commands helm-lsp-workspace-symbol)
-     ;; if you are ivy user
-     ;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-     ;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
-
-     ;; optionally if you want to use debugger
-     ;; (use-package dap-mode)
-     ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
-
-     (use-package which-key
-       :config
-       (which-key-mode))
-
-     ;; Make Emacs/digestif aware of TeX info paths.
-     (add-to-list 'Info-directory-list "/usr/local/texlive/2024/texmf-dist/doc/info")
-   #+end_src
