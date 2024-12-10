@@ -689,8 +689,9 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    Lean is an automated theorem prover.  This package provides integration
    between Lean and Emacs.  Note that =lean4-mode= is not on MELPA, and so must
    be installed manually.
-    #+begin_src emacs-lisp :results silent
+    #+begin_src emacs-lisp :results silent :tangle (unless (eq system-type 'darwin) nil)
       (add-to-list 'load-path "~/.emacs.d/lean4-mode")
+      (require 'lean4-mode)
     #+end_src
 * Org mode
 ** UI settings
