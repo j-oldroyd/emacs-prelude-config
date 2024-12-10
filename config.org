@@ -1,14 +1,22 @@
 #+TITLE: Jesse Oldroyd's Emacs/Prelude configuration
-#+property: header-args:emacs-lisp :tangle (concat (file-name-sans-extension (buffer-file-name)) ".el")
+
 This file describes my =Emacs= configuration, which is built on top of
-[[https://github.com/bbatsov/prelude?tab=readme-ov-file][Prelude]]. This file currently focuses on including resources for creating notes
-with Org mode, particularly via =org-noter= and =org-roam=. Support for BibTeX
-will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=citar=]], [[https://github.com/emacs-citar/citar-org-roam][=citar-org-roam=]] and =org-cite=.
+[[https://github.com/bbatsov/prelude?tab=readme-ov-file][Prelude]]. This file currently focuses on including resources for
+creating notes with Org mode, particularly via =org-noter= and
+=org-roam=. Support for BibTeX will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=citar=]],
+[[https://github.com/emacs-citar/citar-org-roam][=citar-org-roam=]] and =org-cite=.  This is also based in part on Prot's
+Emacs configuration, which uses ~org-babel-tangle~ to produce ~.el~
+files instead of loading one potentially large ~.org~ file.  See [[https://github.com/protesilaos/dotfiles/blob/master/emacs/.emacs.d/prot-emacs.org][this
+Github page]].
+
+#+begin_src emacs-lisp :tangle "no" :results none
+  (org-babel-tangle)
+#+end_src
 
 * General settings and packages
 ** =Emacs= settings
    General settings for =emacs=.
-   #+begin_src emacs-lisp
+   #+begin_src emacs-lisp :tangle "general-settings.el"
      ;; On Windows, commands like rgrep appear to use the wrong "find" command:
      ;; https://stackoverflow.com/questions/3918341/find-parameter-format-not-correct
      (when (eq system-type 'windows-nt)
@@ -22,7 +30,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
 ** UI and navigation settings
    See karthink's [[https://karthinks.com/software/avy-can-do-anything/][blog post]] for ideas on using Avy and its associated
    commands.
-   #+begin_src emacs-lisp :results silent
+   #+begin_src emacs-lisp :tangle "general-settings.el"
      ;; Enables highlighted lines.
      (global-hl-line-mode 1)
      ;; (set-face-background 'hl-line "#d0d6ec")
@@ -47,7 +55,8 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
 
      ;;; Avy bindings
      ;; Override smartparens use of "M-j" so I can use it.
-     (sp-override-key-bindings '(("M-j")))
+     (setq sp-override-key-bindings '(("M-j")))
+     (sp--update-override-key-bindings)
      (use-package avy
        :ensure t
        :bind (("M-j"   .   avy-goto-char-timer)
@@ -55,11 +64,14 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
               ("M-j"     . avy-isearch)))
    #+end_src
 
+   #+RESULTS:
+   : avy-isearch
+
 ** Keybinds
    We need to tell emacs how to interpret certain keys on MacBook
    keyboards. While we're at it, we'll set up some useful keybinds for moving
    through paragraphs.
-   #+begin_src emacs-lisp :results silent
+   #+begin_src emacs-lisp :tangle "general-settings.el"
      ;; macOS bindings assume use of karabiner to remap caps lock and
      ;; return to control. Note that left option key is left unbound. Note
      ;; that control cannot be rebound without overwriting karabiner binds.
@@ -203,7 +215,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    =embark-act= function. This also needs to be integrated with Consult which is
    provided by Prelude. The configuration for both of these is the suggested
    config on GitHub.
-   #+begin_src emacs-lisp :results silent
+   #+begin_src emacs-lisp :tangle "general-settings.el"
      ;; Configure directory extension for vertico to look more like ido.
      (use-package vertico-directory
        :after vertico
@@ -327,7 +339,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
 ** Shells
    Settings for enhancing the shell in emacs. Note that =sage-shell-mode=
    requires SageMath, which is tricky to get on Windows.
-   #+begin_src emacs-lisp
+   #+begin_src emacs-lisp :tangle "general-settings.el"
      ;;  emacs-sage-shell
      (use-package sage-shell-mode
        :ensure t)
@@ -350,7 +362,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    tell ~aspell~ where exactly it can find the necessary modes by creating an
    appropriate ~config~ file ~~/.aspell.conf~ in the MSYS2/UCRT64 shell. See
    [[https://github.com/msys2/MSYS2-packages/issues/2088#issuecomment-1726339967][this post]] for more information.
-   #+begin_src emacs-lisp
+   #+begin_src emacs-lisp :tangle "general-settings.el"
      ;; Enables writegood-mode.
      (use-package writegood-mode
        :ensure t)
@@ -392,7 +404,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    The =pdf-tools= package replaces emacs' own DocView mode for viewing PDF
    files (and others) within emacs itself. This will need to be configured to
    work with AUCTeX below.
-   #+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp :tangle "pdf-settings.el"
      ;; Taken from
      ;; https://www.reddit.com/r/emacs/comments/gm1c2p/pdftools_installation/
      (use-package pdf-tools
@@ -415,7 +427,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
 ** AUCTeX
    These are settings for working with LaTeX documents in emacs. This requires
    AUCTeX, which is included with Prelude modules.
-   #+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp :tangle "latex-settings.el"
      ;; LaTeX-mode settings
      (add-hook 'LaTeX-mode-hook 'visual-line-mode)
      (add-hook 'LaTeX-mode-hook 'flyspell-mode)
@@ -497,7 +509,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    =sage-shell-mode.py= within the package since the fix breaks a path
    argument. In particular, we replace ~sage_tex_load~.
    =CDLaTeX= also allows for extensive customizations and abbreviations.
-   #+begin_src emacs-lisp
+   #+begin_src emacs-lisp :tangle "latex-settings.el"
      (add-hook 'LaTeX-mode-hook #'cdlatex-mode)
      (setq cdlatex-math-symbol-alist
            '((?0 ("\\emptyset" "\\varnothing"))))
@@ -507,7 +519,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    Mail configuration with =emacs=, =mu= and =mu4e=.  At the moment this is just
    =macOS= specific. This is adapted from this [[https://macowners.club/posts/email-emacs-mu4e-macos/#initial-sync][blog post]].  Setting up =mbsync=
    also required setting an app specific password for iCloud.
-   #+begin_src emacs-lisp :results silent
+   #+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "mail-settings.el" "no")
      (use-package mu4e
        :if (eq system-type 'darwin)          ;Only load on macOS
        :load-path  "/opt/homebrew/share/emacs/site-lisp/mu/mu4e")
@@ -540,7 +552,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    We also need to configure =mu4e= for multiple accounts. This configuration is
    adapted from [[https://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and/#configuring-mu4e][this blog post]]. It looks like we need to set ~tls_starttls = on~
    in the ~.msmtprc~ file for this to work properly.
-   #+begin_src emacs-lisp :results silent
+   #+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "mail-settings.el" "no")
      (setq send-mail-function 'sendmail-send-it
            sendmail-program "/opt/homebrew/bin/msmtp"
            mail-specify-envelope-from t
@@ -585,7 +597,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    terminal. We use =heldger-mode= and =flycheck-hledger= to support working
    with =hledger= journal files in Emacs. These settings are adapted from the
    provided configuration for =hledger-mode=.
-   #+begin_src emacs-lisp :results silent
+   #+begin_src emacs-lisp :tangle "accounting.el"
      (use-package hledger-mode
        :mode ("\\.journal\\'" "\\.hledger\\'")
        :commands hledger-enable-reporting
@@ -665,9 +677,13 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
                    (make-local-variable 'company-idle-delay)
                    (setq-local company-idle-delay 0.1))))
    #+end_src
+
+   #+RESULTS:
+   : t
+
 ** Magit
    I want to be able to access tracked files via ~j t~ from ~magit-dispatch~.
-   #+begin_src emacs-lisp :results silent
+   #+begin_src emacs-lisp :tangle "magit-settings.el"
      (with-eval-after-load "magit"
        (magit-add-section-hook
         'magit-status-sections-hook
@@ -677,7 +693,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    #+end_src
 ** PreTeXt
    PreTeXt uses XML markup to produce documents in multiple formats.
-   #+begin_src emacs-lisp :results silent
+   #+begin_src emacs-lisp :tangle "pretext-settings.el"
      ;; fill-paragraph does not respect XML tags, so we use this code adapted from
      ;; https://stackoverflow.com/a/1042118/3901257
      (add-hook 'nxml-mode-hook '(lambda ()
@@ -689,7 +705,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    Lean is an automated theorem prover.  This package provides integration
    between Lean and Emacs.  Note that =lean4-mode= is not on MELPA, and so must
    be installed manually.
-   #+begin_src emacs-lisp :results silent :tangle (unless (eq system-type 'darwin) nil)
+   #+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "lean-settings.el" "no")
      (add-to-list 'load-path "~/.emacs.d/lean4-mode")
      (require 'lean4-mode)
    #+end_src
@@ -697,7 +713,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
 ** UI settings
    It's easier to read if we limit horizontal text to 80 characters wide. We
    also want to enable flyspell in Org buffers along with LaTeX previews.
-   #+begin_src emacs-lisp :results silent
+   #+begin_src emacs-lisp :tangle "org-settings.el"
      ;; Org mode 80 character limit
      ;; Taken from
      ;; https://emacs.stackexchange.com/questions/35266/org-mode-auto-new-line-at-80th-column
@@ -731,7 +747,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
 ** Agenda and capture settings
    Org-agenda is one of the best reasons to become familiar with Org mode. We
    need to set up our agenda files and capture templates/keybinds.
-   #+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp :tangle "org-settings.el"
      ;; This is for key bindings to invoke agenda mode (see line-2)
      (global-set-key "\C-cl" 'org-store-link)
      (global-set-key "\C-ca" 'org-agenda)
@@ -781,7 +797,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    appointments with Org agenda. We also include the =calfw= suite of packages
    for improving the calendar view. This requires using the ~cfw:*~ commands via
    =M-x= for now, but could become a keyboard shortcut later.
-   #+begin_src emacs-lisp
+   #+begin_src emacs-lisp :tangle "calendar-settings.el"
      (require 'calfw)
      (require 'calfw-org)
      (require 'calfw-cal)
@@ -794,7 +810,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    ~org-roam-buffer-toggle~, which is bound to ~C-c m l~ below. This will
    activate another window that shows backlinks for a given node where the point
    is.
-   #+BEGIN_SRC emacs-lisp :results silent
+   #+BEGIN_SRC emacs-lisp :tangle "org-settings.el"
      (use-package org-roam
        :ensure t
        :bind (("C-c m l" . org-roam-buffer-toggle)
@@ -844,7 +860,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
       specific to the paper (such as explaining some mathematical computation)
       while annotation with =org-noter= should focus on observations that I wish
       to refer to outside of the paper.
-      #+BEGIN_SRC emacs-lisp
+      #+BEGIN_SRC emacs-lisp :tangle "bibtex-settings.el"
         (when (eq system-type 'darwin)
           (setq bib-file '("~/Google Drive/My Drive/research/library.bib")))
         (when (eq system-type 'gnu/linux)
@@ -912,7 +928,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
 
 ** =org-babel= settings
    We need to configure =org-babel= for evaluation of ~SRC~ blocks in Org mode.
-   #+begin_src emacs-lisp
+   #+begin_src emacs-lisp :tangle "org-settings.el"
      (org-babel-do-load-languages
       'org-babel-load-languages
       '((octave . t)))
@@ -921,7 +937,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
 *** =ox-hugo=
     We can use =ox-hugo= to quickly generate and preview websites created using
     Hugo.
-    #+begin_src emacs-lisp :results silent
+    #+begin_src emacs-lisp :tangle "hugo-settings.el"
       (use-package ox-hugo
         :ensure t   ;Auto-install the package from Melpa
         :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
@@ -943,7 +959,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    #  LocalWords:  Keybinds
 ** LSP
    Example code for activating LSP in Emacs.
-   #+begin_src emacs-lisp :results silent
+   #+begin_src emacs-lisp :tangle "lsp-settings.el"
      (use-package lsp-mode
        :init
        ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
