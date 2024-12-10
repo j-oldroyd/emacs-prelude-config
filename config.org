@@ -20,7 +20,8 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
          (setq trash-directory "~/.Trash"))
    #+end_src
 ** UI and navigation settings
-   See karthink's [[https://karthinks.com/software/avy-can-do-anything/][blog post]] for ideas on using Avy and its associated commands.
+   See karthink's [[https://karthinks.com/software/avy-can-do-anything/][blog post]] for ideas on using Avy and its associated
+   commands.
    #+begin_src emacs-lisp :results silent
      ;; Enables highlighted lines.
      (global-hl-line-mode 1)
@@ -611,10 +612,10 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
          (hledger-backward-entry)
          (hledger-pulse-momentary-current-entry))
 
-       :bind (("C-c j" . hledger-run-command)
-              :map hledger-mode-map
-              ("M-p" . hledger/prev-entry)
-              ("M-n" . hledger/next-entry))
+       :bind (:map hledger-mode-map
+                   ("C-c j" . hledger-run-command)
+                   ("M-p" . hledger/prev-entry)
+                   ("M-n" . hledger/next-entry))
        :init
        (setq hledger-jfile
              (expand-file-name "~/finance/2024.journal"))
@@ -689,15 +690,15 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
    Lean is an automated theorem prover.  This package provides integration
    between Lean and Emacs.  Note that =lean4-mode= is not on MELPA, and so must
    be installed manually.
-    #+begin_src emacs-lisp :results silent :tangle (unless (eq system-type 'darwin) nil)
-      (add-to-list 'load-path "~/.emacs.d/lean4-mode")
-      (require 'lean4-mode)
-    #+end_src
+   #+begin_src emacs-lisp :results silent :tangle (unless (eq system-type 'darwin) nil)
+     (add-to-list 'load-path "~/.emacs.d/lean4-mode")
+     (require 'lean4-mode)
+   #+end_src
 * Org mode
 ** UI settings
    It's easier to read if we limit horizontal text to 80 characters wide. We
    also want to enable flyspell in Org buffers along with LaTeX previews.
-   #+begin_src emacs-lisp
+   #+begin_src emacs-lisp :results silent
      ;; Org mode 80 character limit
      ;; Taken from
      ;; https://emacs.stackexchange.com/questions/35266/org-mode-auto-new-line-at-80th-column
@@ -727,6 +728,7 @@ will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=
      ;; Set Org-mode indentation
      (setq org-adapt-indentation t)
    #+end_src
+
 ** Agenda and capture settings
    Org-agenda is one of the best reasons to become familiar with Org mode. We
    need to set up our agenda files and capture templates/keybinds.
