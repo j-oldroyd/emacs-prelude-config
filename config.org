@@ -31,7 +31,7 @@ configuration changes.
 ** UI and navigation settings
    See karthink's [[https://karthinks.com/software/avy-can-do-anything/][blog post]] for ideas on using Avy and its associated
    commands.
-   #+begin_src emacs-lisp :tangle "general-settings.el"
+   #+begin_src emacs-lisp :tangle "general-settings.el" :results silent
      ;; Enables highlighted lines.
      (global-hl-line-mode 1)
      (set-face-foreground 'highlight nil)
@@ -41,20 +41,23 @@ configuration changes.
 
      ;; Default to fullscreen. Taken from
      ;; https://stackoverflow.com/questions/78245398/how-can-i-make-emacsclient-open-in-native-fullscreen-every-time-i-launch-it-fr
-     (setq ns-use-native-fullscreen :true)
+     ;; (setq ns-use-native-fullscreen :true)
+     ;; (add-to-list 'default-frame-alist '(fullscreen . fullscreen))
+
+     ;; Default to maximized frame.
      (add-to-list 'default-frame-alist '(fullscreen . fullscreen))
 
      ;;; Avy bindings
      ;; Override smartparens use of "M-j" so I can use it.
-     (setq sp-override-key-bindings '(("M-j")))
-     (sp--update-override-key-bindings)
+     (with-eval-after-load "smartparens"
+       (setq sp-override-key-bindings '(("M-j" . nil)))
+       (sp--update-override-key-bindings))
      (use-package avy
        :ensure t
        :bind (("M-j"   .   avy-goto-char-timer)
               :map isearch-mode-map
               ("M-j"     . avy-isearch)))
    #+end_src
-
 ** Keybinds
    We need to tell emacs how to interpret certain keys on MacBook
    keyboards. While we're at it, we'll set up some useful keybinds for moving
