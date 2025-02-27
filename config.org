@@ -45,7 +45,7 @@ configuration changes.
      ;; (add-to-list 'default-frame-alist '(fullscreen . fullscreen))
 
      ;; Default to maximized frame.
-     (add-to-list 'default-frame-alist '(fullscreen . fullscreen))
+     (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
      ;;; Avy bindings
      ;; Override smartparens use of "M-j" so I can use it.
