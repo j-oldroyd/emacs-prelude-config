@@ -923,14 +923,17 @@ configuration changes.
           (org-cite-insert-processor 'citar)
           (org-cite-follow-processor 'citar)
           (org-cite-activate-processor 'citar)
+          :config (require 'org-roam)
           :hook
           (LaTeX-mode . citar-capf-setup)
           (org-mode . citar-capf-setup))
+
         (use-package citar-org-roam
-          :after (citar org-roam)
+          :after (org-roam citar)
           :config (citar-org-roam-mode))
+
         (use-package citar-embark
-          :after citar embark
+          :after (citar embark)
           :no-require
           :config (citar-embark-mode))
 
