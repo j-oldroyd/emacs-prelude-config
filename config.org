@@ -805,12 +805,18 @@ configuration changes.
               "** NEXT %? \nDEADLINE: %t") ))
 
      ;; Sets up org-mode files for capture/refile.
-     (when (eq system-type 'darwin)
+     (cond ((eq system-type 'darwin)
        (setq org-agenda-files '("~/Documents/org"
                                 "~/Google Drive/My Drive/org"
                                 "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/org"))
        (setq org-default-notes-file
-             (expand-file-name "/Users/jesseoldroyd/Library/Mobile Documents/com~apple~CloudDocs/Documents/org/notes.org")))
+             (expand-file-name "/Users/jesseoldroyd/Library/Mobile
+      Documents/com~apple~CloudDocs/Documents/org/notes.org")))
+           ((eq system-type 'gnu/linux)
+            (setq org-agenda-files '("~/org"
+                                     "~/Google Drive/org"))
+            (setq org-default-notes-file
+                  (expand-file-name "~/org/notes.org"))))
 
      (setq org-refile-targets
            '((nil :maxlevel . 3)
