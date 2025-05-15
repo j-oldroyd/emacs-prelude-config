@@ -869,11 +869,19 @@ configuration changes.
      ;; Drive.  For WSL, this code has been changed to no longer require
      ;; iCloud Drive.  The intent now is to use rsync to keep org-roam up
      ;; to date between WSL and other machines.
-     (cond
-      ((eq system-type 'darwin) (setq org-roam-directory "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/org/roam"))
-      ((eq system-type 'windows-nt) (setq org-roam-directory "C:\\Users\\oldroyd.j\\iCloudDrive\\Documents\\org\\roam"))
-      ((eq system-type 'gnu/linux) (setq org-roam-directory "~/GoogleDrive/org/roam"))
-      )
+
+     (cond ((eq system-type 'darwin)
+            (setq org-roam-directory "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/org/roam"))
+           ((eq system-type 'windows-nt)
+            (setq org-roam-directory "C:\\Users\\oldroyd.j\\iCloudDrive\\Documents\\org\\roam"))
+           ((eq system-type 'gnu/linux)
+            (setq org-roam-directory "~/GoogleDrive/org/roam")
+            (setq org-roam-graph-viewer
+                  (lambda (file)
+                    (let
+                        ((org-roam-graph-viewer "/mnt/c/Program Files/Mozilla Firefox/firefox.exe"))
+                      (org-roam-graph--open (concat "file://///wsl$/Ubuntu" file)))))))
+
      (use-package org-noter)
    #+END_SRC
 
