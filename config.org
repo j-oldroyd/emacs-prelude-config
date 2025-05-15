@@ -872,7 +872,7 @@ configuration changes.
      (cond
       ((eq system-type 'darwin) (setq org-roam-directory "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/org/roam"))
       ((eq system-type 'windows-nt) (setq org-roam-directory "C:\\Users\\oldroyd.j\\iCloudDrive\\Documents\\org\\roam"))
-      ((eq system-type 'gnu/linux) (setq org-roam-directory "~/org/roam"))
+      ((eq system-type 'gnu/linux) (setq org-roam-directory "~/GoogleDrive/org/roam"))
       )
      (use-package org-noter)
    #+END_SRC
