@@ -871,7 +871,7 @@ configuration changes.
      ;; to date between WSL and other machines.
 
      (cond ((eq system-type 'darwin)
-            (setq org-roam-directory "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/org/roam"))
+            (setq org-roam-directory "~/Google Drive/My Drive/org/roam"))
            ((eq system-type 'windows-nt)
             (setq org-roam-directory "C:\\Users\\oldroyd.j\\iCloudDrive\\Documents\\org\\roam"))
            ((eq system-type 'gnu/linux)
@@ -909,7 +909,7 @@ configuration changes.
       to refer to outside of the paper.
       #+BEGIN_SRC emacs-lisp :tangle "bibtex-settings.el"
         (when (eq system-type 'darwin)
-          (setq bib-file '("~/Google Drive/My Drive/research/library.bib")))
+          (setq bib-file '("~/Google Drive/My Drive/research/My Library.bib")))
         (when (eq system-type 'gnu/linux)
           (setq bib-file '("~/GoogleDrive/research/My Library.bib")))
         (when (eq system-type 'windows-nt)
@@ -942,9 +942,9 @@ configuration changes.
           (setq citar-library-paths '("~/GoogleDrive/research"))
           (setq citar-notes-paths '("~/GoogleDrive/research")))
          ((eq system-type 'darwin)
-          (setq citar-library-paths '("~/Google Drive/My Drive/research"))))
-        (when (eq system-type 'darwin)
-          (setq citar-notes-paths '("~/Google Drive/My Drive/research")))
+          (setq citar-library-paths '("~/Google Drive/My Drive/research")))
+         ((eq system-type 'darwin)
+          (setq citar-notes-paths '("~/Google Drive/My Drive/research"))))
 
         ;; On Windows I use JabRef, so I need to tell Citar how to parse JabRef
         ;; file links
