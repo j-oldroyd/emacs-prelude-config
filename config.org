@@ -857,12 +857,15 @@ configuration changes.
        ;; If using org-roam-protocol
        (require 'org-roam-protocol))
 
-     ;; Set directory for roam notes based on Windows, WSL or Mac.
-     ;; This assumes that the Windows machine is using iCloud Drive!
+     ;; Set directory for roam notes based on Windows, WSL or Mac.  This
+     ;; assumes that a Windows-based Emacs config is making use of iCloud
+     ;; Drive.  For WSL, this code has been changed to no longer require
+     ;; iCloud Drive.  The intent now is to use rsync to keep org-roam up
+     ;; to date between WSL and other machines.
      (cond
       ((eq system-type 'darwin) (setq org-roam-directory "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/org/roam"))
       ((eq system-type 'windows-nt) (setq org-roam-directory "C:\\Users\\oldroyd.j\\iCloudDrive\\Documents\\org\\roam"))
-      ((eq system-type 'gnu/linux) (setq org-roam-directory "/mnt/c/Users/oldroyd.j/iCloudDrive/Documents/org/roam"))
+      ((eq system-type 'gnu/linux) (setq org-roam-directory "~/org/roam"))
       )
      (use-package org-noter)
    #+END_SRC
