@@ -88,7 +88,11 @@ configuration changes.
      (setq mac-emulate-three-button-mouse t)
 
      ;; Meow-mode setup.
-     (require 'meow)
+     ;; (require 'meow)
+     (use-package meow
+       :ensure t
+       :custom (meow-expand-hint-remove-delay 2.0))
+
      (defun meow-setup ()
        (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
        (meow-motion-overwrite-define-key
