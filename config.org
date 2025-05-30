@@ -517,6 +517,10 @@ configuration changes.
      (add-hook 'TeX-after-compilation-finished-functions
                #'TeX-revert-document-buffer)
 
+     ;; Allow for easy use of latexdiff.
+     (use-package latexdiff
+       :ensure t)
+
      ;; We need to modify sage-shell to accept filepaths with spaces in their
      ;; names. This appears to require modifying
      ;; sage-shell-sagetex:tex-master-maybe.
