@@ -178,6 +178,7 @@ configuration changes.
         '("y" . meow-save)
         '("Y" . meow-sync-grab)
         '("z" . meow-pop-selection)
+        '("/" . avy-goto-char-timer)
         '("'" . repeat)
         '("<escape>" . ignore)))
 
