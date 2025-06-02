@@ -275,7 +275,8 @@ configuration changes.
            (yas-expand))))
      (add-hook 'post-command-hook #'my-yas-try-expanding-auto-snippets)
 
-     ;; Enable LaTeX snippets in org-mode.
+     ;; Enable LaTeX snippets in org-mode.  See
+     ;; https://emacs.stackexchange.com/questions/38429/yasnippets-loading-two-major-modes-org-mode-and-latex
      (defun my-org-latex-yas ()
        "Activate org and LaTeX yas expansion in org-mode buffers."
        (yas-minor-mode)
