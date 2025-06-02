@@ -275,6 +275,14 @@ configuration changes.
            (yas-expand))))
      (add-hook 'post-command-hook #'my-yas-try-expanding-auto-snippets)
 
+     ;; Enable LaTeX snippets in org-mode.
+     (defun my-org-latex-yas ()
+       "Activate org and LaTeX yas expansion in org-mode buffers."
+       (yas-minor-mode)
+       (yas-activate-extra-mode 'latex-mode))
+
+     (add-hook 'org-mode-hook #'my-org-latex-yas)
+
      ;; Enable rich annotations using the Marginalia package
      (use-package marginalia
        :ensure t
@@ -919,7 +927,8 @@ configuration changes.
         (when (eq system-type 'darwin)
           (setq bib-file '("~/Google Drive/My Drive/research/My Library.bib")))
         (when (eq system-type 'gnu/linux)
-          (setq bib-file '("~/GoogleDrive/research/My Library.bib")))
+          (setq bib-file '("~/GoogleDrive/research/My Library.bib"
+                           "~/GoogleDrive/research/library-time_scales.bib")))
         (when (eq system-type 'windows-nt)
           (setq bib-file '("C:\\Users\\oldroyd.j\\My Drive\\research\\library.bib")))
 
