@@ -953,7 +953,9 @@ configuration changes.
           (setq bib-file '("~/Google Drive/My Drive/research/My Library.bib")))
         (when (eq system-type 'gnu/linux)
           (setq bib-file '("~/GoogleDrive/research/My Library.bib"
-                           "~/GoogleDrive/research/library-time_scales.bib")))
+                           "~/GoogleDrive/research/library-time_scales.bib"
+                           "~/GoogleDrive/research/library-tight_frames-association_schemes.bib"
+                           "~/GoogleDrive/research/library-tight_frames-algorithms.bib")))
         (when (eq system-type 'windows-nt)
           (setq bib-file '("C:\\Users\\oldroyd.j\\My Drive\\research\\library.bib")))
 
