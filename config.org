@@ -60,7 +60,11 @@ configuration changes.
               ("M-j"     . avy-isearch)))
 
      ;; Casual Suite
-                         ;;; See GitHub configuration for suggested org-agenda binds
+     ;;; See GitHub configuration for suggested org-agenda binds The agenda
+     ;;; and calc packages require the use of transient-define-group which
+     ;;; is not available in the built-in version of transient as of
+     ;;; <2025-06-03 Tue>. Instead, the upgraded version >= 0.9.0 must be
+     ;;; downloaded from MELPA.
      (require 'casual-agenda)
      (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)
      (keymap-set org-agenda-mode-map "M-j" #'org-agenda-clock-goto) ; optional
