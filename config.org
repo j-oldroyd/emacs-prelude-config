@@ -873,7 +873,9 @@ configuration changes.
 
 ** Agenda and capture settings
    Org-agenda is one of the best reasons to become familiar with Org mode.  We
-   need to set up our agenda files and capture templates/keybinds.
+   need to set up our agenda files and capture templates/keybinds.  Currently,
+   the WSL settings require a symlink from the Windows Google Drive folder to
+   =~/GoogleDrive/=.
    #+BEGIN_SRC emacs-lisp :tangle "org-settings.el"
      ;; This is for key bindings to invoke agenda mode
      (global-set-key "\C-cl" 'org-store-link)
