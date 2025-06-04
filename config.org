@@ -915,7 +915,7 @@ configuration changes.
       Documents/com~apple~CloudDocs/Documents/org/notes.org")))
       ((eq system-type 'gnu/linux)
        (setq org-agenda-files '("~/org"
-                                "~/Google Drive/org"))
+                                "~/GoogleDrive/org"))
        (setq org-default-notes-file
                   (expand-file-name "~/org/notes.org"))))
 
