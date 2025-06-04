@@ -30,7 +30,8 @@ configuration changes.
    #+end_src
 ** UI and navigation settings
    See karthink's [[https://karthinks.com/software/avy-can-do-anything/][blog post]] for ideas on using Avy and its associated
-   commands.
+   commands.  I'm also including =casual= for its menus, which are based on
+   =transient=.
    #+begin_src emacs-lisp :tangle "general-settings.el" :results silent
      ;; Enables highlighted lines.
      (global-hl-line-mode 1)
@@ -47,7 +48,7 @@ configuration changes.
      ;; Default to maximized frame.
      (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-     ;;; Avy bindings
+                              ;;; Avy bindings
      ;; Override smartparens use of "M-j" so I can use it.
      (with-eval-after-load "smartparens"
        (setq sp-override-key-bindings '(("M-j" . nil)))
@@ -57,6 +58,64 @@ configuration changes.
        :bind (("M-j"   .   avy-goto-char-timer)
               :map isearch-mode-map
               ("M-j"     . avy-isearch)))
+
+     ;; Casual Suite
+     ;;; See GitHub configuration for suggested org-agenda binds The agenda
+     ;;; and calc packages require the use of transient-define-group which
+     ;;; is not available in the built-in version of transient as of
+     ;;; <2025-06-03 Tue>. Instead, the upgraded version >= 0.9.0 must be
+     ;;; downloaded from MELPA.
+     (require 'casual-agenda)
+     (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)
+     (keymap-set org-agenda-mode-map "M-j" #'org-agenda-clock-goto) ; optional
+     (keymap-set org-agenda-mode-map "J" #'bookmark-jump) ; optional
+
+     (require 'casual-bookmarks)
+     (keymap-set bookmark-bmenu-mode-map "C-o" #'casual-bookmarks-tmenu)
+     (keymap-set bookmark-bmenu-mode-map "J" #'bookmark-jump)
+     (easy-menu-add-item global-map '(menu-bar)
+                         casual-bookmarks-main-menu
+                         "Tools")
+     (add-hook 'bookmark-bmenu-mode-hook #'hl-line-mode)
+
+     (require 'casual-calc)
+     (keymap-set calc-mode-map "C-o" #'casual-calc-tmenu)
+     (keymap-set calc-alg-map "C-o" #'casual-calc-tmenu)
+
+     (require 'casual-calendar)
+     (keymap-set calendar-mode-map "C-o" #'casual-calendar)
+
+     (require 'casual-ibuffer)
+     (keymap-set ibuffer-mode-map "C-o" #'casual-ibuffer-tmenu)
+     (keymap-set ibuffer-mode-map "F" #'casual-ibuffer-filter-tmenu)
+     (keymap-set ibuffer-mode-map "s" #'casual-ibuffer-sortby-tmenu)
+     ;; # Info
+     ;; Use web-browser history navigation bindings
+     (keymap-set Info-mode-map "M-[" #'Info-history-back)
+     (keymap-set Info-mode-map "M-]" #'Info-history-forward)
+     ;; Bind p and n to paragraph navigation
+     (keymap-set Info-mode-map "p" #'casual-info-browse-backward-paragraph)
+     (keymap-set Info-mode-map "n" #'casual-info-browse-forward-paragraph)
+     ;; Bind h and l to navigate to previous and next nodes
+     ;; Bind j and k to navigate to next and previous references
+     (keymap-set Info-mode-map "h" #'Info-prev)
+     (keymap-set Info-mode-map "j" #'Info-next-reference)
+     (keymap-set Info-mode-map "k" #'Info-prev-reference)
+     (keymap-set Info-mode-map "l" #'Info-next)
+     ;; Bind / to search
+     (keymap-set Info-mode-map "/" #'Info-search)
+     ;; Set Bookmark
+     (keymap-set Info-mode-map "B" #'bookmark-set)
+
+     (add-hook 'Info-mode-hook #'hl-line-mode)
+     (add-hook 'Info-mode-hook #'scroll-lock-mode)
+
+     (require 'casual-isearch)
+     (keymap-set isearch-mode-map "C-o" #'casual-isearch-tmenu)
+
+     (require 'casual-re-builder)
+     (keymap-set reb-mode-map "C-o" #'casual-re-builder-tmenu)
+     (keymap-set reb-lisp-mode-map "C-o" #'casual-re-builder-tmenu)
    #+end_src
 ** Keybinds
    We need to tell emacs how to interpret certain keys on MacBook
