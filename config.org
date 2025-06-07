@@ -123,14 +123,14 @@ configuration changes.
    through paragraphs.
    #+begin_src emacs-lisp :tangle "general-settings.el"
      ;; macOS bindings assume use of karabiner to remap caps lock and
-     ;; return to control. Note that left option key is left unbound. Note
-     ;; that control cannot be rebound without overwriting karabiner binds.
+     ;; return to control.  Note that Prelude already defines the fn key to
+     ;; act as a hyper key, and that control cannot be rebound without
+     ;; overwriting karabiner binds.
      (when (eq system-type 'darwin)
-       (setq mac-right-command-modifier 'meta
-             mac-command-modifier 'hyper
-             mac-right-option-modifier 'super
-             mac-control-modifier 'control
-             mac-option-modifier nil))
+       (setq mac-command-modifier 'meta
+             ;; mac-command-modifier 'hyper
+             mac-option-modifier 'super
+             mac-control-modifier 'control))
 
      (global-set-key "\M-p" 'backward-paragraph)
      (global-set-key "\M-n" 'forward-paragraph)
