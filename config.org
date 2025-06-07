@@ -498,6 +498,7 @@ configuration changes.
        :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
               (python-mode . lsp-deferred)
               (latex-mode . lsp-deferred)
+              (LaTeX-mode . lsp-deferred)
               ;; if you want which-key integration
               (lsp-mode . lsp-enable-which-key-integration))
        :commands lsp)
@@ -517,6 +518,9 @@ configuration changes.
      (use-package which-key
        :config
        (which-key-mode))
+
+     ;; Set digestif as lsp server
+     (setq lsp-tex-server 'digestif)
 
      ;; Make Emacs/digestif aware of TeX info paths.
      (add-to-list 'Info-directory-list "/usr/local/texlive/2024/texmf-dist/doc/info")
