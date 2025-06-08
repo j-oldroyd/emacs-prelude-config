@@ -90,6 +90,8 @@ configuration changes.
      (keymap-set ibuffer-mode-map "F" #'casual-ibuffer-filter-tmenu)
      (keymap-set ibuffer-mode-map "s" #'casual-ibuffer-sortby-tmenu)
      ;; # Info
+     (require 'casual-info)
+     (keymap-set Info-mode-map "C-o" #'casual-info-tmenu)
      ;; Use web-browser history navigation bindings
      (keymap-set Info-mode-map "M-[" #'Info-history-back)
      (keymap-set Info-mode-map "M-]" #'Info-history-forward)
