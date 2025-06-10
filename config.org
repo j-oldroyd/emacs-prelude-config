@@ -649,13 +649,25 @@ configuration changes.
    #+end_src
 
 ** =mu4e=
-   Mail configuration with =emacs=, =mu= and =mu4e=.  At the moment this is just
-   =macOS= specific. This is adapted from this [[https://macowners.club/posts/email-emacs-mu4e-macos/#initial-sync][blog post]].  Setting up =mbsync=
-   also required setting an app specific password for iCloud.
+   Mail configuration with =emacs=, =mu= and =mu4e=.  Currently in the process
+   of adapting this for WSL.  For now, this requires installing =mu= via
+   Homebrew (which installs =mu4e= as well).  Homebrew is available on both
+   macOS and Linux.  Setting up =mbsync= also required setting an app specific
+   password for iCloud.
+
+   The =mbsync= setup for WSL uses a different approach with the =pass= password
+   manager.  This involves creating a =gpg= key (currently set to expire after
+   two years, i.e., on <2027-06-10 Thu>.  Set up details were taken from [[https://www.redhat.com/en/blog/management-password-store][here]]
+   and [[https://frostyx.cz/posts/synchronize-your-2fa-gmail-with-mbsync][here]].
    #+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "mail-settings.el" "no")
+     (cond
+      ((eq system-type 'darwin)
+       (setq mu4e-path (expand-file-name "/opt/homebrew/share/emacs/site-lisp/mu/mu4e")))
+      ((eq system-type 'gnu/linux)
+       (setq mu4e-path (expand-file-name "/home/linuxbrew/.linuxbrew/Cellar/mu/1.12.11/share/emacs/site-lisp/mu/mu4e/mu4e"))))
+
      (use-package mu4e
-       :if (eq system-type 'darwin)          ;Only load on macOS
-       :load-path  "/opt/homebrew/share/emacs/site-lisp/mu/mu4e")
+       :load-path  mu4e-path)
 
      ;; for sending mails
      (require 'smtpmail)
