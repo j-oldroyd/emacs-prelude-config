@@ -122,7 +122,9 @@ configuration changes.
 ** Keybinds
    We need to tell emacs how to interpret certain keys on MacBook
    keyboards. While we're at it, we'll set up some useful keybinds for moving
-   through paragraphs.
+   through paragraphs.  Of particular note here is the use of [[https://github.com/meow-edit/meow/tree/master][meow-mode]] for
+   modal editing.  This mode has several minor modes associated with it and
+   default minor modes can be set via the ~meow-mode-state-list~ variable.
    #+begin_src emacs-lisp :tangle "general-settings.el"
      ;; macOS bindings assume use of karabiner to remap caps lock and
      ;; return to control.  Note that Prelude already defines the fn key to
@@ -258,10 +260,6 @@ configuration changes.
 
      (meow-setup)
      (meow-global-mode 1)
-
-     ;; But I don't want this mode on in mu4e modes.  This should also turn
-     ;; it off for other similar buffers, like a buffer mode buffer.
-     ;; (add-hook 'special-mode-hook (lambda () (meow-mode -1)))
    #+end_src
 
 ** Completion and templates/snippets
