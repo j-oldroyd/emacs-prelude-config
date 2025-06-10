@@ -659,12 +659,12 @@ configuration changes.
    manager.  This involves creating a =gpg= key (currently set to expire after
    two years, i.e., on <2027-06-10 Thu>.  Set up details were taken from [[https://www.redhat.com/en/blog/management-password-store][here]]
    and [[https://frostyx.cz/posts/synchronize-your-2fa-gmail-with-mbsync][here]].
-   #+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "mail-settings.el" "no")
+   #+begin_src emacs-lisp :tangle "mail-settings.el"
      (cond
       ((eq system-type 'darwin)
        (setq mu4e-path (expand-file-name "/opt/homebrew/share/emacs/site-lisp/mu/mu4e")))
       ((eq system-type 'gnu/linux)
-       (setq mu4e-path (expand-file-name "/home/linuxbrew/.linuxbrew/Cellar/mu/1.12.11/share/emacs/site-lisp/mu/mu4e/mu4e"))))
+       (setq mu4e-path (expand-file-name "/home/linuxbrew/.linuxbrew/Cellar/mu/1.12.11/share/emacs/site-lisp/mu/mu4e"))))
 
      (use-package mu4e
        :load-path  mu4e-path)
@@ -696,43 +696,57 @@ configuration changes.
    We also need to configure =mu4e= for multiple accounts. This configuration is
    adapted from [[https://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and/#configuring-mu4e][this blog post]]. It looks like we need to set ~tls_starttls = on~
    in the ~.msmtprc~ file for this to work properly.
-   #+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "mail-settings.el" "no")
-     (setq send-mail-function 'sendmail-send-it
-           sendmail-program "/opt/homebrew/bin/msmtp"
-           mail-specify-envelope-from t
-           message-sendmail-envelope-from 'header
-           mail-envelope-from 'header)
-
-     (setq mu4e-contexts
-           `( ,(make-mu4e-context
-                :name "gmail"
-                :match-func (lambda (msg) (when msg
-                                            (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
-                :vars '((mu4e-trash-folder . "/gmail/[Gmail]/Trash")
-                        (mu4e-refile-folder . "/gmail/[Gmail]/Archive")
-                        (user-mail-address . "math.oldroyd@gmail.com")
-                        (mu4e-maildir-shortcuts . ( ("/gmail/INBOX" . ?i)))
-                        ))
-              ,(make-mu4e-context
-                :name "wvwc-mail"
-                :match-func (lambda (msg) (when msg
-                                            (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
-                :vars '((mu4e-trash-folder . "/wvwc-mail/[wvwc-mail]/Trash")
-                        (mu4e-refile-folder . "/wvwc-mail/[wvwc-mail]/Archive")
-                        (user-mail-address . "oldroyd.j@wvwc.edu")
-                        (mu4e-maildir-shortcuts . ( ("/wvwc-mail/INBOX" . ?i)))
-                        ))
-              ,(make-mu4e-context
-                :name "icloud"
-                :match-func (lambda (msg) (when msg
-                                            (string-prefix-p "/icloud" (mu4e-message-field msg :maildir))))
-                :vars '(
-                        (mu4e-trash-folder . "/icloud/Deleted Messages")
-                        (mu4e-refile-folder . "/icloud/Archive")
-                        (user-mail-address . "j.oldroyd@icloud.com")
-                        (mu4e-maildir-shortcuts . ( ("/icloud/INBOX" . ?i)))
-                        ))
-              ))
+   #+begin_src emacs-lisp :tangle "mail-settings.el"
+     (cond
+      ((eq system-type 'darwin)
+       (setq send-mail-function 'sendmail-send-it
+             sendmail-program "/opt/homebrew/bin/msmtp"
+             mail-specify-envelope-from t
+             message-sendmail-envelope-from 'header
+             mail-envelope-from 'header))
+      (setq mu4e-contexts
+            `( ,(make-mu4e-context
+                 :name "gmail"
+                 :match-func (lambda (msg) (when msg
+                                             (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+                 :vars '((mu4e-trash-folder . "/gmail/[Gmail]/Trash")
+                         (mu4e-refile-folder . "/gmail/[Gmail]/Archive")
+                         (user-mail-address . "math.oldroyd@gmail.com")
+                         (mu4e-maildir-shortcuts . ( ("/gmail/INBOX" . ?i)))
+                         ))
+               ,(make-mu4e-context
+                 :name "wvwc-mail"
+                 :match-func (lambda (msg) (when msg
+                                             (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+                 :vars '((mu4e-trash-folder . "/wvwc-mail/[wvwc-mail]/Trash")
+                         (mu4e-refile-folder . "/wvwc-mail/[wvwc-mail]/Archive")
+                         (user-mail-address . "oldroyd.j@wvwc.edu")
+                         (mu4e-maildir-shortcuts . ( ("/wvwc-mail/INBOX" . ?i)))
+                         ))
+               ,(make-mu4e-context
+                 :name "icloud"
+                 :match-func (lambda (msg) (when msg
+                                             (string-prefix-p "/icloud" (mu4e-message-field msg :maildir))))
+                 :vars '(
+                         (mu4e-trash-folder . "/icloud/Deleted Messages")
+                         (mu4e-refile-folder . "/icloud/Archive")
+                         (user-mail-address . "j.oldroyd@icloud.com")
+                         (mu4e-maildir-shortcuts . ( ("/icloud/INBOX" . ?i)))
+                         ))
+               )))
+     (cond
+      ((eq system-type 'gnu/linux)
+       (setq mu4e-contexts
+             `(,(make-mu4e-context
+                 :name "wvwc-mail"
+                 :match-func (lambda (msg) (when msg
+                                             (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+                 :vars '((mu4e-trash-folder . "/wvwc-mail/[Gmail]/Trash")
+                         (mu4e-refile-folder . "/wvwc-mail/[Gmail]/Archive")
+                         (user-mail-address . "oldroyd.j@wvwc.edu")
+                         (mu4e-maildir-shortcuts . ( ("/wvwc-mail/INBOX" . ?i)))
+                         )))
+             )))
    #+end_src
 ** =hledger=
    =hledger= is a plaintext accounting tool that is designed to be run from the
