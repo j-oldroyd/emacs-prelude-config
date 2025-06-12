@@ -769,6 +769,9 @@ configuration changes.
                          (mu4e-maildir-shortcuts . ( ("/wvwc-mail/INBOX" . ?i)))
                          )))
              )))
+
+     ;; The following is for integrating with org-msg.
+     (setq mail-user-agent 'mu4e-user-agent)
    #+end_src
 ** =hledger=
    =hledger= is a plaintext accounting tool that is designed to be run from the
