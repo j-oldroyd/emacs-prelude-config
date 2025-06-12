@@ -721,36 +721,36 @@ configuration changes.
              mail-specify-envelope-from t
              message-sendmail-envelope-from 'header
              mail-envelope-from 'header)
-      (setq mu4e-contexts
-            `( ,(make-mu4e-context
-                 :name "gmail"
-                 :match-func (lambda (msg) (when msg
-                                             (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
-                 :vars '((mu4e-trash-folder . "/gmail/[Gmail]/Trash")
-                         (mu4e-refile-folder . "/gmail/[Gmail]/Archive")
-                         (user-mail-address . "math.oldroyd@gmail.com")
-                         (mu4e-maildir-shortcuts . ( ("/gmail/INBOX" . ?i)))
-                         ))
-               ,(make-mu4e-context
-                 :name "wvwc-mail"
-                 :match-func (lambda (msg) (when msg
-                                             (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
-                 :vars '((mu4e-trash-folder . "/wvwc-mail/[wvwc-mail]/Trash")
-                         (mu4e-refile-folder . "/wvwc-mail/[wvwc-mail]/Archive")
-                         (user-mail-address . "oldroyd.j@wvwc.edu")
-                         (mu4e-maildir-shortcuts . ( ("/wvwc-mail/INBOX" . ?i)))
-                         ))
-               ,(make-mu4e-context
-                 :name "icloud"
-                 :match-func (lambda (msg) (when msg
-                                             (string-prefix-p "/icloud" (mu4e-message-field msg :maildir))))
-                 :vars '(
-                         (mu4e-trash-folder . "/icloud/Deleted Messages")
-                         (mu4e-refile-folder . "/icloud/Archive")
-                         (user-mail-address . "j.oldroyd@icloud.com")
-                         (mu4e-maildir-shortcuts . ( ("/icloud/INBOX" . ?i)))
-                         ))
-               ))))
+       (setq mu4e-contexts
+             `( ,(make-mu4e-context
+                  :name "gmail"
+                  :match-func (lambda (msg) (when msg
+                                              (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+                  :vars '((mu4e-trash-folder . "/gmail/[Gmail]/Trash")
+                          (mu4e-refile-folder . "/gmail/[Gmail]/Archive")
+                          (user-mail-address . "math.oldroyd@gmail.com")
+                          (mu4e-maildir-shortcuts . ( ("/gmail/INBOX" . ?i)))
+                          ))
+                ,(make-mu4e-context
+                  :name "wvwc-mail"
+                  :match-func (lambda (msg) (when msg
+                                              (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+                  :vars '((mu4e-trash-folder . "/wvwc-mail/[wvwc-mail]/Trash")
+                          (mu4e-refile-folder . "/wvwc-mail/[wvwc-mail]/Archive")
+                          (user-mail-address . "oldroyd.j@wvwc.edu")
+                          (mu4e-maildir-shortcuts . ( ("/wvwc-mail/INBOX" . ?i)))
+                          ))
+                ,(make-mu4e-context
+                  :name "icloud"
+                  :match-func (lambda (msg) (when msg
+                                              (string-prefix-p "/icloud" (mu4e-message-field msg :maildir))))
+                  :vars '(
+                          (mu4e-trash-folder . "/icloud/Deleted Messages")
+                          (mu4e-refile-folder . "/icloud/Archive")
+                          (user-mail-address . "j.oldroyd@icloud.com")
+                          (mu4e-maildir-shortcuts . ( ("/icloud/INBOX" . ?i)))
+                          ))
+                ))))
      (cond
       ((eq system-type 'gnu/linux)
        (setq send-mail-function 'sendmail-send-it
@@ -772,6 +772,19 @@ configuration changes.
 
      ;; The following is for integrating with org-msg.
      (setq mail-user-agent 'mu4e-user-agent)
+     ;; Config taken from org-msg github page.
+     (require 'org-msg)
+     (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
+           org-msg-startup "hidestars indent inlineimages"
+           org-msg-greeting-fmt "\nHi%s,\n\n"
+           ;;org-msg-recipient-names '(("jeremy.compostella@gmail.com" . "Jérémy"))
+           org-msg-greeting-name-limit 3
+           org-msg-default-alternatives '((new		. (text html))
+            			             (reply-to-html	. (text html))
+            			             (reply-to-text	. (text)))
+           org-msg-convert-citation t
+           )
+     (org-msg-mode)
    #+end_src
 ** =hledger=
    =hledger= is a plaintext accounting tool that is designed to be run from the
