@@ -1170,6 +1170,52 @@ configuration changes.
         :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
         :after ox)
     #+end_src
+*** =impatient-mode=
+    This package allows for HTML previews of buffers in the browser by
+    navigating to =http://localhost:8080/imp=.  The configuration below (copied
+    from the =init.el= gist [[https://gist.github.com/tylerjl][here]])
+    #+begin_src emacs-lisp :tangle "org-export-settings.el"
+      (use-package impatient-mode)
+
+      (define-minor-mode tjl/md-preview-mode
+        "Toggles live markdown preview using impatient-mode"
+        :init-value nil
+        :lighter " 󰽛"
+
+        (if tjl/md-preview-mode
+
+            (progn
+              (if (process-status "httpd")
+                  (setq tjl/httpd-was-running t)
+                (progn (httpd-start)))
+              (impatient-mode)
+              (imp-set-user-filter 'tjl/markdown-filter)
+              (imp-visit-buffer)
+              (message "Live markdown preview enabled"))
+
+          (progn
+            (impatient-mode -1)
+            (unless (or (imp--buffer-list)
+                    (and (fboundp 'tjl/httpd-was-running) tjl/httpd-was-running))
+              ;; Tear httpd down
+              (progn (httpd-stop)
+                     (setq tjl/httpd-was-running nil)))
+            (message "Live markdown preview disabled"))))
+
+      ;; For use with impatient-mode filter
+      (defun tjl/markdown-filter (buffer)
+        (princ
+         (with-temp-buffer
+           (let ((tmp (buffer-name)))
+             (set-buffer buffer)
+             (set-buffer (markdown tmp))
+             (format "<!DOCTYPE html><html><title>Markdown preview</title><link rel=\"stylesheet\" href = \"https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css\"/>
+      <body><article class=\"markdown-body\" style=\"box-sizing: border-box;min-width: 200px;max-width: 980px;margin: 0 auto;padding: 45px;\">%s</article></body></html>" (buffer-string))))
+         (current-buffer)))
+    #+end_src
+
+    #+RESULTS:
+    : tjl/markdown-filter
 
 * Packages to consider adding
 ** =elfeed=
