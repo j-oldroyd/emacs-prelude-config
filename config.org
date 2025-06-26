@@ -1161,6 +1161,21 @@ configuration changes.
    #+end_src
 
 ** Export settings
+*** Tangle settings
+    These are general settings for tangling files to ensure that lexical binding
+    is enabled.  This code is taken from [[https://emacs.stackexchange.com/a/84607/45800][this answer]] on Stack Exchange.
+    #+begin_src emacs-lisp :tangle "org-export-settings.el"
+      (defun my-ensure-lexical-binding-cookie()
+        (goto-char(point-min)) ;; beginning of tangled code
+        (insert ";; -*- coding: utf-8; lexical-binding: t -*-")
+        (newline)
+        (newline)
+        (let ((inhibit-message t)) ;; Don't show messages from these functions
+          (basic-save-buffer)
+          (kill-buffer) nil))
+
+      (add-hook 'org-babel-post-tangle-hook #'my-ensure-lexical-binding-cookie)
+    #+end_src
 *** =ox-hugo=
     We can use =ox-hugo= to quickly generate and preview websites created using
     Hugo.
@@ -1216,7 +1231,6 @@ configuration changes.
 
     #+RESULTS:
     : tjl/markdown-filter
-
 * Packages to consider adding
 ** =elfeed=
    This looks like a good way to keep track of arXiv papers.
