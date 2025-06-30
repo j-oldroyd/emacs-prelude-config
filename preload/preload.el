@@ -1,2 +1,2 @@
-;; Use custom theme and override Prelude.
-(setq prelude-theme 'modus-operandi-tinted)
+;; Use custom theme and override Prelude.  -*- lexical-binding: t; -*-
+(setq prelude-theme 'ef-owl)
