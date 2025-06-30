@@ -714,61 +714,61 @@ configuration changes.
    adapted from [[https://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and/#configuring-mu4e][this blog post]]. It looks like we need to set ~tls_starttls = on~
    in the ~.msmtprc~ file for this to work properly.
    #+begin_src emacs-lisp :tangle "mail-settings.el"
-     (cond
-      ((eq system-type 'darwin)
-       (setq send-mail-function 'sendmail-send-it
-             sendmail-program "/opt/homebrew/bin/msmtp"
-             mail-specify-envelope-from t
-             message-sendmail-envelope-from 'header
-             mail-envelope-from 'header)
-       (setq mu4e-contexts
-             `( ,(make-mu4e-context
-                  :name "gmail"
-                  :match-func (lambda (msg) (when msg
-                                              (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
-                  :vars '((mu4e-trash-folder . "/gmail/[Gmail]/Trash")
-                          (mu4e-refile-folder . "/gmail/[Gmail]/Archive")
-                          (user-mail-address . "math.oldroyd@gmail.com")
-                          (mu4e-maildir-shortcuts . ( ("/gmail/INBOX" . ?i)))
-                          ))
-                ,(make-mu4e-context
-                  :name "wvwc-mail"
-                  :match-func (lambda (msg) (when msg
-                                              (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
-                  :vars '((mu4e-trash-folder . "/wvwc-mail/[wvwc-mail]/Trash")
-                          (mu4e-refile-folder . "/wvwc-mail/[wvwc-mail]/Archive")
-                          (user-mail-address . "oldroyd.j@wvwc.edu")
-                          (mu4e-maildir-shortcuts . ( ("/wvwc-mail/INBOX" . ?i)))
-                          ))
-                ,(make-mu4e-context
-                  :name "icloud"
-                  :match-func (lambda (msg) (when msg
-                                              (string-prefix-p "/icloud" (mu4e-message-field msg :maildir))))
-                  :vars '(
-                          (mu4e-trash-folder . "/icloud/Deleted Messages")
-                          (mu4e-refile-folder . "/icloud/Archive")
-                          (user-mail-address . "j.oldroyd@icloud.com")
-                          (mu4e-maildir-shortcuts . ( ("/icloud/INBOX" . ?i)))
-                          ))
-                ))))
-     (cond
-      ((eq system-type 'gnu/linux)
-       (setq send-mail-function 'sendmail-send-it
-             sendmail-program "/home/linuxbrew/.linuxbrew/bin/msmtp"
-             mail-specify-envelope-from t
-             message-sendmail-envelope-from 'header
-             mail-envelope-from 'header)
-       (setq mu4e-contexts
-             `(,(make-mu4e-context
-                 :name "wvwc-mail"
-                 :match-func (lambda (msg) (when msg
-                                             (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
-                 :vars '((mu4e-trash-folder . "/wvwc-mail/[Gmail]/Trash")
-                         (mu4e-refile-folder . "/wvwc-mail/[Gmail]/Archive")
-                         (user-mail-address . "oldroyd.j@wvwc.edu")
-                         (mu4e-maildir-shortcuts . ( ("/wvwc-mail/INBOX" . ?i)))
-                         )))
-             )))
+     (with-eval-after-load 'mu4e
+       (cond
+        ((eq system-type 'darwin)
+         (setq send-mail-function 'sendmail-send-it
+               sendmail-program "/opt/homebrew/bin/msmtp"
+               mail-specify-envelope-from t
+               message-sendmail-envelope-from 'header
+               mail-envelope-from 'header)
+         (setq mu4e-contexts
+               `( ,(make-mu4e-context
+                    :name "gmail"
+                    :match-func (lambda (msg) (when msg
+                                                (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+                    :vars '((mu4e-trash-folder . "/gmail/[Gmail]/Trash")
+                            (mu4e-refile-folder . "/gmail/[Gmail]/Archive")
+                            (user-mail-address . "math.oldroyd@gmail.com")
+                            (mu4e-maildir-shortcuts . ( ("/gmail/INBOX" . ?i)))
+                            ))
+                  ,(make-mu4e-context
+                    :name "wvwc-mail"
+                    :match-func (lambda (msg) (when msg
+                                                (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+                    :vars '((mu4e-trash-folder . "/wvwc-mail/[wvwc-mail]/Trash")
+                            (mu4e-refile-folder . "/wvwc-mail/[wvwc-mail]/Archive")
+                            (user-mail-address . "oldroyd.j@wvwc.edu")
+                            (mu4e-maildir-shortcuts . ( ("/wvwc-mail/INBOX" . ?i)))
+                            ))
+                  ,(make-mu4e-context
+                    :name "icloud"
+                    :match-func (lambda (msg) (when msg
+                                                (string-prefix-p "/icloud" (mu4e-message-field msg :maildir))))
+                    :vars '(
+                            (mu4e-trash-folder . "/icloud/Deleted Messages")
+                            (mu4e-refile-folder . "/icloud/Archive")
+                            (user-mail-address . "j.oldroyd@icloud.com")
+                            (mu4e-maildir-shortcuts . ( ("/icloud/INBOX" . ?i)))
+                            ))
+                  )))
+        ((eq system-type 'gnu/linux)
+         (setq send-mail-function 'sendmail-send-it
+               sendmail-program "/home/linuxbrew/.linuxbrew/bin/msmtp"
+               mail-specify-envelope-from t
+               message-sendmail-envelope-from 'header
+               mail-envelope-from 'header)
+         (setq mu4e-contexts
+               `(,(make-mu4e-context
+                   :name "wvwc-mail"
+                   :match-func (lambda (msg) (when msg
+                                               (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+                   :vars '((mu4e-trash-folder . "/wvwc-mail/[Gmail]/Trash")
+                           (mu4e-refile-folder . "/wvwc-mail/[Gmail]/Archive")
+                           (user-mail-address . "oldroyd.j@wvwc.edu")
+                           (mu4e-maildir-shortcuts . ( ("/wvwc-mail/INBOX" . ?i)))
+                           )))
+               ))))
 
      ;; The following is for integrating with org-msg.
      (setq mail-user-agent 'mu4e-user-agent)
@@ -1159,8 +1159,21 @@ configuration changes.
       'org-babel-load-languages
       '((octave . t)))
    #+end_src
+*** Tangle settings
+   These are general settings for tangling files to ensure that lexical binding
+   is enabled.  This code is taken from [[https://emacs.stackexchange.com/a/84607/45800][this answer]] on Stack Exchange.
+   #+begin_src emacs-lisp :tangle "org-settings.el"
+     (defun my-ensure-lexical-binding-cookie()
+       (goto-char(point-min)) ;; beginning of tangled code
+       (insert ";; -*- coding: utf-8; lexical-binding: t -*-")
+       (newline)
+       (newline)
+       (let ((inhibit-message t)) ;; Don't show messages from these functions
+         (basic-save-buffer)
+         (kill-buffer) nil))
 
-** Export settings
+     (add-hook 'org-babel-post-tangle-hook #'my-ensure-lexical-binding-cookie)
+   #+end_src
 *** =ox-hugo=
     We can use =ox-hugo= to quickly generate and preview websites created using
     Hugo.
@@ -1170,7 +1183,53 @@ configuration changes.
         :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
         :after ox)
     #+end_src
+*** =impatient-mode=
+    This package allows for HTML previews of buffers in the browser by
+    navigating to =http://localhost:8080/imp=.  The configuration below (copied
+    from the =init.el= gist [[https://gist.github.com/tylerjl][here]])
+    #+begin_src emacs-lisp :tangle "org-export-settings.el"
+      (use-package impatient-mode)
 
+      (define-minor-mode tjl/md-preview-mode
+        "Toggles live markdown preview using impatient-mode"
+        :init-value nil
+        :lighter " 󰽛"
+
+        (if tjl/md-preview-mode
+
+            (progn
+              (if (process-status "httpd")
+                  (setq tjl/httpd-was-running t)
+                (progn (httpd-start)))
+              (impatient-mode)
+              (imp-set-user-filter 'tjl/markdown-filter)
+              (imp-visit-buffer)
+              (message "Live markdown preview enabled"))
+
+          (progn
+            (impatient-mode -1)
+            (unless (or (imp--buffer-list)
+                    (and (fboundp 'tjl/httpd-was-running) tjl/httpd-was-running))
+              ;; Tear httpd down
+              (progn (httpd-stop)
+                     (setq tjl/httpd-was-running nil)))
+            (message "Live markdown preview disabled"))))
+
+      ;; For use with impatient-mode filter
+      (defun tjl/markdown-filter (buffer)
+        (princ
+         (with-temp-buffer
+           (let ((tmp (buffer-name)))
+             (set-buffer buffer)
+             (set-buffer (markdown tmp))
+             (format "<!DOCTYPE html><html><title>Markdown preview</title><link rel=\"stylesheet\" href = \"https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css\"/>
+      <body><article class=\"markdown-body\" style=\"box-sizing: border-box;min-width: 200px;max-width: 980px;margin: 0 auto;padding: 45px;\">%s</article></body></html>" (buffer-string))))
+         (current-buffer)))
+    #+end_src
+
+    #+RESULTS:
+    : tjl/markdown-filter
+** Export settings
 * Packages to consider adding
 ** =elfeed=
    This looks like a good way to keep track of arXiv papers.
