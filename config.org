@@ -55,9 +55,9 @@ configuration changes.
        (sp--update-override-key-bindings))
      (use-package avy
        :ensure t
-       :bind (("M-j"   .   avy-goto-char-timer)
+       :bind (("H-j"   .   avy-goto-char-timer)
               :map isearch-mode-map
-              ("M-j"     . avy-isearch)))
+              ("H-j"     . avy-isearch)))
 
      ;; Casual Suite
      ;;; See GitHub configuration for suggested org-agenda binds The agenda
