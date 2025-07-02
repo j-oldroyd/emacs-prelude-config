@@ -786,6 +786,41 @@ configuration changes.
            )
      (org-msg-mode)
    #+end_src
+** Python
+   Settings for Python programming.  Virtual environments are handled using
+   =pyvenv= (the Emacs package) in conjunction with =pyenv= (the Python
+   package).  The Python configuration is adapted from the configuration located
+   [[https://emacs.stackexchange.com/questions/59905/how-can-i-start-ipython-from-emacs][here]].  Note that using the =IPython= shell causes an issue with the =ef-owl=
+   theme as errors are highlighted using =ansiyellow= which is almost unreadable
+   against the background.  This can be dealt with by adjusting =IPython= itself
+   as described [[https://emacs.stackexchange.com/questions/76652/overlay-makes-text-unreadable-where-does-it-come-from-overlay-face-is-undef][here]], but the jist is that we need to alter the ~bg:ansiyellow~
+   setting in =core/ultrab.py=.
+   #+begin_src emacs-lisp :tangle "python-settings.el"
+     (use-package pyvenv
+       :ensure nil
+       )
+
+     (use-package python
+       :ensure nil
+       :mode
+       ("\\.py\\'" . python-mode)
+
+       :init
+       (setq-default indent-tabs-mode nil)
+
+       :hook
+       ((python-mode . smartparens-mode)
+        (python-mode . company-mode)
+        (python-mode . flycheck-mode)
+        (inferior-python-mode . smartparens-mode))
+
+       :config
+       (setq python-indent-offset 4
+             python-indent-guess-indent-offset-verbose nil
+             python-shell-interpreter "ipython"
+             ;; python-shell-interpreter-args "-i --simple-prompt"
+             ))
+   #+end_src
 ** =hledger=
    =hledger= is a plaintext accounting tool that is designed to be run from the
    terminal. We use =heldger-mode= and =flycheck-hledger= to support working
