@@ -48,16 +48,17 @@ configuration changes.
      ;; Default to maximized frame.
      (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-                              ;;; Avy bindings
+     ;;; Avy bindings
      ;; Override smartparens use of "M-j" so I can use it.
-     (with-eval-after-load "smartparens"
-       (setq sp-override-key-bindings '(("M-j" . nil)))
+     (with-eval-after-load 'smartparens
+       (setq sp-override-key-bindings '(("M-j" . avy-goto-char-time)))
        (sp--update-override-key-bindings))
+
      (use-package avy
        :ensure t
-       :bind (("H-j"   .   avy-goto-char-timer)
+       :bind (("M-j"   .   avy-goto-char-timer)
               :map isearch-mode-map
-              ("H-j"     . avy-isearch)))
+              ("M-j"     . avy-isearch)))
 
      ;; Casual Suite
      ;;; See GitHub configuration for suggested org-agenda binds The agenda
@@ -576,6 +577,12 @@ configuration changes.
      (add-hook 'LaTeX-mode-hook 'visual-line-mode)
      (add-hook 'LaTeX-mode-hook 'flyspell-mode)
      (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+     ;;; Smartparens uses M-j for join sexp, but I want to use that for Avy
+     ;;; instead.
+     (add-hook 'LaTeX-mode-hook
+               (lambda ()
+                 (setq sp-override-key-bindings '(("M-j" . avy-goto-char-timer)))
+                 (sp--update-override-key-bindings)))
      (setq reftex-plug-into-AUCTeX t)
 
      ;; Enables rainbow-highlighters for LaTeX.
