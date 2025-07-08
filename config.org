@@ -48,7 +48,7 @@ configuration changes.
      ;; Default to maximized frame.
      (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-     ;;; Avy bindings
+        ;;; Avy bindings
      ;; Override smartparens use of "M-j" so I can use it.
      (with-eval-after-load 'smartparens
        (setq sp-override-key-bindings '(("M-j" . avy-goto-char-time)))
@@ -61,11 +61,11 @@ configuration changes.
               ("M-j"     . avy-isearch)))
 
      ;; Casual Suite
-     ;;; See GitHub configuration for suggested org-agenda binds The agenda
-     ;;; and calc packages require the use of transient-define-group which
-     ;;; is not available in the built-in version of transient as of
-     ;;; <2025-06-03 Tue>. Instead, the upgraded version >= 0.9.0 must be
-     ;;; downloaded from MELPA.
+        ;;; See GitHub configuration for suggested org-agenda binds The agenda
+        ;;; and calc packages require the use of transient-define-group which
+        ;;; is not available in the built-in version of transient as of
+        ;;; <2025-06-03 Tue>. Instead, the upgraded version >= 0.9.0 must be
+        ;;; downloaded from MELPA.
      (require 'casual-agenda)
      (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)
      (keymap-set org-agenda-mode-map "M-j" #'org-agenda-clock-goto) ; optional
@@ -159,7 +159,7 @@ configuration changes.
 
      (defun meow-setup ()
        (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
-       (meow-motion-overwrite-define-key
+       (meow-motion-define-key
         '("j" . meow-next)
         '("k" . meow-prev)
         '("/" . consult-line))
