@@ -786,9 +786,9 @@ configuration changes.
            org-msg-greeting-fmt "\nHi%s,\n\n"
            ;;org-msg-recipient-names '(("jeremy.compostella@gmail.com" . "Jérémy"))
            org-msg-greeting-name-limit 3
-           org-msg-default-alternatives '((new		. (text html))
-            			             (reply-to-html	. (text html))
-            			             (reply-to-text	. (text)))
+           org-msg-default-alternatives '((new          . (text html))
+                                          (reply-to-html     . (text html))
+                                          (reply-to-text     . (text)))
            org-msg-convert-citation t
            )
      (org-msg-mode)
@@ -1016,7 +1016,7 @@ configuration changes.
              ("f" "Fleeting note" entry  (file org-default-notes-file)
               "* TODO %^{Note title}\nContext: %a\n%?" :empty-lines-before 1 )
              ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
-              "** NEXT %? \nDEADLINE: %t") ))
+              "** NEXT %? \nDEADLINE: %t")))
 
      ;; Sets up org-mode files for capture/refile.
      (cond
@@ -1026,12 +1026,12 @@ configuration changes.
                                 "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/org"))
        (setq org-default-notes-file
              (expand-file-name "/Users/jesseoldroyd/Library/Mobile
-      Documents/com~apple~CloudDocs/Documents/org/notes.org")))
+                Documents/com~apple~CloudDocs/Documents/org/notes.org")))
       ((eq system-type 'gnu/linux)
        (setq org-agenda-files '("~/org"
                                 "~/GoogleDrive/org"))
        (setq org-default-notes-file
-                  (expand-file-name "~/org/notes.org"))))
+             (expand-file-name "~/org/notes.org"))))
 
      (setq org-refile-targets
            '((nil :maxlevel . 3)
@@ -1096,6 +1096,23 @@ configuration changes.
                         ((org-roam-graph-viewer "/mnt/c/Program Files/Mozilla Firefox/firefox.exe"))
                       (org-roam-graph--open (concat "file://///wsl$/Ubuntu" file)))))))
 
+     ;; Org-roam templates
+     ;;; Notes template based on suggested citar config.
+     (setq org-roam-capture-templates
+           '(("d" "default" plain
+              "%?"
+              :target
+              (file+head
+               "%<%Y%m%d%H%M%S>-${slug}.org"
+               "#+title: ${note-title}\n")
+              :unnarrowed t)
+             ("n" "literature note" plain
+              "%?"
+              :target
+              (file+head
+               "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
+               "#+title: ${citar-citekey} (${citar-date}). ${note-title}.\n#+created: %U\n#+last_modified: %U\n\n* Main idea(s)\n* Key results\n* Questions")
+              :unnarrowed t)))
      (use-package org-noter)
    #+END_SRC
 
@@ -1123,7 +1140,7 @@ configuration changes.
       to refer to outside of the paper.
       #+BEGIN_SRC emacs-lisp :tangle "bibtex-settings.el"
         (when (eq system-type 'darwin)
-          (setq bib-file '("~/Google Drive/My Drive/research/My Library.bib")))
+          (setq bib-file '("~/Google Drive/My Drive/research/library.bib")))
         (when (eq system-type 'gnu/linux)
           (setq bib-file '("~/GoogleDrive/research/My Library.bib"
                            "~/GoogleDrive/research/library-time_scales.bib"
@@ -1149,6 +1166,9 @@ configuration changes.
           :after (org-roam citar)
           :config (citar-org-roam-mode))
 
+        ;;; Set up citar to use org-roam template
+        (setq citar-org-roam-capture-template-key "n")
+
         (use-package citar-embark
           :after (citar embark)
           :no-require
@@ -1162,8 +1182,7 @@ configuration changes.
           (setq citar-library-paths '("~/GoogleDrive/research"))
           (setq citar-notes-paths '("~/GoogleDrive/research")))
          ((eq system-type 'darwin)
-          (setq citar-library-paths '("~/Google Drive/My Drive/research")))
-         ((eq system-type 'darwin)
+          (setq citar-library-paths '("~/Google Drive/My Drive/research"))
           (setq citar-notes-paths '("~/Google Drive/My Drive/research"))))
 
         ;; On Windows I use JabRef, so I need to tell Citar how to parse JabRef
@@ -1202,20 +1221,20 @@ configuration changes.
       '((octave . t)))
    #+end_src
 *** Tangle settings
-   These are general settings for tangling files to ensure that lexical binding
-   is enabled.  This code is taken from [[https://emacs.stackexchange.com/a/84607/45800][this answer]] on Stack Exchange.
-   #+begin_src emacs-lisp :tangle "org-settings.el"
-     (defun my-ensure-lexical-binding-cookie()
-       (goto-char(point-min)) ;; beginning of tangled code
-       (insert ";; -*- coding: utf-8; lexical-binding: t -*-")
-       (newline)
-       (newline)
-       (let ((inhibit-message t)) ;; Don't show messages from these functions
-         (basic-save-buffer)
-         (kill-buffer) nil))
+    These are general settings for tangling files to ensure that lexical binding
+    is enabled.  This code is taken from [[https://emacs.stackexchange.com/a/84607/45800][this answer]] on Stack Exchange.
+    #+begin_src emacs-lisp :tangle "org-settings.el"
+      (defun my-ensure-lexical-binding-cookie()
+        (goto-char(point-min)) ;; beginning of tangled code
+        (insert ";; -*- coding: utf-8; lexical-binding: t -*-")
+        (newline)
+        (newline)
+        (let ((inhibit-message t)) ;; Don't show messages from these functions
+          (basic-save-buffer)
+          (kill-buffer) nil))
 
-     (add-hook 'org-babel-post-tangle-hook #'my-ensure-lexical-binding-cookie)
-   #+end_src
+      (add-hook 'org-babel-post-tangle-hook #'my-ensure-lexical-binding-cookie)
+    #+end_src
 *** =ox-hugo=
     We can use =ox-hugo= to quickly generate and preview websites created using
     Hugo.
@@ -1251,7 +1270,7 @@ configuration changes.
           (progn
             (impatient-mode -1)
             (unless (or (imp--buffer-list)
-                    (and (fboundp 'tjl/httpd-was-running) tjl/httpd-was-running))
+                        (and (fboundp 'tjl/httpd-was-running) tjl/httpd-was-running))
               ;; Tear httpd down
               (progn (httpd-stop)
                      (setq tjl/httpd-was-running nil)))
