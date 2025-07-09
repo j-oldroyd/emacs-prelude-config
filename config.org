@@ -1022,7 +1022,15 @@ configuration changes.
      ;; Set Org-mode indentation
      (setq org-adapt-indentation t)
    #+end_src
-
+   Be default, =prelude-mode= redefines =M-S-<UP>= and =M-S-<DOWN>= to
+   =move-text= commands.  This unfortunately overrides org-table keybinds for
+   inserting rows, so I reset them here.
+   #+begin_src emacs-lisp :tangle "org-settings.el"
+     (use-package org
+       :bind (:map org-mode-map
+                   ("M-S-<up>" . org-table-kill-row)
+                   ("M-S-<down>" . org-table-insert-row)))
+   #+end_src
 ** Agenda and capture settings
    Org-agenda is one of the best reasons to become familiar with Org mode.  We
    need to set up our agenda files and capture templates/keybinds.  Currently,
