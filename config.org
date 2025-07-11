@@ -864,7 +864,7 @@ configuration changes.
        :config
        (setq python-indent-offset 4
              python-indent-guess-indent-offset-verbose nil
-             python-shell-interpreter "ipython"
+             python-shell-interpreter "python"
              ;; python-shell-interpreter-args "-i --simple-prompt"
              ))
    #+end_src
@@ -1188,7 +1188,8 @@ configuration changes.
       to refer to outside of the paper.
       #+BEGIN_SRC emacs-lisp :tangle "bibtex-settings.el"
         (when (eq system-type 'darwin)
-          (setq bib-file '("~/Google Drive/My Drive/research/library.bib")))
+          (setq bib-file '("~/Google Drive/My Drive/research/library.bib"
+                           "~/Documents/zotero/library.bib")))
         (when (eq system-type 'gnu/linux)
           (setq bib-file '("~/GoogleDrive/research/My Library.bib"
                            "~/GoogleDrive/research/library-time_scales.bib"
@@ -1230,7 +1231,8 @@ configuration changes.
           (setq citar-library-paths '("~/GoogleDrive/research"))
           (setq citar-notes-paths '("~/GoogleDrive/research")))
          ((eq system-type 'darwin)
-          (setq citar-library-paths '("~/Google Drive/My Drive/research"))
+          (setq citar-library-paths '("~/Google Drive/My Drive/research"
+                                      "~/Documents/zotero"))
           (setq citar-notes-paths '("~/Google Drive/My Drive/research"))))
 
         ;; On Windows I use JabRef, so I need to tell Citar how to parse JabRef
