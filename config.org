@@ -86,6 +86,9 @@ configuration changes.
      (require 'casual-calendar)
      (keymap-set calendar-mode-map "C-o" #'casual-calendar)
 
+     (require 'casual-dired) ; optional if using autoloaded menu
+     (keymap-set dired-mode-map "C-o" #'casual-dired-tmenu)
+
      (require 'casual-ibuffer)
      (keymap-set ibuffer-mode-map "C-o" #'casual-ibuffer-tmenu)
      (keymap-set ibuffer-mode-map "F" #'casual-ibuffer-filter-tmenu)
