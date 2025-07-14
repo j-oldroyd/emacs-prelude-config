@@ -1074,7 +1074,7 @@ configuration changes.
      (global-set-key "\C-cc" 'org-capture)
      (global-set-key "\C-cb" 'org-iswitchb)
 
-     ;;Changes TODO to done automatically if children tasks done
+     ;; Changes TODO to DONE automatically if children tasks done
      (defun org-summary-todo (n-done n-not-done)
        "Switch entry to DONE when all subentries are done, to TODO otherwise."
        (let (org-log-done org-log-states)   ; turn off logging
@@ -1082,7 +1082,21 @@ configuration changes.
 
      (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
 
-     ;; Define the custum capture templates
+     ;; Define TODO sequence and faces.  Based on
+     ;; https://whhone.com/posts/org-mode-task-management/
+     (setq org-todo-keywords
+           '((sequence "TODO(t)" "NEXT(n)" "PROG(p)" "INTR(i)"
+                       "|" "CANCELED(c)" "DONE(d)" "WAITING(w)" "SHELVED(s)")))
+     (setq org-todo-keyword-faces
+           '(("TODO" . org-todo)
+             ("NEXT" . (:foreground "cyan" :weight bold))
+             ("INTR" . org-warning)
+             ("PROG" . (:foreground "green" :weight bold))
+             ("CANCELED" . (:foreground "red" :weight bold))
+             ("WAITING" . (:foreground "yellow" :weight bold))
+             ("SHELVED" . (:foreground "gray" :weight bold))))
+
+     ;; Define the custom capture templates
      (setq org-capture-templates
            '(("t" "Todo" entry (file org-default-notes-file)
               "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
