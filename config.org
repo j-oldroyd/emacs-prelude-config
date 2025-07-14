@@ -48,7 +48,7 @@ configuration changes.
      ;; Default to maximized frame.
      (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-        ;;; Avy bindings
+     ;; Avy bindings
      ;; Override smartparens use of "M-j" so I can use it.
      (with-eval-after-load 'smartparens
        (setq sp-override-key-bindings '(("M-j" . avy-goto-char-time)))
@@ -61,11 +61,11 @@ configuration changes.
               ("M-j"     . avy-isearch)))
 
      ;; Casual Suite
-        ;;; See GitHub configuration for suggested org-agenda binds The agenda
-        ;;; and calc packages require the use of transient-define-group which
-        ;;; is not available in the built-in version of transient as of
-        ;;; <2025-06-03 Tue>. Instead, the upgraded version >= 0.9.0 must be
-        ;;; downloaded from MELPA.
+     ;; See GitHub configuration for suggested org-agenda binds The agenda
+     ;; and calc packages require the use of transient-define-group which
+     ;; is not available in the built-in version of transient as of
+     ;; <2025-06-03 Tue>. Instead, the upgraded version >= 0.9.0 must be
+     ;; downloaded from MELPA.
      (require 'casual-agenda)
      (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)
      (keymap-set org-agenda-mode-map "M-j" #'org-agenda-clock-goto) ; optional
@@ -122,6 +122,20 @@ configuration changes.
      (require 'casual-re-builder)
      (keymap-set reb-mode-map "C-o" #'casual-re-builder-tmenu)
      (keymap-set reb-lisp-mode-map "C-o" #'casual-re-builder-tmenu)
+
+     ;; Doom modeline
+     ;; Taken from
+     ;; https://github.com/MatthewZMD/.emacs.d?tab=readme-ov-file#doom-modeline
+     (use-package doom-modeline
+       :custom
+       ;; Don't compact font caches during GC. Windows Laggy Issue
+       (inhibit-compacting-font-caches t)
+       (doom-modeline-minor-modes t)
+       (doom-modeline-icon t)
+       (doom-modeline-major-mode-color-icon t)
+       (doom-modeline-height 15)
+       :config
+       (doom-modeline-mode))
    #+end_src
 ** Keybinds
    We need to tell emacs how to interpret certain keys on MacBook
@@ -212,6 +226,7 @@ configuration changes.
         '("e" . meow-next-word)
         '("E" . meow-next-symbol)
         '("f" . meow-find)
+        '("F" . avy-goto-char-timer)
         '("g" . meow-cancel-selection)
         '("G" . meow-grab)
         '("h" . meow-left)
@@ -503,6 +518,11 @@ configuration changes.
              (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
              (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
              (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+
+     ;; format-all provides code-formatting via third-party tools such as
+     ;; Black (for Python) and latexindent (for LaTeX)
+     (use-package format-all
+       :bind ("C-c M-i" . format-all-buffer))
    #+end_src
 
    #+RESULTS:
@@ -520,11 +540,14 @@ configuration changes.
        ;; (setq lsp-keymap-prefix "C-c l")
        :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
               (python-mode . lsp-deferred)
+              (python-ts-mode . lsp-deferred)
               (latex-mode . lsp-deferred)
               (LaTeX-mode . lsp-deferred)
               ;; if you want which-key integration
               (lsp-mode . lsp-enable-which-key-integration))
-       :commands lsp)
+       :commands lsp
+       :config
+       (setq lsp-pylsp-plugins-black-enabled t))
 
      ;; optionally
      (use-package lsp-ui :commands lsp-ui-mode)
@@ -547,6 +570,14 @@ configuration changes.
 
      ;; Make Emacs/digestif aware of TeX info paths.
      (add-to-list 'Info-directory-list "/usr/local/texlive/2024/texmf-dist/doc/info")
+
+     ;; Auto-activate ts-modes when available
+     (use-package treesit-auto
+       :custom
+       (treesit-auto-install 'prompt)
+       :config
+       (treesit-auto-add-to-auto-mode-alist 'all)
+       (global-treesit-auto-mode))
    #+end_src
 ** PDF-tools
    The =pdf-tools= package replaces emacs' own DocView mode for viewing PDF
@@ -807,7 +838,7 @@ configuration changes.
            (el-patch-feature org-msg)
            (with-eval-after-load 'org-msg
              (el-patch-defun org-msg-preview (arg)
-                             "Export and display the current OrgMsg buffer.
+               "Export and display the current OrgMsg buffer.
      It uses the last alternative of the `alternatives' property as
      the alternatives should be listed in increasing order of
      preference.  If this alternative is `html' it calls the
@@ -815,26 +846,26 @@ configuration changes.
      browser.  With the prefix argument ARG set, it calls
      `xwidget-webkit-browse-url' instead of `browse-url'.  For all
      other alternatives, it displays the exported result in a buffer."
-                             (interactive "P")
-                             (let* ((preferred (last (org-msg-get-prop "alternatives")))
-     	                       (alt (caar (org-msg-build-alternatives preferred t))))
-                               (cond ((string= (car alt) "text/html")
-     	                         (save-window-excursion
-     	                           (let ((browse-url-browser-function (if arg
-     						                          'xwidget-webkit-browse-url
-     						                        browse-url-browser-function))
-     		                         (tmp-file (make-temp-file "org-msg" nil ".html")))
-     	                             (with-temp-buffer
-     		                       (insert (cdr alt))
-     		                       (write-file tmp-file))
-                                          (el-patch-swap
-     	                              (browse-url (concat "file://" tmp-file))
-                                           (browse-url (concat "file://///wsl.localhost/Ubuntu/" tmp-file)))))
-     	                         (t (with-current-buffer (get-buffer-create
-     				                          (format "*OrgMsg %s Preview*" (car alt)))
-     	                              (delete-region (point-min) (point-max))
-     	                              (insert (cdr alt)))
-     	                            (display-buffer (current-buffer))))))))))
+               (interactive "P")
+               (let* ((preferred (last (org-msg-get-prop "alternatives")))
+                      (alt (caar (org-msg-build-alternatives preferred t))))
+                 (cond ((string= (car alt) "text/html")
+                        (save-window-excursion
+                          (let ((browse-url-browser-function
+                                 (if arg 'xwidget-webkit-browse-url
+                                   browse-url-browser-function))
+                                (tmp-file (make-temp-file "org-msg" nil ".html")))
+                            (with-temp-buffer
+                              (insert (cdr alt))
+                              (write-file tmp-file))
+                            (el-patch-swap
+                              (browse-url (concat "file://" tmp-file))
+                              (browse-url (concat "file://///wsl.localhost/Ubuntu/" tmp-file)))))
+                        (t (with-current-buffer
+                               (get-buffer-create (format "*OrgMsg %s Preview*" (car alt)))
+                             (delete-region (point-min) (point-max))
+                             (insert (cdr alt)))
+                           (display-buffer (current-buffer))))))))))
    #+end_src
 ** Python
    Settings for Python programming.  Virtual environments are handled using
@@ -867,7 +898,7 @@ configuration changes.
        :config
        (setq python-indent-offset 4
              python-indent-guess-indent-offset-verbose nil
-             python-shell-interpreter "ipython"
+             python-shell-interpreter "python"
              ;; python-shell-interpreter-args "-i --simple-prompt"
              ))
    #+end_src
@@ -1025,7 +1056,15 @@ configuration changes.
      ;; Set Org-mode indentation
      (setq org-adapt-indentation t)
    #+end_src
-
+   Be default, =prelude-mode= redefines =M-S-<UP>= and =M-S-<DOWN>= to
+   =move-text= commands.  This unfortunately overrides org-table keybinds for
+   inserting rows, so I reset them here.
+   #+begin_src emacs-lisp :tangle "org-settings.el"
+     (use-package org
+       :bind (:map org-mode-map
+                   ("M-S-<up>" . org-table-kill-row)
+                   ("M-S-<down>" . org-table-insert-row)))
+   #+end_src
 ** Agenda and capture settings
    Org-agenda is one of the best reasons to become familiar with Org mode.  We
    need to set up our agenda files and capture templates/keybinds.  Currently,
@@ -1038,7 +1077,7 @@ configuration changes.
      (global-set-key "\C-cc" 'org-capture)
      (global-set-key "\C-cb" 'org-iswitchb)
 
-     ;;Changes TODO to done automatically if children tasks done
+     ;; Changes TODO to DONE automatically if children tasks done
      (defun org-summary-todo (n-done n-not-done)
        "Switch entry to DONE when all subentries are done, to TODO otherwise."
        (let (org-log-done org-log-states)   ; turn off logging
@@ -1046,7 +1085,21 @@ configuration changes.
 
      (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
 
-     ;; Define the custum capture templates
+     ;; Define TODO sequence and faces.  Based on
+     ;; https://whhone.com/posts/org-mode-task-management/
+     (setq org-todo-keywords
+           '((sequence "TODO(t)" "NEXT(n)" "PROG(p)" "INTR(i)"
+                       "|" "CANCELED(c)" "DONE(d)" "WAITING(w)" "SHELVED(s)")))
+     (setq org-todo-keyword-faces
+           '(("TODO" . org-todo)
+             ("NEXT" . (:foreground "cyan" :weight bold))
+             ("INTR" . org-warning)
+             ("PROG" . (:foreground "green" :weight bold))
+             ("CANCELED" . (:foreground "red" :weight bold))
+             ("WAITING" . (:foreground "yellow" :weight bold))
+             ("SHELVED" . (:foreground "gray" :weight bold))))
+
+     ;; Define the custom capture templates
      (setq org-capture-templates
            '(("t" "Todo" entry (file org-default-notes-file)
               "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
@@ -1183,7 +1236,8 @@ configuration changes.
       to refer to outside of the paper.
       #+BEGIN_SRC emacs-lisp :tangle "bibtex-settings.el"
         (when (eq system-type 'darwin)
-          (setq bib-file '("~/Google Drive/My Drive/research/library.bib")))
+          (setq bib-file '("~/Google Drive/My Drive/research/library.bib"
+                           "~/Documents/zotero/library.bib")))
         (when (eq system-type 'gnu/linux)
           (setq bib-file '("~/GoogleDrive/research/My Library.bib"
                            "~/GoogleDrive/research/library-time_scales.bib"
@@ -1225,7 +1279,8 @@ configuration changes.
           (setq citar-library-paths '("~/GoogleDrive/research"))
           (setq citar-notes-paths '("~/GoogleDrive/research")))
          ((eq system-type 'darwin)
-          (setq citar-library-paths '("~/Google Drive/My Drive/research"))
+          (setq citar-library-paths '("~/Google Drive/My Drive/research"
+                                      "~/Documents/zotero"))
           (setq citar-notes-paths '("~/Google Drive/My Drive/research"))))
 
         ;; On Windows I use JabRef, so I need to tell Citar how to parse JabRef
