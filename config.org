@@ -48,7 +48,7 @@ configuration changes.
      ;; Default to maximized frame.
      (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-        ;;; Avy bindings
+     ;; Avy bindings
      ;; Override smartparens use of "M-j" so I can use it.
      (with-eval-after-load 'smartparens
        (setq sp-override-key-bindings '(("M-j" . avy-goto-char-time)))
@@ -61,11 +61,11 @@ configuration changes.
               ("M-j"     . avy-isearch)))
 
      ;; Casual Suite
-        ;;; See GitHub configuration for suggested org-agenda binds The agenda
-        ;;; and calc packages require the use of transient-define-group which
-        ;;; is not available in the built-in version of transient as of
-        ;;; <2025-06-03 Tue>. Instead, the upgraded version >= 0.9.0 must be
-        ;;; downloaded from MELPA.
+     ;; See GitHub configuration for suggested org-agenda binds The agenda
+     ;; and calc packages require the use of transient-define-group which
+     ;; is not available in the built-in version of transient as of
+     ;; <2025-06-03 Tue>. Instead, the upgraded version >= 0.9.0 must be
+     ;; downloaded from MELPA.
      (require 'casual-agenda)
      (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)
      (keymap-set org-agenda-mode-map "M-j" #'org-agenda-clock-goto) ; optional
@@ -119,6 +119,20 @@ configuration changes.
      (require 'casual-re-builder)
      (keymap-set reb-mode-map "C-o" #'casual-re-builder-tmenu)
      (keymap-set reb-lisp-mode-map "C-o" #'casual-re-builder-tmenu)
+
+     ;; Doom modeline
+     ;; Taken from
+     ;; https://github.com/MatthewZMD/.emacs.d?tab=readme-ov-file#doom-modeline
+     (use-package doom-modeline
+       :custom
+       ;; Don't compact font caches during GC. Windows Laggy Issue
+       (inhibit-compacting-font-caches t)
+       (doom-modeline-minor-modes t)
+       (doom-modeline-icon t)
+       (doom-modeline-major-mode-color-icon t)
+       (doom-modeline-height 15)
+       :config
+       (doom-modeline-mode))
    #+end_src
 ** Keybinds
    We need to tell emacs how to interpret certain keys on MacBook
@@ -517,42 +531,42 @@ configuration changes.
    various file types including =.tex= files.  Another alternative is to use
    =eglot=, which is a built-in package.
    #+begin_src emacs-lisp :tangle "lsp-settings.el"
-        (use-package lsp-mode
-          :init
-          ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-          ;; (setq lsp-keymap-prefix "C-c l")
-          :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-                 (python-mode . lsp-deferred)
-                 (python-ts-mode . lsp-deferred)
-                 (latex-mode . lsp-deferred)
-                 (LaTeX-mode . lsp-deferred)
-                 ;; if you want which-key integration
-                 (lsp-mode . lsp-enable-which-key-integration))
-          :commands lsp
-          :config
-          (setq lsp-pylsp-plugins-black-enabled t))
+     (use-package lsp-mode
+       :init
+       ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+       ;; (setq lsp-keymap-prefix "C-c l")
+       :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+              (python-mode . lsp-deferred)
+              (python-ts-mode . lsp-deferred)
+              (latex-mode . lsp-deferred)
+              (LaTeX-mode . lsp-deferred)
+              ;; if you want which-key integration
+              (lsp-mode . lsp-enable-which-key-integration))
+       :commands lsp
+       :config
+       (setq lsp-pylsp-plugins-black-enabled t))
 
-        ;; optionally
-        (use-package lsp-ui :commands lsp-ui-mode)
-        ;; if you are helm user
-        ;; (use-package helm-lsp :commands helm-lsp-workspace-symbol)
-        ;; if you are ivy user
-        ;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-        ;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+     ;; optionally
+     (use-package lsp-ui :commands lsp-ui-mode)
+     ;; if you are helm user
+     ;; (use-package helm-lsp :commands helm-lsp-workspace-symbol)
+     ;; if you are ivy user
+     ;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+     ;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
-        ;; optionally if you want to use debugger
-        ;; (use-package dap-mode)
-        ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+     ;; optionally if you want to use debugger
+     ;; (use-package dap-mode)
+     ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
-        (use-package which-key
-          :config
-          (which-key-mode))
+     (use-package which-key
+       :config
+       (which-key-mode))
 
-        ;; Set digestif as lsp server
-        (setq lsp-tex-server 'digestif)
+     ;; Set digestif as lsp server
+     (setq lsp-tex-server 'digestif)
 
-        ;; Make Emacs/digestif aware of TeX info paths.
-        (add-to-list 'Info-directory-list "/usr/local/texlive/2024/texmf-dist/doc/info")
+     ;; Make Emacs/digestif aware of TeX info paths.
+     (add-to-list 'Info-directory-list "/usr/local/texlive/2024/texmf-dist/doc/info")
 
      ;; Auto-activate ts-modes when available
      (use-package treesit-auto
@@ -831,24 +845,24 @@ configuration changes.
      other alternatives, it displays the exported result in a buffer."
                (interactive "P")
                (let* ((preferred (last (org-msg-get-prop "alternatives")))
-     	         (alt (caar (org-msg-build-alternatives preferred t))))
+                      (alt (caar (org-msg-build-alternatives preferred t))))
                  (cond ((string= (car alt) "text/html")
-     	           (save-window-excursion
-     	             (let ((browse-url-browser-function (if arg
-     						            'xwidget-webkit-browse-url
-     						          browse-url-browser-function))
-     		           (tmp-file (make-temp-file "org-msg" nil ".html")))
-     	               (with-temp-buffer
-     		         (insert (cdr alt))
-     		         (write-file tmp-file))
+                        (save-window-excursion
+                          (let ((browse-url-browser-function
+                                 (if arg 'xwidget-webkit-browse-url
+                                   browse-url-browser-function))
+                                (tmp-file (make-temp-file "org-msg" nil ".html")))
+                            (with-temp-buffer
+                              (insert (cdr alt))
+                              (write-file tmp-file))
                             (el-patch-swap
-     	                 (browse-url (concat "file://" tmp-file))
+                              (browse-url (concat "file://" tmp-file))
                               (browse-url (concat "file://///wsl.localhost/Ubuntu/" tmp-file)))))
-     	           (t (with-current-buffer (get-buffer-create
-     				            (format "*OrgMsg %s Preview*" (car alt)))
-     	                (delete-region (point-min) (point-max))
-     	                (insert (cdr alt)))
-     	              (display-buffer (current-buffer))))))))))
+                        (t (with-current-buffer
+                               (get-buffer-create (format "*OrgMsg %s Preview*" (car alt)))
+                             (delete-region (point-min) (point-max))
+                             (insert (cdr alt)))
+                           (display-buffer (current-buffer))))))))))
    #+end_src
 ** Python
    Settings for Python programming.  Virtual environments are handled using
