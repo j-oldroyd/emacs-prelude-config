@@ -906,7 +906,7 @@ configuration changes.
        ;; Ensure `text-scale-adjust' scales the header line with the headers themselves
        ;; by ensuring the `default' face is in the inheritance hierarchy.
        (face-remap-add-relative 'header-line '(:inherit (mu4e-header-face
-                                                         default)))
+                                                         default))))
 
        ;; The following is for integrating with org-msg.
        (setq mail-user-agent 'mu4e-user-agent)
