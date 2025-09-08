@@ -21,9 +21,9 @@ configuration changes.
     (let ((inhibit-message t)) ;; Don't show messages from these functions
       (basic-save-buffer)
       (kill-buffer) nil))
-    (add-hook 'org-babel-post-tangle-hook #'my-ensure-lexical-binding-cookie)
+  (add-hook 'org-babel-post-tangle-hook #'my-ensure-lexical-binding-cookie)
 
-    (org-babel-tangle)
+  (org-babel-tangle)
 #+end_src
 
 * General settings and packages
