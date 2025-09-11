@@ -451,6 +451,7 @@ configuration changes.
 
      ;; Enable LaTeX snippets in org-mode.  See
      ;; https://emacs.stackexchange.com/questions/38429/yasnippets-loading-two-major-modes-org-mode-and-latex
+     ;; My snippets are currently in LaTeX-mode, so this might not work...
      (defun my-org-latex-yas ()
        "Activate org and LaTeX yas expansion in org-mode buffers."
        (yas-minor-mode)
@@ -1132,9 +1133,12 @@ configuration changes.
      (require 'lean4-mode)
    #+end_src
 * Org mode
-** UI settings
-   It's easier to read if we limit horizontal text to 80 characters wide. We
+** General UI and edit settings
+   It's easier to read if we limit horizontal text to 80 characters wide.  We
    also want to enable flyspell in Org buffers along with LaTeX previews.
+   CDLaTeX will also be useful for handling \LaTeX code.  Note that \LaTeX
+   snippets have been enabled via an appropriate =.yas-parents= file in
+   =snippets/org-mode=.
    #+begin_src emacs-lisp :tangle "org-settings.el"
      ;; Org mode 80 character limit
      ;; Taken from
@@ -1161,6 +1165,9 @@ configuration changes.
        (plist-put png :latex-compiler '("latex -interaction nonstopmode -output-directory %o %F"))
        (plist-put png :image-converter '("dvipng -D %D -T tight -o %O %F"))
        (plist-put png :transparent-image-converter '("dvipng -D %D -T tight -bg Transparent -o %O %F")))
+
+     ;; Enable CDLaTeX in Org.
+     (add-hook 'org-mode-hook #'turn-on-org-cdlatex)
 
      ;; Set Org-mode indentation
      (setq org-adapt-indentation t)
