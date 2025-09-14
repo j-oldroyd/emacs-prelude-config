@@ -1193,7 +1193,7 @@ configuration changes.
              ("INTR" . org-warning)
              ("PROG" . (:foreground "green" :weight bold))
              ("CANCELED" . (:foreground "red" :weight bold))
-             ("WAITING" . (:foreground "goldenrod" :weight bold))
+             ("WAITING" . (:foreground "yellow" :weight bold))
              ("SHELVED" . (:foreground "gray" :weight bold))))
 
      ;; Define the custom capture templates
