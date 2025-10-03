@@ -777,22 +777,24 @@ configuration changes.
      ;; We need to modify sage-shell to accept filepaths with spaces in their
      ;; names. This appears to require modifying
      ;; sage-shell-sagetex:tex-master-maybe.
-     ;; (advice-add 'sage-shell-sagetex:tex-master-maybe
-     ;;             :around #'my-sage-shell-sagetex:tex-master-maybe)
-     ;; (defun my-sage-shell-sagetex:tex-master-maybe (sage-shell-sagetex:tex-master-maybe f &optional nondir)
-     ;;   (let* ((b (get-file-buffer f))
-     ;;          (tm (when (and (bufferp b)
-     ;;                         (boundp 'TeX-master))
-     ;;                (buffer-local-value 'TeX-master b))))
-     ;;     (let ((ms (cond ((and tm (stringp tm))
-     ;;                      (shell-quote-argument (expand-file-name tm (file-name-directory f))))
-     ;;                     (t f))))
-     ;;       (if nondir (file-name-nondirectory ms)
-     ;;         ms))))
-
      (advice-add 'sage-shell-sagetex:tex-master-maybe
+                 :around #'my-sage-shell-sagetex:tex-master-maybe)
+     (defun my-sage-shell-sagetex:tex-master-maybe (sage-shell-sagetex:tex-master-maybe f &optional nondir)
+       (let* ((b (get-file-buffer f))
+              (tm (when (and (bufferp b)
+                             (boundp 'TeX-master))
+                    (buffer-local-value 'TeX-master b))))
+         (let ((ms (cond ((and tm (stringp tm))
+                          (shell-quote-argument (expand-file-name tm (file-name-directory f))))
+                         (t f))))
+           (if nondir (file-name-nondirectory ms)
+             ms))))
+
+     (advice-add '
+      sage-shell-sagetex:tex-master-maybe
                  :filter-return #'shell-quote-argument)
    #+END_SRC
+
    The above fix for =sage-shell-mode= also requires editing
    =sage-shell-mode.py= within the package since the fix breaks a path
    argument. In particular, we replace ~sage_tex_load~.  =CDLaTeX= also allows
