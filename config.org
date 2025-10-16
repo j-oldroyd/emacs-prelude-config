@@ -1,4 +1,5 @@
 #+TITLE: Jesse Oldroyd's Emacs/Prelude configuration
+#+PROPERTY: header-args :results output silent
 
 This file describes my =Emacs= configuration, which is built on top of
 [[https://github.com/bbatsov/prelude?tab=readme-ov-file][Prelude]]. This file currently focuses on including resources for
@@ -313,8 +314,7 @@ configuration changes.
         '("." . meow-bounds-of-thing)
         '("[" . meow-beginning-of-thing)
         '("]" . meow-end-of-thing)
-        '("/" . avy-goto-char-timer)
-        ;; '("/" . meow-visit)
+        '("/" . meow-visit)
         '("a" . meow-append)
         '("A" . meow-open-below)
         '("b" . meow-back-word)
@@ -323,6 +323,7 @@ configuration changes.
         '("e" . meow-prev)
         '("E" . meow-prev-expand)
         '("f" . meow-find)
+        '("F" . avy-goto-char-timer)
         '("g" . meow-cancel-selection)
         '("G" . meow-grab)
         '("h" . meow-left)
