@@ -61,7 +61,13 @@ configuration changes.
      ;; Default to maximized frame.
      (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-     ;; Avy bindings
+     ;;; Which-key
+     ;; Provide keybinding completions.
+     (use-package which-key
+       :config
+       (which-key-mode))
+
+     ;:; Avy bindings
      ;; Override smartparens use of "M-j" so I can use it.
      (with-eval-after-load 'smartparens
        (setq sp-override-key-bindings '(("M-j" . avy-goto-char-time)))
@@ -73,7 +79,7 @@ configuration changes.
               :map isearch-mode-map
               ("M-j"     . avy-isearch)))
 
-     ;; Casual Suite
+     ;;: Casual Suite
      ;; See GitHub configuration for suggested org-agenda binds The agenda
      ;; and calc packages require the use of transient-define-group which
      ;; is not available in the built-in version of transient as of
@@ -136,7 +142,7 @@ configuration changes.
      (keymap-set reb-mode-map "C-o" #'casual-re-builder-tmenu)
      (keymap-set reb-lisp-mode-map "C-o" #'casual-re-builder-tmenu)
 
-     ;; Doom modeline
+     ;;; Doom modeline
      ;; Taken from
      ;; https://github.com/MatthewZMD/.emacs.d?tab=readme-ov-file#doom-modeline
      (use-package doom-modeline
@@ -658,10 +664,6 @@ configuration changes.
      ;; optionally if you want to use debugger
      ;; (use-package dap-mode)
      ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
-
-     (use-package which-key
-       :config
-       (which-key-mode))
 
      ;; Set digestif as lsp server
      (setq lsp-tex-server 'digestif)
