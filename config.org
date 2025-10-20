@@ -1137,6 +1137,14 @@ configuration changes.
    #+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "lean-settings.el" "no")
      (add-to-list 'load-path "~/.emacs.d/lean4-mode")
      (require 'lean4-mode)
+
+     (use-package lean4-mode
+       :commands lean4-mode
+       :vc (:url "https://github.com/leanprover-community/lean4-mode.git"
+       :rev :last-release
+       ;; Or, if you prefer the bleeding edge version of Lean4-Mode:
+       ;; :rev :newest
+       ))
    #+end_src
 * Org mode
 ** General UI and edit settings
