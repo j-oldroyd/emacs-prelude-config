@@ -1,2 +1,2 @@
 ;; Use custom theme and override Prelude.  -*- lexical-binding: t; -*-
-(setq prelude-theme 'ef-owl)
+(setq prelude-theme 'ef-light)
