@@ -440,8 +440,8 @@ configuration changes.
                  (goto-char minp) t))))
 
          (defun yas-next-field-or-cdlatex nil
-           (interactive)
            "Jump to the next Yas field correctly with cdlatex active."
+           (interactive)
            (if
                (or (bound-and-true-p cdlatex-mode)
                    (bound-and-true-p org-cdlatex-mode))
