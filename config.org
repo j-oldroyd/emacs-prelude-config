@@ -1133,18 +1133,20 @@ configuration changes.
 ** =lean4-mode=
    Lean is an automated theorem prover.  This package provides integration
    between Lean and Emacs.  Note that =lean4-mode= is not on MELPA, and so must
-   be installed manually.
-   #+begin_src emacs-lisp :tangle (if (eq system-type 'darwin) "lean-settings.el" "no")
-     (add-to-list 'load-path "~/.emacs.d/lean4-mode")
-     (require 'lean4-mode)
-
+   be installed manually or with =:vc=.
+   #+begin_src emacs-lisp :tangle "lean-settings.el"
      (use-package lean4-mode
        :commands lean4-mode
        :vc (:url "https://github.com/leanprover-community/lean4-mode.git"
-       :rev :last-release
+                 :rev :last-release)
        ;; Or, if you prefer the bleeding edge version of Lean4-Mode:
        ;; :rev :newest
-       ))
+
+       ;; Disable Crux binding in favor of Lean infoview.
+       :bind (:map prelude-mode-map
+                   ("C-c C-i" . nil))
+       :hook (after-init . lean4-mode)
+       )
    #+end_src
 * Org mode
 ** General UI and edit settings
