@@ -957,9 +957,9 @@ configuration changes.
            org-msg-convert-citation t
            org-msg-signature "
 
-                        ,#+begin_signature
-                        --Jesse
-                        ,#+end_signature"
+          ,#+begin_signature
+          --Jesse
+          ,#+end_signature"
            )
      (org-msg-mode)
 
@@ -974,13 +974,15 @@ configuration changes.
            (with-eval-after-load 'org-msg
              (el-patch-defun org-msg-preview (arg)
                "Export and display the current OrgMsg buffer.
+
      It uses the last alternative of the `alternatives' property as the
-          alternatives should be listed in increasing order of preference.
-          If this alternative is `html' it calls the `browse-url' function to
-          display the exported mail in a web browser.  With the prefix
-          argument ARG set, it calls `xwidget-webkit-browse-url' instead of
-          `browse-url'.  For all other alternatives, it displays the exported
-          result in a buffer."
+     alternatives should be listed in increasing order of
+     preference.  If this alternative is `html' it calls the
+     `browse-url' function to display the exported mail in a
+     web browser.  With the prefix argument ARG set, it calls
+     `xwidget-webkit-browse-url' instead of `browse-url'.  For
+     all other alternatives, it displays the exported result
+     in a buffer."
                (interactive "P")
                (let* ((preferred (last (org-msg-get-prop "alternatives")))
                       (alt (caar (org-msg-build-alternatives preferred t))))
