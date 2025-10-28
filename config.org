@@ -957,9 +957,9 @@ configuration changes.
            org-msg-convert-citation t
            org-msg-signature "
 
-          ,#+begin_signature
-          --Jesse
-          ,#+end_signature"
+     ,#+begin_signature
+     --Jesse
+     ,#+end_signature"
            )
      (org-msg-mode)
 
