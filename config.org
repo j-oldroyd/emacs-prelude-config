@@ -824,7 +824,7 @@ configuration changes.
       ((eq system-type 'darwin)
        (setq mu4e-path (expand-file-name "/opt/homebrew/share/emacs/site-lisp/mu/mu4e")))
       ((eq system-type 'gnu/linux)
-       (setq mu4e-path (expand-file-name "/home/linuxbrew/.linuxbrew/Cellar/mu/1.12.11/share/emacs/site-lisp/mu/mu4e"))))
+       (setq mu4e-path (expand-file-name "/home/linuxbrew/.linuxbrew/Cellar/mu/1.12.13/share/emacs/site-lisp/mu/mu4e"))))
 
      (use-package mu4e
        :load-path  mu4e-path)
