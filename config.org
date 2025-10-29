@@ -852,6 +852,9 @@ configuration changes.
 
      ;; Change HTML display for dark color schemes
      (setq shr-color-visible-luminance-min 80)
+
+     ;; Prevent line breaks in emails.  This can look weird on mobile devices.
+     (setq mu4e-compose-format-flowed t)
    #+end_src
    We also need to configure =mu4e= for multiple accounts. This configuration is
    adapted from [[https://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and/#configuring-mu4e][this blog post]]. It looks like we need to set ~tls_starttls = on~
