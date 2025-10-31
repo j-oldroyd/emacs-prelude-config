@@ -542,6 +542,15 @@ configuration changes.
                 (,(kbd "C-c C-z") . sage-shell-edit:pop-to-process-buffer))))
    #+end_src
 
+** LLM integration
+   Emacs has several packages based around the use of AI/LLMs within Emacs
+   itself.  I make use of karthink's =gptel= [[https://github.com/karthink/gptel][package]] along with Google Gemini.
+   This will require getting an appropriate API key (NOT saved to this repo,
+   obviously).
+   #+begin_src emacs-lisp :tangle "llm-settings.el"
+     (require 'gptel)
+   #+end_src
+
 ** Miscellaneous packages and settings
    Packages that don't fit anywhere else just yet. Note that ~nroff~ errors on
    Windows appear to be caused by the MSYS2 installation of ~aspell~. We need to
@@ -964,6 +973,14 @@ configuration changes.
      --Jesse
      ,#+end_signature"
            )
+
+     ;; Disable fill-paragraph in org-msg to allow mu4e to format=flowed
+     ;; each message.  See relevant documentation in mu4e block.
+     (require 'messages-are-flowing)
+     (add-hook 'org-msg-mode-hook 'turn-off-auto-fill)
+     (add-hook 'org-msg-mode-hook 'visual-line-mode)
+     (add-hook 'org-msg-mode-hook 'messages-are-flowing-use-and-mark-hard-newlines)
+
      (org-msg-mode)
 
      ;; Org-msg be default uses /tmp/ for storing message previews.  This
