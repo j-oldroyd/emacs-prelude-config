@@ -85,6 +85,8 @@ configuration changes.
      ;; is not available in the built-in version of transient as of
      ;; <2025-06-03 Tue>. Instead, the upgraded version >= 0.9.0 must be
      ;; downloaded from MELPA.
+     (use-package casual
+       :ensure t)
      (require 'casual-agenda)
      (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)
      (keymap-set org-agenda-mode-map "M-j" #'org-agenda-clock-goto) ; optional
@@ -588,7 +590,8 @@ configuration changes.
      ;;   )
 
      ;; Create nice html exports of buffers
-     (use-package htmlize)
+     (use-package htmlize
+       :ensure t)
 
      ;; Install vundo package for visual undo framework.
      (use-package vundo
@@ -636,6 +639,11 @@ configuration changes.
      ;; Black (for Python) and latexindent (for LaTeX)
      (use-package format-all
        :bind ("C-c M-i" . format-all-buffer))
+
+     ;; This package is useful for patching other packages.  I currently
+     ;; need it for patching org-msg on WSL.
+     (use-package el-patch
+       :ensure t)
    #+end_src
 
    #+RESULTS:
@@ -682,6 +690,7 @@ configuration changes.
 
      ;; Auto-activate ts-modes when available
      (use-package treesit-auto
+       :ensure t
        :custom
        (treesit-auto-install 'prompt)
        :config
@@ -833,7 +842,7 @@ configuration changes.
       ((eq system-type 'darwin)
        (setq mu4e-path (expand-file-name "/opt/homebrew/share/emacs/site-lisp/mu/mu4e")))
       ((eq system-type 'gnu/linux)
-       (setq mu4e-path (expand-file-name "/home/linuxbrew/.linuxbrew/Cellar/mu/1.12.13/share/emacs/site-lisp/mu/mu4e"))))
+       (setq mu4e-path (expand-file-name "/usr/local/share/emacs/site-lisp/mu4e"))))
 
      (use-package mu4e
        :load-path  mu4e-path)
@@ -957,7 +966,9 @@ configuration changes.
      ;; The following is for integrating with org-msg.
      (setq mail-user-agent 'mu4e-user-agent)
      ;; Config taken from org-msg github page.
-     (require 'org-msg)
+     (use-package org-msg
+       :ensure t)
+
      (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
            org-msg-startup "hidestars indent inlineimages"
            org-msg-greeting-fmt "\nHi%s,\n\n"
@@ -1034,9 +1045,8 @@ configuration changes.
    as described [[https://emacs.stackexchange.com/questions/76652/overlay-makes-text-unreadable-where-does-it-come-from-overlay-face-is-undef][here]], but the jist is that we need to alter the ~bg:ansiyellow~
    setting in =core/ultrab.py=.
    #+begin_src emacs-lisp :tangle "python-settings.el"
-     (use-package pyvenv
-       :ensure nil
-       )
+     ;; (use-package pyvenv
+     ;;   :ensure nil)
 
      (use-package python
        :ensure nil
@@ -1382,7 +1392,8 @@ configuration changes.
                "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
                "#+title: ${citar-citekey} (${citar-date}). ${note-title}.\n#+created: %U\n#+last_modified: %U\n\n* Main idea(s)\n* Key results\n* Questions")
               :unnarrowed t)))
-     (use-package org-noter)
+     (use-package org-noter
+       :ensure t)
    #+END_SRC
 
 ** BibTeX
@@ -1433,6 +1444,7 @@ configuration changes.
           (org-mode . citar-capf-setup))
 
         (use-package citar-org-roam
+          :ensure t
           :after (org-roam citar)
           :config (citar-org-roam-mode))
 
@@ -1440,6 +1452,7 @@ configuration changes.
         (setq citar-org-roam-capture-template-key "n")
 
         (use-package citar-embark
+          :ensure t
           :after (citar embark)
           :no-require
           :config (citar-embark-mode))
@@ -1520,7 +1533,8 @@ configuration changes.
     navigating to =http://localhost:8080/imp=.  The configuration below (copied
     from the =init.el= gist [[https://gist.github.com/tylerjl][here]])
     #+begin_src emacs-lisp :tangle "org-export-settings.el"
-      (use-package impatient-mode)
+      (use-package impatient-mode
+        :ensure t)
 
       (define-minor-mode tjl/md-preview-mode
         "Toggles live markdown preview using impatient-mode"
@@ -1559,8 +1573,6 @@ configuration changes.
          (current-buffer)))
     #+end_src
 
-    #+RESULTS:
-    : tjl/markdown-filter
 ** Export settings
 * Packages to consider adding
 ** =elfeed=
