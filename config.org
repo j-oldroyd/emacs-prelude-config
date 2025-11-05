@@ -50,8 +50,8 @@ configuration changes.
      (global-hl-line-mode 1)
      (set-face-foreground 'highlight nil)
 
-     ;; Prelude hides the toolbar, so turn it back on.
-     (tool-bar-mode 1)
+     ;; Prelude hides the toolbar, so turn it back on with code below.
+     ;; (tool-bar-mode 1)
 
      ;; Default to fullscreen. Taken from
      ;; https://stackoverflow.com/questions/78245398/how-can-i-make-emacsclient-open-in-native-fullscreen-every-time-i-launch-it-fr
@@ -61,13 +61,13 @@ configuration changes.
      ;; Default to maximized frame.
      (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
-     ;;; Which-key
+     ;;: Which-key
      ;; Provide keybinding completions.
      (use-package which-key
        :config
        (which-key-mode))
 
-     ;:; Avy bindings
+     ;;: Avy bindings
      ;; Override smartparens use of "M-j" so I can use it.
      (with-eval-after-load 'smartparens
        (setq sp-override-key-bindings '(("M-j" . avy-goto-char-time)))
@@ -144,7 +144,7 @@ configuration changes.
      (keymap-set reb-mode-map "C-o" #'casual-re-builder-tmenu)
      (keymap-set reb-lisp-mode-map "C-o" #'casual-re-builder-tmenu)
 
-     ;;; Doom modeline
+     ;;: Doom modeline
      ;; Taken from
      ;; https://github.com/MatthewZMD/.emacs.d?tab=readme-ov-file#doom-modeline
      (use-package doom-modeline
@@ -157,6 +157,13 @@ configuration changes.
        (doom-modeline-height 15)
        :config
        (doom-modeline-mode))
+
+     ;;: Scrolling
+     ;;Later versions of Emacs support pixel scrolling, so we
+     ;; can make use of that.  This is WSL specific since emacs-mac has its
+     ;; own scrolling setup.
+     (when (eq system-type 'gnu/linux)
+       (pixel-scroll-precision-mode 1))
    #+end_src
 ** Keybinds
    We need to tell emacs how to interpret certain keys on MacBook
@@ -985,6 +992,8 @@ configuration changes.
      ,#+end_signature"
            )
 
+     (add-hook 'message-mode-hook 'org-msg-mode)
+
      ;; Disable fill-paragraph in org-msg to allow mu4e to format=flowed
      ;; each message.  See relevant documentation in mu4e block.
      (require 'messages-are-flowing)
@@ -992,7 +1001,6 @@ configuration changes.
      (add-hook 'org-msg-mode-hook 'visual-line-mode)
      (add-hook 'org-msg-mode-hook 'messages-are-flowing-use-and-mark-hard-newlines)
 
-     (org-msg-mode)
 
      ;; Org-msg be default uses /tmp/ for storing message previews.  This
      ;; is normally not a problem, except that I sometimes use WSL with my
