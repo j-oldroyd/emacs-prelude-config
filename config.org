@@ -870,7 +870,7 @@ configuration changes.
 
      ;; save attachment to desktop by default
      ;; or another choice of yours:
-     (setq mu4e-attachment-dir "~/Desktop")
+     (setq mu4e-attachment-dir "~/attachments")
 
      ;; rename files when moving - needed for mbsync:
      (setq mu4e-change-filenames-when-moving t)
