@@ -1,4 +1,4 @@
-#+TITLE: Jesse Oldroyd's Emacs/Prelude configuration
+#+TITLE: Emacs/Prelude configuration
 #+PROPERTY: header-args :results output silent
 
 This file describes my =Emacs= configuration, which is built on top of
@@ -11,7 +11,21 @@ files instead of loading one potentially large ~.org~ file.  See [[https://githu
 Github page]].  This command needs to be re-run each time the
 configuration changes.
 
-#+begin_src emacs-lisp :tangle "no" :results none
+I use build Emacs myself.  This process is relatively painless, and I use the
+following commands (after cloning Emacs from an appropriate repo, such as
+=emacs-mirror= on GitHub):
+#+begin_src bash :tangle "no" :results code
+  # From within emacs/
+  ./autogen.sh
+  ./configure --with-native-compilation --with-tree-sitter \
+              --without-compress-install --with-imagemagick \
+              --with-mailutils --with-xml2
+#+end_src
+See also [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mastering Emacs]] for a good breakdown of this process.
+
+The following block must be evaluated each time the configuration is updated, as
+it produces the actual =.el= files required for my Emacs configuration.
+#+begin_src emacs-lisp :tangle "no" :results code
   ;; Add lexical binding to tangled files.  Taken from
   ;; https://emacs.stackexchange.com/questions/81540/lexical-binding-in-a-tangled-init-el-file
   (defun my-ensure-lexical-binding-cookie()
@@ -652,8 +666,6 @@ configuration changes.
      (use-package el-patch
        :ensure t)
    #+end_src
-
-   #+RESULTS:
 
 * Enhancing modes for files
   The packages here improve/replace how emacs handles certain files.
