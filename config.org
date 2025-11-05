@@ -1084,6 +1084,7 @@ configuration changes.
    provided configuration for =hledger-mode=.
    #+begin_src emacs-lisp :tangle "accounting.el"
      (use-package hledger-mode
+       :ensure t
        :mode ("\\.journal\\'" "\\.hledger\\'")
        :commands hledger-enable-reporting
        :preface
@@ -1144,6 +1145,7 @@ configuration changes.
                    (add-to-list 'company-backends 'hledger-company))))
 
      (use-package hledger-input
+       :ensure t
        :preface
        (defun popup-balance-at-point ()
          "Show balance for account at point in a popup."
@@ -1206,6 +1208,18 @@ configuration changes.
                    ("C-c C-i" . nil))
        :hook (after-init . lean4-mode)
        )
+   #+end_src
+** EPUB files
+   We can read EPUB files in Emacs using =nov.el=, a [[https://depp.brause.cc/nov.el/][major mode]].  The
+   configuration here is adapted from the suggestions on the website.
+   #+begin_src emacs-lisp :tangle "epub-settings.el"
+     (use-package nov
+       :ensure t
+       :custom
+       (nov-text-width t)
+       :hook
+       (after-init . visual-line-mode)
+       (after-init . visual-fill-column-mode))
    #+end_src
 * Org mode
 ** General UI and edit settings
