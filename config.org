@@ -1158,25 +1158,25 @@ it produces the actual =.el= files required for my Emacs configuration.
                    (make-local-variable 'company-backends)
                    (add-to-list 'company-backends 'hledger-company))))
 
-     (use-package hledger-input
-       :ensure t
-       :preface
-       (defun popup-balance-at-point ()
-         "Show balance for account at point in a popup."
-         (interactive)
-         (if-let ((account (thing-at-point 'hledger-account)))
-             (message (hledger-shell-command-to-string
-                       (format " balance -N %s " account)))
-           (message "No account at point")))
+     ;; (use-package hledger-input
+     ;;   :ensure t
+     ;;   :preface
+     ;;   (defun popup-balance-at-point ()
+     ;;     "Show balance for account at point in a popup."
+     ;;     (interactive)
+     ;;     (if-let ((account (thing-at-point 'hledger-account)))
+     ;;         (message (hledger-shell-command-to-string
+     ;;                   (format " balance -N %s " account)))
+     ;;       (message "No account at point")))
 
-       :config
-       (setq hledger-input-buffer-height 20)
-       (add-hook 'hledger-input-post-commit-hook #'hledger-show-new-balances)
-       (add-hook 'hledger-input-mode-hook #'auto-fill-mode)
-       (add-hook 'hledger-input-mode-hook
-                 (lambda ()
-                   (make-local-variable 'company-idle-delay)
-                   (setq-local company-idle-delay 0.1))))
+     ;;   :config
+     ;;   (setq hledger-input-buffer-height 20)
+     ;;   (add-hook 'hledger-input-post-commit-hook #'hledger-show-new-balances)
+     ;;   (add-hook 'hledger-input-mode-hook #'auto-fill-mode)
+     ;;   (add-hook 'hledger-input-mode-hook
+     ;;             (lambda ()
+     ;;               (make-local-variable 'company-idle-delay)
+     ;;               (setq-local company-idle-delay 0.1))))
    #+end_src
 
 ** Magit
