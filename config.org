@@ -1228,13 +1228,12 @@ it produces the actual =.el= files required for my Emacs configuration.
    configuration here is adapted from the suggestions on the website.
    #+begin_src emacs-lisp :tangle "epub-settings.el"
      (use-package nov
-       :ensure t
-       :custom
-       (nov-text-width t)
-       :hook
-       (after-init . visual-line-mode)
-       (after-init . visual-fill-column-mode))
+       :ensure t)
 
+     (add-hook 'nov-mode-hook 'visual-line-mode)
+     (add-hook 'nov-mode-hook 'visual-fill-column-mode)
+     (add-hook 'nov-mode-hook 'visual-line-mode)
+     (add-hook 'nov-mode-hook 'visual-fill-column-mode)
      (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
    #+end_src
 * Org mode
