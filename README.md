@@ -1,0 +1,1801 @@
+
+# Table of Contents
+
+1.  [General settings and packages](#orgc901943)
+    1.  [`Emacs` settings](#org31d135b)
+    2.  [UI and navigation settings](#orgf877eb0)
+    3.  [Keybinds](#orga0da674)
+    4.  [Completion and templates/snippets](#orgc2076bd)
+    5.  [Shells](#org8e84362)
+    6.  [LLM integration](#org55adacc)
+    7.  [Miscellaneous packages and settings](#orgd36b7cf)
+2.  [Enhancing modes for files](#org36ab9e6)
+    1.  [Language server protocol](#org43d960e)
+    2.  [PDF-tools](#orgdb5b639)
+    3.  [AUCTeX](#org5d54cfb)
+    4.  [`mu4e`](#org859bbe5)
+    5.  [Python](#org76ddcf9)
+    6.  [`hledger`](#org7333d33)
+    7.  [Magit](#orgcd9f7bb)
+    8.  [PreTeXt](#org894af1c)
+    9.  [`lean4-mode`](#orgcac4b9d)
+    10. [EPUB files](#orgc7bbdcc)
+3.  [Org mode](#org9154eab)
+    1.  [General UI and edit settings](#org260da48)
+    2.  [Agenda and capture settings](#orge84fcc7)
+    3.  [Calendar and diary settings](#org650809e)
+    4.  [Note-taking](#org79840a1)
+    5.  [BibTeX](#org3ce50cc)
+    6.  [`org-babel` settings](#org5d5e3e3)
+        1.  [Tangle settings](#orgb5d011f)
+        2.  [`ox-hugo`](#org3d4463d)
+        3.  [`impatient-mode`](#orga0caedf)
+    7.  [Export settings](#org2e85bb6)
+4.  [Packages to consider adding](#org6b45d31)
+    1.  [`elfeed`](#orga2b3b57)
+    2.  [`org-reveal`](#orgfeea712)
+    3.  [`matlab=mode`](#org06b6ed3)
+    4.  [`org-super-agenda`](#org95b6274)
+
+This file describes my `Emacs` configuration, which is built on top of
+[Prelude](https://github.com/bbatsov/prelude?tab=readme-ov-file). This file currently focuses on including resources for
+creating notes with Org mode, particularly via `org-noter` and
+`org-roam`. Support for BibTeX will be provided by [`citar`](https://github.com/emacs-citar/citar?tab=readme-ov-file),
+[`citar-org-roam`](https://github.com/emacs-citar/citar-org-roam) and `org-cite`.  This is also based in part on Prot's
+Emacs configuration, which uses `org-babel-tangle` to produce `.el`
+files instead of loading one potentially large `.org` file.  See [this
+Github page](https://github.com/protesilaos/dotfiles/blob/master/emacs/.emacs.d/prot-emacs.org).  This command needs to be re-run each time the
+configuration changes.
+
+The following block must be evaluated each time the configuration is updated, as
+it produces the actual `.el` files required for my Emacs configuration.
+
+    ;; Add lexical binding to tangled files.  Taken from
+    ;; https://emacs.stackexchange.com/questions/81540/lexical-binding-in-a-tangled-init-el-file
+    (defun my-ensure-lexical-binding-cookie()
+        (goto-char(point-min)) ;; beginning of tangled code
+      (insert ";; -*- coding: utf-8; lexical-binding: t -*-")
+      (newline)
+      (newline)
+      (let ((inhibit-message t)) ;; Don't show messages from these functions
+        (basic-save-buffer)
+        (kill-buffer) nil))
+    (add-hook 'org-babel-post-tangle-hook #'my-ensure-lexical-binding-cookie)
+    
+    (org-babel-tangle)
+    
+    (org-export-to-file 'md "README.md")
+
+I use Emacs with native compilation myself.  This process is relatively
+painless, and I use the following commands after cloning Emacs from an
+appropriate repo, such as [`emacs-mirror`](https://github.com/emacs-mirror/emacs) on GitHub, although I'm considering
+switching to this modified [`emacs-mac`](https://github.com/jdtsmith/emacs-mac) build on macOS:
+
+    # From within emacs/
+    ./autogen.sh
+    ./configure --with-native-compilation --with-tree-sitter \
+                --without-compress-install --with-imagemagick \
+                --with-mailutils --with-xml2
+    make -j8 # or some other appropriate number of cores
+    sudo make install
+
+See [Mastering Emacs](https://www.masteringemacs.org/article/how-to-get-started-tree-sitter) for a good breakdown of this process.
+
+
+<a id="orgc901943"></a>
+
+# General settings and packages
+
+
+<a id="org31d135b"></a>
+
+## `Emacs` settings
+
+General settings for `emacs`.
+
+    ;; On Windows, commands like rgrep appear to use the wrong "find" command:
+    ;; https://stackoverflow.com/questions/3918341/find-parameter-format-not-correct
+    (when (eq system-type 'windows-nt)
+      (setq find-program "C:\\msys64\\usr\\bin\\find.exe"))
+    
+    ;; Move deleted files to trash in Dired instead of deleting them outright.
+    (setq delete-by-moving-to-trash t)
+    (if (eq system-type 'darwin)
+        (setq trash-directory "~/.Trash"))
+
+
+<a id="orgf877eb0"></a>
+
+## UI and navigation settings
+
+See karthink's [blog post](https://karthinks.com/software/avy-can-do-anything/) for ideas on using Avy and its associated
+commands.  I'm also including `casual` for its menus, which are based on
+`transient`.
+
+    ;; Enables highlighted lines.
+    (global-hl-line-mode 1)
+    (set-face-foreground 'highlight nil)
+    
+    ;; Prelude hides the toolbar, so turn it back on with code below.
+    ;; (tool-bar-mode 1)
+    
+    ;; Default to fullscreen. Taken from
+    ;; https://stackoverflow.com/questions/78245398/how-can-i-make-emacsclient-open-in-native-fullscreen-every-time-i-launch-it-fr
+    ;; (setq ns-use-native-fullscreen :true)
+    ;; (add-to-list 'default-frame-alist '(fullscreen . fullscreen))
+    
+    ;; Default to maximized frame.
+    (add-to-list 'default-frame-alist '(fullscreen . maximized))
+    
+    ;;: Which-key
+    ;; Provide keybinding completions.
+    (use-package which-key
+      :config
+      (which-key-mode))
+    
+    ;;: Avy bindings
+    ;; Override smartparens use of "M-j" so I can use it.
+    (with-eval-after-load 'smartparens
+      (setq sp-override-key-bindings '(("M-j" . avy-goto-char-time)))
+      (sp--update-override-key-bindings))
+    
+    (use-package avy
+      :ensure t
+      :bind (("M-j"   .   avy-goto-char-timer)
+             :map isearch-mode-map
+             ("M-j"     . avy-isearch)))
+    
+    ;;: Casual Suite
+    ;; See GitHub configuration for suggested org-agenda binds The agenda
+    ;; and calc packages require the use of transient-define-group which
+    ;; is not available in the built-in version of transient as of
+    ;; <2025-06-03 Tue>. Instead, the upgraded version >= 0.9.0 must be
+    ;; downloaded from MELPA.
+    (use-package casual
+      :ensure t)
+    (require 'casual-agenda)
+    (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)
+    (keymap-set org-agenda-mode-map "M-j" #'org-agenda-clock-goto) ; optional
+    (keymap-set org-agenda-mode-map "J" #'bookmark-jump) ; optional
+    
+    (require 'casual-bookmarks)
+    (keymap-set bookmark-bmenu-mode-map "C-o" #'casual-bookmarks-tmenu)
+    (keymap-set bookmark-bmenu-mode-map "J" #'bookmark-jump)
+    (easy-menu-add-item global-map '(menu-bar)
+                        casual-bookmarks-main-menu
+                        "Tools")
+    (add-hook 'bookmark-bmenu-mode-hook #'hl-line-mode)
+    
+    (require 'casual-calc)
+    (keymap-set calc-mode-map "C-o" #'casual-calc-tmenu)
+    (keymap-set calc-alg-map "C-o" #'casual-calc-tmenu)
+    
+    (require 'casual-calendar)
+    (keymap-set calendar-mode-map "C-o" #'casual-calendar)
+    
+    (require 'casual-dired) ; optional if using autoloaded menu
+    (keymap-set dired-mode-map "C-o" #'casual-dired-tmenu)
+    
+    (require 'casual-ibuffer)
+    (keymap-set ibuffer-mode-map "C-o" #'casual-ibuffer-tmenu)
+    (keymap-set ibuffer-mode-map "F" #'casual-ibuffer-filter-tmenu)
+    (keymap-set ibuffer-mode-map "s" #'casual-ibuffer-sortby-tmenu)
+    ;; # Info
+    (require 'casual-info)
+    (keymap-set Info-mode-map "C-o" #'casual-info-tmenu)
+    ;; Use web-browser history navigation bindings
+    (keymap-set Info-mode-map "M-[" #'Info-history-back)
+    (keymap-set Info-mode-map "M-]" #'Info-history-forward)
+    ;; Bind p and n to paragraph navigation
+    (keymap-set Info-mode-map "p" #'casual-info-browse-backward-paragraph)
+    (keymap-set Info-mode-map "n" #'casual-info-browse-forward-paragraph)
+    ;; Bind h and l to navigate to previous and next nodes
+    ;; Bind j and k to navigate to next and previous references
+    (keymap-set Info-mode-map "h" #'Info-prev)
+    (keymap-set Info-mode-map "j" #'Info-next-reference)
+    (keymap-set Info-mode-map "k" #'Info-prev-reference)
+    (keymap-set Info-mode-map "l" #'Info-next)
+    ;; Bind / to search
+    (keymap-set Info-mode-map "/" #'Info-search)
+    ;; Set Bookmark
+    (keymap-set Info-mode-map "B" #'bookmark-set)
+    
+    (add-hook 'Info-mode-hook #'hl-line-mode)
+    (add-hook 'Info-mode-hook #'scroll-lock-mode)
+    
+    (require 'casual-isearch)
+    (keymap-set isearch-mode-map "C-o" #'casual-isearch-tmenu)
+    
+    (require 'casual-re-builder)
+    (keymap-set reb-mode-map "C-o" #'casual-re-builder-tmenu)
+    (keymap-set reb-lisp-mode-map "C-o" #'casual-re-builder-tmenu)
+    
+    ;;: Doom modeline
+    ;; Taken from
+    ;; https://github.com/MatthewZMD/.emacs.d?tab=readme-ov-file#doom-modeline
+    (use-package doom-modeline
+      :custom
+      ;; Don't compact font caches during GC. Windows Laggy Issue
+      (inhibit-compacting-font-caches t)
+      (doom-modeline-minor-modes t)
+      (doom-modeline-icon t)
+      (doom-modeline-major-mode-color-icon t)
+      (doom-modeline-height 15)
+      :config
+      (doom-modeline-mode))
+    
+    ;;: Scrolling
+    ;;Later versions of Emacs support pixel scrolling, so we
+    ;; can make use of that.  This is WSL specific since emacs-mac has its
+    ;; own scrolling setup.
+    (when (eq system-type 'gnu/linux)
+      (pixel-scroll-precision-mode 1))
+
+
+<a id="orga0da674"></a>
+
+## Keybinds
+
+We need to tell emacs how to interpret certain keys on MacBook
+keyboards. While we're at it, we'll set up some useful keybinds for moving
+through paragraphs.  Of particular note here is the use of [meow-mode](https://github.com/meow-edit/meow/tree/master) for
+modal editing.  This mode has several minor modes associated with it and
+default minor modes can be set via the `meow-mode-state-list` variable.
+
+    ;; macOS bindings assume use of karabiner to remap caps lock and
+    ;; return to control.  Note that Prelude already defines the fn key to
+    ;; act as a hyper key, and that control cannot be rebound without
+    ;; overwriting karabiner binds.
+    (when (eq system-type 'darwin)
+      (setq mac-command-modifier 'meta
+            ;; mac-command-modifier 'hyper
+            mac-option-modifier 'super
+            mac-control-modifier 'control))
+    
+    (global-set-key "\M-p" 'backward-paragraph)
+    (global-set-key "\M-n" 'forward-paragraph)
+    
+    ;; Prelude uses S-arrow for windmove keybindings which conflicts with org-mode
+    ;; basics. Therefore we use C-arrow prefix instead. On macOS this appears to
+    ;; only work with right-command, as left-control (on laptop) has different
+    ;; result.
+    (windmove-default-keybindings 'ctrl)
+    
+    ;; For use with MacBook trackpad. This allows the track pad to be used with
+    ;; fly spell-mode. This uses Option+click for Mouse-2 and Cmd+click for
+    ;; mouse-3.
+    (setq mac-emulate-three-button-mouse t)
+    
+    ;; Meow-mode setup.
+    ;; (require 'meow)
+    (use-package meow
+      :ensure t
+      :custom (meow-expand-hint-remove-delay 2.0))
+    
+    (defun meow-setup ()
+      (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+      (meow-motion-define-key
+       '("j" . meow-next)
+       '("k" . meow-prev)
+       '("/" . consult-line))
+      '("<escape>" . ignore)
+      (meow-leader-define-key
+       ;; SPC j/k will run the original command in MOTION state.
+       '("j" . "H-j")
+       '("k" . "H-k")
+       '("/" . "H-/")
+       ;; Use SPC (0-9) for digit arguments.
+       '("1" . meow-digit-argument)
+       '("2" . meow-digit-argument)
+       '("3" . meow-digit-argument)
+       '("4" . meow-digit-argument)
+       '("5" . meow-digit-argument)
+       '("6" . meow-digit-argument)
+       '("7" . meow-digit-argument)
+       '("8" . meow-digit-argument)
+       '("9" . meow-digit-argument)
+       '("0" . meow-digit-argument)
+       '("/" . meow-keypad-describe-key)
+       '("?" . meow-cheatsheet))
+      (meow-normal-define-key
+       '("0" . meow-expand-0)
+       '("9" . meow-expand-9)
+       '("8" . meow-expand-8)
+       '("7" . meow-expand-7)
+       '("6" . meow-expand-6)
+       '("5" . meow-expand-5)
+       '("4" . meow-expand-4)
+       '("3" . meow-expand-3)
+       '("2" . meow-expand-2)
+       '("1" . meow-expand-1)
+       '("-" . negative-argument)
+       '(";" . meow-reverse)
+       '("," . meow-inner-of-thing)
+       '("." . meow-bounds-of-thing)
+       '("[" . meow-beginning-of-thing)
+       '("]" . meow-end-of-thing)
+       '("a" . meow-append)
+       '("A" . meow-open-below)
+       '("b" . meow-back-word)
+       '("B" . meow-back-symbol)
+       '("c" . meow-change)
+       '("d" . meow-delete)
+       '("D" . meow-backward-delete)
+       '("e" . meow-next-word)
+       '("E" . meow-next-symbol)
+       '("f" . meow-find)
+       '("F" . avy-goto-char-timer)
+       '("g" . meow-cancel-selection)
+       '("G" . meow-grab)
+       '("h" . meow-left)
+       '("H" . meow-left-expand)
+       '("i" . meow-insert)
+       '("I" . meow-open-above)
+       '("j" . meow-next)
+       '("J" . meow-next-expand)
+       '("k" . meow-prev)
+       '("K" . meow-prev-expand)
+       '("l" . meow-right)
+       '("L" . meow-right-expand)
+       '("m" . meow-join)
+       '("n" . meow-search)
+       '("o" . meow-block)
+       '("O" . meow-to-block)
+       '("p" . meow-yank)
+       '("q" . meow-quit)
+       '("Q" . meow-goto-line)
+       '("r" . meow-replace)
+       '("R" . meow-swap-grab)
+       '("s" . meow-kill)
+       '("t" . meow-till)
+       '("u" . meow-undo)
+       '("U" . meow-undo-in-selection)
+       '("v" . meow-visit)
+       '("w" . meow-mark-word)
+       '("W" . meow-mark-symbol)
+       '("x" . meow-line)
+       '("X" . meow-goto-line)
+       '("y" . meow-save)
+       '("Y" . meow-sync-grab)
+       '("z" . meow-pop-selection)
+       '("/" . avy-goto-char-timer)
+       '("'" . repeat)
+       '("<escape>" . ignore)))
+    
+    ;; Testing out Colemak on my Mac
+    (defun meow-setup-colemak ()
+      (setq meow-cheatsheet-layout meow-cheatsheet-layout-colemak)
+      (meow-motion-define-key
+       ;; Use e to move up, n to move down.
+       ;; Since special modes usually use n to move down, we only overwrite e here.
+       '("e" . meow-prev)
+       '("<escape>" . ignore))
+      (meow-leader-define-key
+       '("?" . meow-cheatsheet)
+       '("1" . meow-digit-argument)
+       '("2" . meow-digit-argument)
+       '("3" . meow-digit-argument)
+       '("4" . meow-digit-argument)
+       '("5" . meow-digit-argument)
+       '("6" . meow-digit-argument)
+       '("7" . meow-digit-argument)
+       '("8" . meow-digit-argument)
+       '("9" . meow-digit-argument)
+       '("0" . meow-digit-argument))
+      (meow-normal-define-key
+       '("0" . meow-expand-0)
+       '("1" . meow-expand-1)
+       '("2" . meow-expand-2)
+       '("3" . meow-expand-3)
+       '("4" . meow-expand-4)
+       '("5" . meow-expand-5)
+       '("6" . meow-expand-6)
+       '("7" . meow-expand-7)
+       '("8" . meow-expand-8)
+       '("9" . meow-expand-9)
+       '("-" . negative-argument)
+       '(";" . meow-reverse)
+       '("," . meow-inner-of-thing)
+       '("." . meow-bounds-of-thing)
+       '("[" . meow-beginning-of-thing)
+       '("]" . meow-end-of-thing)
+       '("/" . meow-visit)
+       '("a" . meow-append)
+       '("A" . meow-open-below)
+       '("b" . meow-back-word)
+       '("B" . meow-back-symbol)
+       '("c" . meow-change)
+       '("e" . meow-prev)
+       '("E" . meow-prev-expand)
+       '("f" . meow-find)
+       '("F" . avy-goto-char-timer)
+       '("g" . meow-cancel-selection)
+       '("G" . meow-grab)
+       '("h" . meow-left)
+       '("H" . meow-left-expand)
+       '("i" . meow-right)
+       '("I" . meow-right-expand)
+       '("j" . meow-join)
+       '("k" . meow-kill)
+       '("l" . meow-line)
+       '("L" . meow-goto-line)
+       '("m" . meow-mark-word)
+       '("M" . meow-mark-symbol)
+       '("n" . meow-next)
+       '("N" . meow-next-expand)
+       '("o" . meow-block)
+       '("O" . meow-to-block)
+       '("p" . meow-yank)
+       '("q" . meow-quit)
+       '("r" . meow-replace)
+       '("s" . meow-insert)
+       '("S" . meow-open-above)
+       '("t" . meow-till)
+       '("u" . meow-undo)
+       '("U" . meow-undo-in-selection)
+       '("v" . meow-search)
+       '("w" . meow-next-word)
+       '("W" . meow-next-symbol)
+       '("x" . meow-delete)
+       '("X" . meow-backward-delete)
+       '("y" . meow-save)
+       '("z" . meow-pop-selection)
+       '("'" . repeat)
+       '("<escape>" . ignore)))
+    
+    ;; Meow hints are disabled in Org mode by default. Since I only use
+    ;; fixed-width fonts and the same size, this shouldn't be an
+    ;; issue. This can be done by removing org-mode from the variable
+    ;; meow-expand-exclude-mode-list.
+    
+    ;; LaTeX settings for meow. Taken from
+    ;; https://aatmunbaxi.netlify.app/comp/configuring_meow_friendly_latex/
+    (meow-thing-register 'inline-math
+                         '(pair ("\\(") ("\\)"))
+                         '(pair ("\\(") ("\\)") ) )
+    
+    (add-to-list 'meow-char-thing-table '(?m . inline-math))
+    
+    (cond
+     ((eq system-type 'darwin) (meow-setup-colemak))
+     ((eq system-type 'gnu/linux) (meow-setup)))
+    
+    (meow-global-mode 1)
+
+
+<a id="orgc2076bd"></a>
+
+## Completion and templates/snippets
+
+We use `vertico` and `yasnippet` from Prelude. These might be redundant.  I'm
+also using Marginalia to provide `marginalia-mode` to provide more
+information on completions. On top of this, I include Embark for the
+`embark-act` function. This also needs to be integrated with Consult which is
+provided by Prelude. The configuration for both of these is the suggested
+config on GitHub.
+
+    ;; Configure directory extension for vertico to look more like ido.
+    (use-package vertico-directory
+      :after vertico
+      :ensure nil
+      ;; More convenient directory navigation commands
+      :bind (:map vertico-map
+                  ("RET" . vertico-directory-enter)
+                  ("DEL" . vertico-directory-delete-char)
+                  ("M-DEL" . vertico-directory-delete-word))
+      ;; Tidy shadowed file names
+      :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+    
+    ;; Enable YASnippet.
+    (use-package yasnippet
+      :ensure t)
+    (yas-global-mode 1)
+    
+    ;; karthink's code for integrating CDLaTeX with YASnippet.  Taken from
+    ;; https://gist.github.com/karthink/7d89df35ee9b7ac0c93d0177b862dadb
+    (use-package cdlatex
+      :hook ((cdlatex-tab . yas-expand)
+             (cdlatex-tab . cdlatex-in-yas-field))
+      :config
+      (use-package yasnippet
+        :bind (:map yas-keymap
+                    ("<tab>" . yas-next-field-or-cdlatex)
+                    ("TAB" . yas-next-field-or-cdlatex))
+        :config
+        (defun cdlatex-in-yas-field ()
+          ;; Check if we're at the end of the Yas field
+          (when-let* ((_ (overlayp yas--active-field-overlay))
+                      (end (overlay-end yas--active-field-overlay)))
+            (if (>= (point) end)
+                ;; Call yas-next-field if cdlatex can't expand here
+                (let ((s (thing-at-point 'sexp)))
+                  (unless (and s (assoc (substring-no-properties s)
+                                        cdlatex-command-alist-comb))
+                    (yas-next-field-or-maybe-expand)
+                    t))
+              ;; otherwise expand and jump to the correct location
+              (let (cdlatex-tab-hook minp)
+                (setq minp
+                      (min (save-excursion (cdlatex-tab)
+                                           (point))
+                           (overlay-end yas--active-field-overlay)))
+                (goto-char minp) t))))
+    
+        (defun yas-next-field-or-cdlatex nil
+          "Jump to the next Yas field correctly with cdlatex active."
+          (interactive)
+          (if
+              (or (bound-and-true-p cdlatex-mode)
+                  (bound-and-true-p org-cdlatex-mode))
+              (cdlatex-tab)
+            (yas-next-field-or-maybe-expand)))))
+    
+    ;; Try to set up auto-expansion for certain snippets.
+    ;; Taken from
+    ;; https://www.reddit.com/r/emacs/comments/o5ewqc/is_automatic_snippet_expansion_with_yasnippet/
+    (defun my-yas-try-expanding-auto-snippets ()
+      (when yas-minor-mode
+        (let ((yas-buffer-local-condition ''(require-snippet-condition . auto)))
+          (yas-expand))))
+    (add-hook 'post-command-hook #'my-yas-try-expanding-auto-snippets)
+    
+    ;; Enable LaTeX snippets in org-mode.  See
+    ;; https://emacs.stackexchange.com/questions/38429/yasnippets-loading-two-major-modes-org-mode-and-latex
+    ;; My snippets are currently in LaTeX-mode, so this might not work...
+    (defun my-org-latex-yas ()
+      "Activate org and LaTeX yas expansion in org-mode buffers."
+      (yas-minor-mode)
+      (yas-activate-extra-mode 'latex-mode))
+    
+    (add-hook 'org-mode-hook #'my-org-latex-yas)
+    
+    ;; Enable rich annotations using the Marginalia package
+    (use-package marginalia
+      :ensure t
+      ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
+      ;; available in the *Completions* buffer, add it to the
+      ;; `completion-list-mode-map'.
+      :bind (:map minibuffer-local-map
+                  ("M-A" . marginalia-cycle))
+    
+      ;; The :init section is always executed.
+      :init
+    
+      ;; Marginalia must be activated in the :init section of use-package such that
+      ;; the mode gets enabled right away. Note that this forces loading the
+      ;; package.
+      (marginalia-mode))
+    
+    (use-package embark
+      :ensure t
+    
+      :bind
+      (("C-." . embark-act)         ;; pick some comfortable binding
+       ("C-;" . embark-dwim)        ;; good alternative: M-.
+       ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+    
+      :init
+    
+      ;; Optionally replace the key help with a completing-read interface
+      (setq prefix-help-command #'embark-prefix-help-command)
+    
+      ;; Show the Embark target at point via Eldoc. You may adjust the
+      ;; Eldoc strategy, if you want to see the documentation from
+      ;; multiple providers. Beware that using this can be a little
+      ;; jarring since the message shown in the minibuffer can be more
+      ;; than one line, causing the modeline to move up and down:
+    
+      ;; (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
+      ;; (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
+    
+      :config
+    
+      ;; Hide the mode line of the Embark live/completions buffers
+      (add-to-list 'display-buffer-alist
+                   '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                     nil
+                     (window-parameters (mode-line-format . none)))))
+    
+    ;; Consult users will also want the embark-consult package.
+    (use-package embark-consult
+      :ensure t ; only need to install it, embark loads it after consult if found
+      :hook
+      (embark-collect-mode . consult-preview-at-point-mode))
+
+
+<a id="org8e84362"></a>
+
+## Shells
+
+Settings for enhancing the shell in emacs. Note that `sage-shell-mode`
+requires SageMath, which is tricky to get on Windows.
+
+    ;;  emacs-sage-shell
+    (use-package sage-shell-mode
+      :ensure t)
+    
+    ;; AucTeX keybindings for SageTeX with emacs-sage-shell
+    ;; From Github documentation
+    (eval-after-load "latex"
+      '(mapc (lambda (key-cmd) (define-key LaTeX-mode-map (car key-cmd) (cdr key-cmd)))
+             `((,(kbd "C-c s c") . sage-shell-sagetex:compile-current-file)
+               (,(kbd "C-c s C") . sage-shell-sagetex:compile-file)
+               (,(kbd "C-c s r") . sage-shell-sagetex:run-latex-and-load-current-file)
+               (,(kbd "C-c s R") . sage-shell-sagetex:run-latex-and-load-file)
+               (,(kbd "C-c s l") . sage-shell-sagetex:load-current-file)
+               (,(kbd "C-c s L") . sage-shell-sagetex:load-file)
+               (,(kbd "C-c C-z") . sage-shell-edit:pop-to-process-buffer))))
+
+
+<a id="org55adacc"></a>
+
+## LLM integration
+
+Emacs has several packages based around the use of AI/LLMs within Emacs
+itself.  I make use of karthink's `gptel` [package](https://github.com/karthink/gptel) along with Google Gemini.
+This will require getting an appropriate API key (NOT saved to this repo,
+obviously).
+
+    (require 'gptel)
+
+
+<a id="orgd36b7cf"></a>
+
+## Miscellaneous packages and settings
+
+Packages that don't fit anywhere else just yet. Note that `nroff` errors on
+Windows appear to be caused by the MSYS2 installation of `aspell`. We need to
+tell `aspell` where exactly it can find the necessary modes by creating an
+appropriate `config` file `~/.aspell.conf` in the MSYS2/UCRT64 shell. See
+[this post](https://github.com/msys2/MSYS2-packages/issues/2088#issuecomment-1726339967) for more information.
+
+    ;; Enables writegood-mode.
+    (use-package writegood-mode
+      :ensure t)
+    (global-set-key "\C-c\C-wg" 'writegood-mode)
+    
+    ;; Set ispell and args for spellchecking
+    (setq ispell-program-name "aspell")
+    ;;(setq ispell-extra-args '("--lang=en_US"))
+    
+    ;; Set flyspell to use mouse-3 instead of mouse-2.
+    ;; Taken from
+    ;; https://emacs.stackexchange.com/a/32930
+    (eval-after-load "flyspell"
+      '(progn
+         (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
+         (define-key flyspell-mouse-map [mouse-3] #'undefined)))
+    
+    ;; Tell ispell to chill so it doesn't slow down my buffer.
+    ;; Taken from
+    ;; https://github.com/syl20bnr/spacemacs/issues/311#issuecomment-215110131
+    ;; (with-eval-after-load 'flyspell
+    ;;   (require 'flyspell-lazy)
+    ;;   (flyspell-lazy-mode 1)
+    ;;   (setq ;; Be a little more aggressive than the lazy defaults
+    ;;    flyspell-lazy-idle-seconds 2 ;; This scans just the recent changes
+    ;;    flyspell-lazy-window-idle-seconds 6 ;; This scans the whole window
+    ;;    )
+    ;;   )
+    
+    ;; Create nice html exports of buffers
+    (use-package htmlize
+      :ensure t)
+    
+    ;; Install vundo package for visual undo framework.
+    (use-package vundo
+      :ensure t
+      :config
+      (setq vundo-glyph-alist vundo-unicode-symbols)
+      ;; Use `HJKL` VIM-like motion, also Home/End to jump around.
+      ;; These bindings are stolen from
+      ;; https://www.reddit.com/r/emacs/comments/txwwfi/vundo_is_great_visual_undotree_for_emacs28/
+    
+      (define-key vundo-mode-map (kbd "l") #'vundo-forward)
+      (define-key vundo-mode-map (kbd "<right>") #'vundo-forward)
+      (define-key vundo-mode-map (kbd "h") #'vundo-backward)
+      (define-key vundo-mode-map (kbd "<left>") #'vundo-backward)
+      (define-key vundo-mode-map (kbd "j") #'vundo-next)
+      (define-key vundo-mode-map (kbd "<down>") #'vundo-next)
+      (define-key vundo-mode-map (kbd "k") #'vundo-previous)
+      (define-key vundo-mode-map (kbd "<up>") #'vundo-previous)
+      (define-key vundo-mode-map (kbd "<home>") #'vundo-stem-root)
+      (define-key vundo-mode-map (kbd "<end>") #'vundo-stem-end)
+      (define-key vundo-mode-map (kbd "q") #'vundo-quit)
+      (define-key vundo-mode-map (kbd "C-g") #'vundo-quit)
+      (define-key vundo-mode-map (kbd "RET") #'vundo-confirm))
+    
+    ;; Make use of tree-sitter.  Per Mastering Emacs blog, you will need
+    ;; to call treesit-install-language-grammar for each language wanted.
+    (setq treesit-language-source-alist
+          '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+            (cmake "https://github.com/uyha/tree-sitter-cmake")
+            (css "https://github.com/tree-sitter/tree-sitter-css")
+            (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+            (go "https://github.com/tree-sitter/tree-sitter-go")
+            (html "https://github.com/tree-sitter/tree-sitter-html")
+            (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+            (json "https://github.com/tree-sitter/tree-sitter-json")
+            (make "https://github.com/alemuller/tree-sitter-make")
+            (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+            (python "https://github.com/tree-sitter/tree-sitter-python")
+            (toml "https://github.com/tree-sitter/tree-sitter-toml")
+            (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+            (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+            (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
+    
+    ;; format-all provides code-formatting via third-party tools such as
+    ;; Black (for Python) and latexindent (for LaTeX)
+    (use-package format-all
+      :bind ("C-c M-i" . format-all-buffer))
+    
+    ;; This package is useful for patching other packages.  I currently
+    ;; need it for patching org-msg on WSL.
+    (use-package el-patch
+      :ensure t)
+
+
+<a id="org36ab9e6"></a>
+
+# Enhancing modes for files
+
+The packages here improve/replace how emacs handles certain files.
+
+
+<a id="org43d960e"></a>
+
+## Language server protocol
+
+A language server protocol (LSP) can be used to provide completions for
+various file types including `.tex` files.  Another alternative is to use
+`eglot`, which is a built-in package.
+
+    (use-package lsp-mode
+      :init
+      ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+      ;; (setq lsp-keymap-prefix "C-c l")
+      :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+             (python-mode . lsp-deferred)
+             (python-ts-mode . lsp-deferred)
+             (latex-mode . lsp-deferred)
+             (LaTeX-mode . lsp-deferred)
+             ;; if you want which-key integration
+             (lsp-mode . lsp-enable-which-key-integration))
+      :commands lsp
+      :config
+      (setq lsp-pylsp-plugins-black-enabled t))
+    
+    ;; optionally
+    (use-package lsp-ui :commands lsp-ui-mode)
+    ;; if you are helm user
+    ;; (use-package helm-lsp :commands helm-lsp-workspace-symbol)
+    ;; if you are ivy user
+    ;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+    ;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+    
+    ;; optionally if you want to use debugger
+    ;; (use-package dap-mode)
+    ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+    
+    ;; Set digestif as lsp server
+    (setq lsp-tex-server 'digestif)
+    
+    ;; Make Emacs/digestif aware of TeX info paths.
+    (add-to-list 'Info-directory-list "/usr/local/texlive/2024/texmf-dist/doc/info")
+    
+    ;; Auto-activate ts-modes when available
+    (use-package treesit-auto
+      :ensure t
+      :custom
+      (treesit-auto-install 'prompt)
+      :config
+      (treesit-auto-add-to-auto-mode-alist 'all)
+      (global-treesit-auto-mode))
+
+
+<a id="orgdb5b639"></a>
+
+## PDF-tools
+
+The `pdf-tools` package replaces emacs' own DocView mode for viewing PDF
+files (and others) within emacs itself. This will need to be configured to
+work with AUCTeX below.
+
+    ;; Taken from
+    ;; https://www.reddit.com/r/emacs/comments/gm1c2p/pdftools_installation/
+    (use-package pdf-tools
+      :ensure t
+      :config
+      (pdf-tools-install)
+      (setq-default pdf-view-display-size 'fit-page))
+    
+    ;; Apparently line numbers break horizontal scrolling in PDF Tools.
+    ;; Code below taken from
+    ;; emacs.stackexchange.com/questions/74317/how-can-i-get-horizontal-scrolling-in-pdfview-to-work
+    (defun bugfix-display-line-numbers--turn-on (fun &rest args)
+      "Avoid `display-line-numbers-mode' in `image-mode' and related.
+    Around advice for FUN with ARGS."
+      (unless (derived-mode-p 'image-mode 'docview-mode 'pdf-view-mode)
+        (apply fun args)))
+    
+    (advice-add 'display-line-numbers--turn-on :around #'bugfix-display-line-numbers--turn-on)
+
+
+<a id="org5d54cfb"></a>
+
+## AUCTeX
+
+These are settings for working with LaTeX documents in emacs. This requires
+AUCTeX, which is included with Prelude modules.
+
+    ;; LaTeX-mode settings
+    (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+    (add-hook 'LaTeX-mode-hook 'flyspell-mode)
+    (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+    ;;; Smartparens uses M-j for join sexp, but I want to use that for Avy
+    ;;; instead.
+    (add-hook 'LaTeX-mode-hook
+              (lambda ()
+                (setq sp-override-key-bindings '(("M-j" . avy-goto-char-timer)))
+                (sp--update-override-key-bindings)))
+    (setq reftex-plug-into-AUCTeX t)
+    
+    ;; Enables rainbow-highlighters for LaTeX.
+    ;; (add-hook 'LaTeX-mode-hook #'rainbow-delimiters-mode)
+    (add-hook 'TeX-mode-hook #'rainbow-delimiters-mode)
+    
+    ;; AUCTeX's live preview requires ghostscript, so we tell AUCTeX where to
+    ;; find it on macOS. Live preview on Windows is very troublesome, so we
+    ;; don't worry about it.
+    (when (eq system-type 'darwin)
+      (setq preview-gs-command "/usr/local/bin/gs"))
+    
+    
+    ;; Change inline math delimiters that AUCTeX and CDLaTeX
+    ;; insert from $...$ to \(...\)
+    (setq TeX-electric-math (cons "\\(" ""))
+    (setq cdlatex-use-dollar-to-ensure-math nil)
+    
+    ;; Reset TeX-open/close-quote from Prelude definitions
+    (setq TeX-open-quote "``")
+    (setq TeX-close-quote "''")
+    
+    ;; latexmk settings
+    ;; Use Skim as viewer, enable source <-> PDF sync
+    ;; make latexmk available via C-c C-c
+    ;; Note: SyncTeX is setup via ~/.latexmkrc (see below)
+    ;; (add-hook 'LaTeX-mode-hook
+    ;;           (lambda ()
+    ;;             (push
+    ;;              '("latexmk" "latexmk -pdf %s" TeX-run-TeX nil t
+    ;;                :help "Run latexmk on file")
+    ;;              TeX-command-list)))
+    
+    ;; ;; AucTeX and latexmk don't get along on Windows, so don't worry about
+    ;; setting up AUCTeX for latexmk on Windows
+    ;; (when (eq system-type 'darwin)
+    ;; (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk"))))
+    ;; (when (eq system-type 'windows-nt)
+    ;;   (add-hook 'TeX-mode-hook
+    ;;             (lambda () (setq TeX-command-default LaTeX-command))))
+    
+    ;; Prettify symbols in TeX
+    (add-hook 'TeX-mode-hook #'prettify-symbols-mode)
+    
+    ;; Code below is taken from
+    ;; https://emacs.stackexchange.com/questions/19472/how-to-let-auctex-open-pdf-with-pdf-tools
+    ;; Use pdf-tools to open PDF files
+    (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+          TeX-source-correlate-mode t
+          TeX-source-correlate-start-server t
+          TeX-source-correlate-method (quote synctex))
+    
+    ;; Update PDF buffers after successful LaTeX runs
+    (add-hook 'TeX-after-compilation-finished-functions
+              #'TeX-revert-document-buffer)
+    
+    ;; Allow for easy use of latexdiff.
+    (use-package latexdiff
+      :ensure t)
+    
+    ;; We need to modify sage-shell to accept filepaths with spaces in their
+    ;; names. This appears to require modifying
+    ;; sage-shell-sagetex:tex-master-maybe.
+    (advice-add 'sage-shell-sagetex:tex-master-maybe
+                :around #'my-sage-shell-sagetex:tex-master-maybe)
+    (defun my-sage-shell-sagetex:tex-master-maybe (sage-shell-sagetex:tex-master-maybe f &optional nondir)
+      (let* ((b (get-file-buffer f))
+             (tm (when (and (bufferp b)
+                            (boundp 'TeX-master))
+                   (buffer-local-value 'TeX-master b))))
+        (let ((ms (cond ((and tm (stringp tm))
+                         (shell-quote-argument (expand-file-name tm (file-name-directory f))))
+                        (t f))))
+          (if nondir (file-name-nondirectory ms)
+            ms))))
+    
+    (advice-add '
+     sage-shell-sagetex:tex-master-maybe
+                :filter-return #'shell-quote-argument)
+
+The above fix for `sage-shell-mode` also requires editing
+`sage-shell-mode.py` within the package since the fix breaks a path
+argument. In particular, we replace `sage_tex_load`.  `CDLaTeX` also allows
+for extensive customizations and abbreviations.
+
+    (add-hook 'LaTeX-mode-hook #'cdlatex-mode)
+    (setq cdlatex-math-symbol-alist
+          '((?0 ("\\emptyset" "\\varnothing"))))
+
+
+<a id="org859bbe5"></a>
+
+## `mu4e`
+
+Mail configuration with `emacs`, `mu` and `mu4e`.  Currently in the process
+of adapting this for WSL.  For now, this requires installing `mu` via
+Homebrew (which installs `mu4e` as well).  Homebrew is available on both
+macOS and Linux.  Setting up `mbsync` also required setting an app specific
+password for iCloud.
+
+The `mbsync` setup for WSL uses a different approach with the `pass` password
+manager.  This involves creating a `gpg` key (currently set to expire after
+two years, i.e., on <span class="timestamp-wrapper"><span class="timestamp">&lt;2027-06-10 Thu&gt;</span></span>.  Set up details were taken from [here](https://www.redhat.com/en/blog/management-password-store)
+and [here](https://frostyx.cz/posts/synchronize-your-2fa-gmail-with-mbsync).
+
+    (cond
+     ((eq system-type 'darwin)
+      (setq mu4e-path (expand-file-name "/opt/homebrew/share/emacs/site-lisp/mu/mu4e")))
+     ((eq system-type 'gnu/linux)
+      (setq mu4e-path (expand-file-name "/usr/local/share/emacs/site-lisp/mu4e"))))
+    
+    (use-package mu4e
+      :load-path  mu4e-path)
+    
+    ;; for sending mails
+    (require 'smtpmail)
+    
+    ;; we installed this with homebrew
+    (setq mu4e-mu-binary (executable-find "mu"))
+    
+    ;; this is the directory we created before:
+    ;; (setq mu4e-maildir "~/.maildir")
+    
+    ;; this command is called to sync imap servers:
+    (setq mu4e-get-mail-command (concat (executable-find "mbsync") " -a"))
+    ;; how often to call it in seconds:
+    (setq mu4e-update-interval 300)
+    
+    ;; save attachment to desktop by default
+    ;; or another choice of yours:
+    (setq mu4e-attachment-dir "~/attachments")
+    
+    ;; rename files when moving - needed for mbsync:
+    (setq mu4e-change-filenames-when-moving t)
+    
+    ;; Change HTML display for dark color schemes
+    (setq shr-color-visible-luminance-min 80)
+    
+    ;; Prevent line breaks in emails.  This can look weird on mobile devices.
+    (setq mu4e-compose-format-flowed t)
+
+We also need to configure `mu4e` for multiple accounts. This configuration is
+adapted from [this blog post](https://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and/#configuring-mu4e). It looks like we need to set `tls_starttls = on`
+in the `.msmtprc` file for this to work properly.
+
+    (with-eval-after-load 'mu4e
+      (cond
+       ((eq system-type 'darwin)
+        (setq send-mail-function 'sendmail-send-it
+              sendmail-program "/opt/homebrew/bin/msmtp"
+              mail-specify-envelope-from t
+              message-sendmail-envelope-from 'header
+              mail-envelope-from 'header)
+        (setq mu4e-contexts
+              `( ,(make-mu4e-context
+                   :name "gmail"
+                   :match-func (lambda (msg) (when msg
+                                               (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+                   :vars '((mu4e-trash-folder . "/gmail/[Gmail]/Trash")
+                           (mu4e-refile-folder . "/gmail/[Gmail]/Archive")
+                           (user-mail-address . "math.oldroyd@gmail.com")
+                           (mu4e-maildir-shortcuts . ( ("/gmail/INBOX" . ?i)))
+                           ))
+                 ,(make-mu4e-context
+                   :name "wvwc-mail"
+                   :match-func (lambda (msg) (when msg
+                                               (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+                   :vars '((mu4e-trash-folder . "/wvwc-mail/[wvwc-mail]/Trash")
+                           (mu4e-refile-folder . "/wvwc-mail/[wvwc-mail]/Archive")
+                           (user-mail-address . "oldroyd.j@wvwc.edu")
+                           (mu4e-maildir-shortcuts . ( ("/wvwc-mail/INBOX" . ?i)))
+                           ))
+                 ,(make-mu4e-context
+                   :name "icloud"
+                   :match-func (lambda (msg) (when msg
+                                               (string-prefix-p "/icloud" (mu4e-message-field msg :maildir))))
+                   :vars '(
+                           (mu4e-trash-folder . "/icloud/Deleted Messages")
+                           (mu4e-refile-folder . "/icloud/Archive")
+                           (user-mail-address . "j.oldroyd@icloud.com")
+                           (mu4e-maildir-shortcuts . ( ("/icloud/INBOX" . ?i)))
+                           ))
+                 )))
+       ((eq system-type 'gnu/linux)
+        (setq send-mail-function 'sendmail-send-it
+              sendmail-program "/usr/bin/msmtp"
+              mail-specify-envelope-from t
+              message-sendmail-envelope-from 'header
+              mail-envelope-from 'header)
+        (setq mu4e-contexts
+              `(,(make-mu4e-context
+                  :name "wvwc-mail"
+                  :match-func (lambda (msg) (when msg
+                                              (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+                  :vars '((mu4e-trash-folder . "/wvwc-mail/[Gmail]/Trash")
+                          (mu4e-refile-folder . "/wvwc-mail/[Gmail]/Archive")
+                          (user-mail-address . "oldroyd.j@wvwc.edu")
+                          (mu4e-maildir-shortcuts . ( ("/wvwc-mail/INBOX" . ?i)))
+                          ))
+                ,(make-mu4e-context
+                  :name "math-gmail"
+                  :match-func (lambda (msg) (when msg
+                                              (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+                  :vars '((mu4e-trash-folder . "/math-gmail/[Gmail]/Trash")
+                          (mu4e-refile-folder . "/math-gmail/[Gmail]/Archive")
+                          (user-mail-address . "math.oldroyd@gmail.com")
+                          (mu4e-maildir-shortcuts . ( ("/math-gmail/INBOX" . ?m)))
+                          ))
+                )))))
+    
+    ;; Headers can be misaligned with columns in header view, so this code
+    ;; from https://www.djcbsoftware.nl/code/mu/mu4e/Known-issues.html
+    ;; tries to fix it.
+    (add-hook 'mu4e-headers-mode-hook #'my-mu4e-headers-mode-hook)
+    (defun my-mu4e-headers-mode-hook ()
+      ;; Account for the fringe and other spacing in the header line.
+      (header-line-indent-mode 1)
+      (push (propertize " " 'display '(space :align-to header-line-indent-width))
+            header-line-format)
+      ;; Ensure `text-scale-adjust' scales the header line with the headers themselves
+      ;; by ensuring the `default' face is in the inheritance hierarchy.
+      (face-remap-add-relative 'header-line '(:inherit (mu4e-header-face
+                                                        default))))
+
+The `org-msg` package, located [on GitHub](https://github.com/jeremy-compostella/org-msg?tab=readme-ov-file), allows us to format emails using
+the capabilities of Org Mode.  In particular, we can typeset mathematics
+using $\LaTeX$ and send (and evaluate!) code snippets using Org Babel.  There
+are many options for this package, but one that we can note in particular is
+`org-msg-recipient-names`, which allows replies to automatically use a
+different name than what is given in "From" section of the message.  This is
+handy if students choose to go by a different name than what is on the course
+roster.  At the moment, my customizations for this variable are *not* tracked
+by GitHub for privacy reasons.
+
+This code also contains a patch using `el-patch`, see [here](https://github.com/radian-software/el-patch), for the
+`org-msg-preview` function.  My WSL setup requires this patch to make the
+message preview functionality work as expected because I use a browser in
+Windows to preview messages created in Emacs/WSL.
+
+    ;; The following is for integrating with org-msg.
+    (setq mail-user-agent 'mu4e-user-agent)
+    ;; Config taken from org-msg github page.
+    (use-package org-msg
+      :ensure t)
+    
+    (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
+          org-msg-startup "hidestars indent inlineimages"
+          org-msg-greeting-fmt "\nHi%s,\n\n"
+          ;;org-msg-recipient-names '(("jeremy.compostella@gmail.com" . "Jérémy"))
+          org-msg-greeting-name-limit 3
+          org-msg-default-alternatives '((new          . (text html))
+                                         (reply-to-html     . (text html))
+                                         (reply-to-text     . (text)))
+          org-msg-convert-citation t
+          org-msg-signature "
+    
+    #+begin_signature
+    --Jesse
+    #+end_signature"
+          )
+    
+    (add-hook 'message-mode-hook 'org-msg-mode)
+    
+    ;; Disable fill-paragraph in org-msg to allow mu4e to format=flowed
+    ;; each message.  See relevant documentation in mu4e block.
+    (require 'messages-are-flowing)
+    (add-hook 'org-msg-mode-hook 'turn-off-auto-fill)
+    (add-hook 'org-msg-mode-hook 'visual-line-mode)
+    (add-hook 'org-msg-mode-hook 'messages-are-flowing-use-and-mark-hard-newlines)
+    
+    
+    ;; Org-msg be default uses /tmp/ for storing message previews.  This
+    ;; is normally not a problem, except that I sometimes use WSL with my
+    ;; browser in the Windows filesystem.  Therefore, I need to modify the
+    ;; filepath created for the browse-url function.  This uses el-patch
+    ;; to modify the original function definition.
+    (if (equal system-type 'gnu/linux)
+        (progn
+          (el-patch-feature org-msg)
+          (with-eval-after-load 'org-msg
+            (el-patch-defun org-msg-preview (arg)
+              "Export and display the current OrgMsg buffer.
+    
+    It uses the last alternative of the `alternatives' property as the
+    alternatives should be listed in increasing order of
+    preference.  If this alternative is `html' it calls the
+    `browse-url' function to display the exported mail in a
+    web browser.  With the prefix argument ARG set, it calls
+    `xwidget-webkit-browse-url' instead of `browse-url'.  For
+    all other alternatives, it displays the exported result
+    in a buffer."
+              (interactive "P")
+              (let* ((preferred (last (org-msg-get-prop "alternatives")))
+                     (alt (caar (org-msg-build-alternatives preferred t))))
+                (cond ((string= (car alt) "text/html")
+                       (save-window-excursion
+                         (let ((browse-url-browser-function
+                                (if arg 'xwidget-webkit-browse-url
+                                  browse-url-browser-function))
+                               (tmp-file (make-temp-file "org-msg" nil ".html")))
+                           (with-temp-buffer
+                             (insert (cdr alt))
+                             (write-file tmp-file))
+                           (el-patch-swap
+                             (browse-url (concat "file://" tmp-file))
+                             (browse-url (concat "file://///wsl.localhost/Ubuntu/" tmp-file)))))
+                       (t (with-current-buffer
+                              (get-buffer-create (format "*OrgMsg %s Preview*" (car alt)))
+                            (delete-region (point-min) (point-max))
+                            (insert (cdr alt)))
+                          (display-buffer (current-buffer))))))))))
+
+
+<a id="org76ddcf9"></a>
+
+## Python
+
+Settings for Python programming.  Virtual environments are handled using
+`pyvenv` (the Emacs package) in conjunction with `pyenv` (the Python
+package).  The Python configuration is adapted from the configuration located
+[here](https://emacs.stackexchange.com/questions/59905/how-can-i-start-ipython-from-emacs).  Note that using the `IPython` shell causes an issue with the `ef-owl`
+theme as errors are highlighted using `ansiyellow` which is almost unreadable
+against the background.  This can be dealt with by adjusting `IPython` itself
+as described [here](https://emacs.stackexchange.com/questions/76652/overlay-makes-text-unreadable-where-does-it-come-from-overlay-face-is-undef), but the jist is that we need to alter the `bg:ansiyellow`
+setting in `core/ultrab.py`.
+
+    ;; (use-package pyvenv
+    ;;   :ensure nil)
+    
+    (use-package python
+      :ensure nil
+      :mode
+      ("\\.py\\'" . python-mode)
+    
+      :init
+      (setq-default indent-tabs-mode nil)
+    
+      :hook
+      ((python-mode . smartparens-mode)
+       (python-mode . company-mode)
+       (python-mode . flycheck-mode)
+       (inferior-python-mode . smartparens-mode))
+    
+      :config
+      (setq python-indent-offset 4
+            python-indent-guess-indent-offset-verbose nil
+            python-shell-interpreter "python"
+            ;; python-shell-interpreter-args "-i --simple-prompt"
+            ))
+
+
+<a id="org7333d33"></a>
+
+## `hledger`
+
+`hledger` is a plaintext accounting tool that is designed to be run from the
+terminal. We use `heldger-mode` and `flycheck-hledger` to support working
+with `hledger` journal files in Emacs. These settings are adapted from the
+provided configuration for `hledger-mode`.
+
+    (use-package hledger-mode
+      :ensure t
+      :mode ("\\.journal\\'" "\\.hledger\\'")
+      :commands hledger-enable-reporting
+      :preface
+      (defun hledger/next-entry ()
+        "Move to next entry and pulse."
+        (interactive)
+        (hledger-next-or-new-entry)
+        (hledger-pulse-momentary-current-entry))
+    
+      (defface hledger-warning-face
+        '((((background dark))
+           :background "Red" :foreground "White")
+          (((background light))
+           :background "Red" :foreground "White")
+          (t :inverse-video t))
+        "Face for warning"
+        :group 'hledger)
+    
+      (defun hledger/prev-entry ()
+        "Move to last entry and pulse."
+        (interactive)
+        (hledger-backward-entry)
+        (hledger-pulse-momentary-current-entry))
+    
+      :bind (:map hledger-mode-map
+                  ("C-c j" . hledger-run-command)
+                  ("M-p" . hledger/prev-entry)
+                  ("M-n" . hledger/next-entry))
+      :init
+      (setq hledger-jfile
+            (expand-file-name "~/finance/2024.journal"))
+    
+      ;; Expanded account balances in the overall monthly report are
+      ;; mostly noise for me and do not convey any meaningful information.
+      (setq hledger-show-expanded-report nil)
+    
+      (when (boundp 'my-hledger-service-fetch-url)
+        (setq hledger-service-fetch-url
+              my-hledger-service-fetch-url))
+    
+      :config
+      (add-hook 'hledger-view-mode-hook #'hl-line-mode)
+    
+      (add-hook 'hledger-view-mode-hook
+                (lambda ()
+                  (run-with-timer 1 nil
+                                  (lambda ()
+                                    (when (equal hledger-last-run-command
+                                                 "balancesheet")
+                                      ;; highlight frequently changing accounts
+                                      (highlight-regexp "^.*\\(Checking\\|cash\\).*$")
+                                      (highlight-regexp "^.*Credit\sCard.*$"
+                                                        'hledger-warning-face))))))
+    
+      (add-hook 'hledger-mode-hook
+                (lambda ()
+                  (make-local-variable 'company-backends)
+                  (add-to-list 'company-backends 'hledger-company))))
+    
+    ;; (use-package hledger-input
+    ;;   :ensure t
+    ;;   :preface
+    ;;   (defun popup-balance-at-point ()
+    ;;     "Show balance for account at point in a popup."
+    ;;     (interactive)
+    ;;     (if-let ((account (thing-at-point 'hledger-account)))
+    ;;         (message (hledger-shell-command-to-string
+    ;;                   (format " balance -N %s " account)))
+    ;;       (message "No account at point")))
+    
+    ;;   :config
+    ;;   (setq hledger-input-buffer-height 20)
+    ;;   (add-hook 'hledger-input-post-commit-hook #'hledger-show-new-balances)
+    ;;   (add-hook 'hledger-input-mode-hook #'auto-fill-mode)
+    ;;   (add-hook 'hledger-input-mode-hook
+    ;;             (lambda ()
+    ;;               (make-local-variable 'company-idle-delay)
+    ;;               (setq-local company-idle-delay 0.1))))
+
+
+<a id="orgcd9f7bb"></a>
+
+## Magit
+
+I want to be able to access tracked files via `j t` from `magit-dispatch`.
+We need to load these settings after `magit` is loaded, otherwise Emacs
+complains about the hook not existing.
+
+    (with-eval-after-load "magit"
+      (magit-add-section-hook
+       'magit-status-sections-hook
+       'magit-insert-tracked-files
+       nil
+       'append))
+
+
+<a id="org894af1c"></a>
+
+## PreTeXt
+
+PreTeXt uses XML markup to produce documents in multiple formats.  Emacs
+already had an `nxml-mode` with schema support that we can use with PreTeXt.
+For pretty-printing, there is also `sgml-mode` which contains the function
+`sgml-pretty-print`.  This is on top of command line utilities such as
+`xmllint` and `tidy`.
+
+    ;; fill-paragraph does not respect XML tags, so we use this code adapted from
+    ;; https://stackoverflow.com/a/1042118/3901257
+    (add-hook 'nxml-mode-hook '(lambda ()
+                                 (setq paragraph-separate "[     ]*\\(//+\\|\\**\\)\\([  ]*\\| <.*>\\)$\\|^\f")
+                                 ))
+
+
+<a id="orgcac4b9d"></a>
+
+## `lean4-mode`
+
+Lean is an automated theorem prover.  This package provides integration
+between Lean and Emacs.  Note that `lean4-mode` is not on MELPA, and so must
+be installed manually or with `:vc`.
+
+    (use-package lean4-mode
+      :commands lean4-mode
+      :vc (:url "https://github.com/leanprover-community/lean4-mode.git"
+                :rev :last-release)
+      ;; Or, if you prefer the bleeding edge version of Lean4-Mode:
+      ;; :rev :newest
+    
+      ;; Disable Crux binding in favor of Lean infoview.
+      :bind (:map prelude-mode-map
+                  ("C-c C-i" . nil))
+      :hook (after-init . lean4-mode)
+      )
+
+
+<a id="orgc7bbdcc"></a>
+
+## EPUB files
+
+We can read EPUB files in Emacs using `nov.el`, a [major mode](https://depp.brause.cc/nov.el/).  The
+configuration here is adapted from the suggestions on the website.
+
+    (use-package nov
+      :ensure t)
+    
+    (add-hook 'nov-mode-hook 'visual-line-mode)
+    (add-hook 'nov-mode-hook 'visual-fill-column-mode)
+    (add-hook 'nov-mode-hook 'visual-line-mode)
+    (add-hook 'nov-mode-hook 'visual-fill-column-mode)
+    (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
+
+
+<a id="org9154eab"></a>
+
+# Org mode
+
+
+<a id="org260da48"></a>
+
+## General UI and edit settings
+
+It's easier to read if we limit horizontal text to 80 characters wide.  We
+also want to enable flyspell in Org buffers along with LaTeX previews.
+CDLaTeX will also be useful for handling \LaTeX code.  Note that \LaTeX
+snippets have been enabled via an appropriate `.yas-parents` file in
+`snippets/org-mode`.
+
+    ;; Org mode 80 character limit
+    ;; Taken from
+    ;; https://emacs.stackexchange.com/questions/35266/org-mode-auto-new-line-at-80th-column
+    (add-hook 'org-mode-hook (lambda () (setq fill-column 80)))
+    (add-hook 'org-mode-hook 'auto-fill-mode)
+    
+    ;; Make Org bullets a little nicer
+    (use-package org-bullets
+      :ensure t)
+    (add-hook 'org-mode-hook
+              (lambda ()
+                (org-bullets-mode 1)))
+    
+    ;; Buffer previews and spellcheck
+    (setq org-src-fontify-natively t)
+    (add-hook 'org-mode-hook 'flyspell-mode)
+    (setq org-latex-create-formula-image-program 'dvipng)
+    
+    ;; Default dvipng alist setting caused issues with org LaTeX previews. This
+    ;; is fixed by implementing code below, taken from:
+    ;; https://emacs.stackexchange.com/questions/57898/getting-latex-preview-to-work-with-org-mode-dvi-not-found
+    (let ((png (cdr (assoc 'dvipng org-preview-latex-process-alist))))
+      (plist-put png :latex-compiler '("latex -interaction nonstopmode -output-directory %o %F"))
+      (plist-put png :image-converter '("dvipng -D %D -T tight -o %O %F"))
+      (plist-put png :transparent-image-converter '("dvipng -D %D -T tight -bg Transparent -o %O %F")))
+    
+    ;; Enable CDLaTeX in Org.
+    (add-hook 'org-mode-hook #'turn-on-org-cdlatex)
+    
+    ;; Set Org-mode indentation
+    (setq org-adapt-indentation t)
+
+Be default, `prelude-mode` redefines `M-S-<UP>` and `M-S-<DOWN>` to
+`move-text` commands.  This unfortunately overrides org-table keybinds for
+inserting rows, so I reset them here.
+
+    (use-package org
+      :bind (:map org-mode-map
+                  ("M-S-<up>" . org-table-kill-row)
+                  ("M-S-<down>" . org-table-insert-row)))
+
+
+<a id="orge84fcc7"></a>
+
+## Agenda and capture settings
+
+Org-agenda is one of the best reasons to become familiar with Org mode.  We
+need to set up our agenda files and capture templates/keybinds.  Currently,
+the WSL settings require a symlink from the Windows Google Drive folder to
+`~/GoogleDrive/`.
+
+    ;; This is for key bindings to invoke agenda mode
+    (global-set-key "\C-cl" 'org-store-link)
+    (global-set-key "\C-ca" 'org-agenda)
+    (global-set-key "\C-cc" 'org-capture)
+    (global-set-key "\C-cb" 'org-iswitchb)
+    
+    ;; Changes TODO to DONE automatically if children tasks done
+    (defun org-summary-todo (n-done n-not-done)
+      "Switch entry to DONE when all subentries are done, to TODO otherwise."
+      (let (org-log-done org-log-states)   ; turn off logging
+        (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+    
+    (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+    
+    ;; Define TODO sequence and faces.  Based on
+    ;; https://whhone.com/posts/org-mode-task-management/
+    (setq org-todo-keywords
+          '((sequence "TODO(t)" "NEXT(n)" "PROG(p)" "INTR(i)"
+                      "|" "CANCELED(c)" "DONE(d)" "WAITING(w)" "SHELVED(s)")))
+    (setq org-todo-keyword-faces
+          '(("TODO" . org-todo)
+            ("NEXT" . (:foreground "cyan" :weight bold))
+            ("INTR" . org-warning)
+            ("PROG" . (:foreground "green" :weight bold))
+            ("CANCELED" . (:foreground "red" :weight bold))
+            ("WAITING" . (:foreground "yellow" :weight bold))
+            ("SHELVED" . (:foreground "gray" :weight bold))))
+    
+    ;; Define the custom capture templates
+    (setq org-capture-templates
+          '(("t" "Todo" entry (file org-default-notes-file)
+             "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
+            ("m" "Meeting" entry (file org-default-notes-file)
+             "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
+            ("d" "Diary" entry (file+datetree "~/org/diary.org")
+             "* %?\n%U\n" :clock-in t :clock-resume t)
+            ("i" "Idea" entry (file org-default-notes-file)
+             "* %? :IDEA: \n%t" :clock-in t :clock-resume t)
+            ("f" "Fleeting note" entry  (file org-default-notes-file)
+             "* TODO %^{Note title}\nContext: %a\n%?" :empty-lines-before 1 )
+            ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
+             "** NEXT %? \nDEADLINE: %t")))
+    
+    ;; Sets up org-mode files for capture/refile.
+    (cond
+     ((eq system-type 'darwin)
+      (setq org-agenda-files '("~/Documents/org"
+                               "~/Google Drive/My Drive/org"
+                               "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/org"))
+      (setq org-default-notes-file
+            (expand-file-name "/Users/jesseoldroyd/Library/Mobile
+               Documents/com~apple~CloudDocs/Documents/org/notes.org")))
+     ((eq system-type 'gnu/linux)
+      (setq org-agenda-files '("~/org"
+                               "~/GoogleDrive/org"))
+      (setq org-default-notes-file
+            (expand-file-name "~/org/notes.org"))))
+    
+    (setq org-refile-targets
+          '((nil :maxlevel . 3)
+            (org-agenda-files :maxlevel . 3)))
+
+
+<a id="org650809e"></a>
+
+## Calendar and diary settings
+
+We also make use of the `Emacs` diary to schedule appointments and check for
+sunrise/sunset times if necessary (as any text editor should be capable of
+doing). Currently, diary settings have been adjusted using
+`customize-variable` via `M-x`. This includes integration of diary
+appointments with Org agenda. We also include the `calfw` suite of packages
+for improving the calendar view. This requires using the `cfw:*` commands via
+`M-x` for now, but could become a keyboard shortcut later.
+
+    (require 'calfw)
+    (require 'calfw-org)
+    (require 'calfw-cal)
+
+
+<a id="org79840a1"></a>
+
+## Note-taking
+
+This config is adapted from the recommended config for [`org-roam`](https://github.com/org-roam/org-roam-bibtex). The
+keybinds need to be modified slightly so as not to conflict with Prelude's
+`crux` keybinds. To avoid cursing like a sailor, note that `org-roam` is
+activated by visiting an appropriate node and then using
+`org-roam-buffer-toggle`, which is bound to `C-c m l` below. This will
+activate another window that shows backlinks for a given node where the point
+is.
+
+    (use-package org-roam
+      :ensure t
+      :bind (("C-c m l" . org-roam-buffer-toggle)
+             ("C-c m f" . org-roam-node-find)
+             ("C-c m g" . org-roam-graph)
+             ("C-c m i" . org-roam-node-insert)
+             ("C-c m c" . org-roam-capture)
+             ;; Dailies for journaling
+             ("C-c m j" . org-roam-dailies-capture-today))
+      :config
+      ;; If you're using a vertical completion framework, you might want a
+      ;; more informative completion interface
+      (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+      (org-roam-db-autosync-mode)
+      ;; If using org-roam-protocol
+      (require 'org-roam-protocol))
+    
+    ;; Set directory for roam notes based on Windows, WSL or Mac.  This
+    ;; assumes that a Windows-based Emacs config is making use of iCloud
+    ;; Drive.  For WSL, this code has been changed to no longer require
+    ;; iCloud Drive.  The intent now is to use rsync to keep org-roam up
+    ;; to date between WSL and other machines.
+    
+    (cond ((eq system-type 'darwin)
+           (setq org-roam-directory "~/Google Drive/My Drive/org/roam"))
+          ((eq system-type 'windows-nt)
+           (setq org-roam-directory "C:\\Users\\oldroyd.j\\iCloudDrive\\Documents\\org\\roam"))
+          ((eq system-type 'gnu/linux)
+           (setq org-roam-directory "~/GoogleDrive/org/roam")
+           (setq org-roam-graph-viewer
+                 (lambda (file)
+                   (let
+                       ((org-roam-graph-viewer "/mnt/c/Program Files/Mozilla Firefox/firefox.exe"))
+                     (org-roam-graph--open (concat "file://///wsl$/Ubuntu" file)))))))
+    
+    ;; Org-roam templates
+    ;;; Notes template based on suggested citar config.
+    (setq org-roam-capture-templates
+          '(("d" "default" plain
+             "%?"
+             :target
+             (file+head
+              "%<%Y%m%d%H%M%S>-${slug}.org"
+              "#+title: ${note-title}\n")
+             :unnarrowed t)
+            ("n" "literature note" plain
+             "%?"
+             :target
+             (file+head
+              "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
+              "#+title: ${citar-citekey} (${citar-date}). ${note-title}.\n#+created: %U\n#+last_modified: %U\n\n* Main idea(s)\n* Key results\n* Questions")
+             :unnarrowed t)))
+    (use-package org-noter
+      :ensure t)
+
+
+<a id="org3ce50cc"></a>
+
+## BibTeX
+
+The location of the bibliography file needs to be set. We can use the
+variable `bib-file` which is part of `bib-mode.el`. This might be used by
+AUCTeX as well, so why not set it here. The location of the Google Drive file
+probably depends on the OS, so we account for that here as well.
+
+For `citar`, we also configure it to work with `org-roam` and `embark`. For
+now, a decent workflow seems to be the following:
+
+1.  Open a file using `citar-open`. With the `org-roam` integration, this file
+    should ideally be an `org-roam` file. With a fair amount of profanity this
+    can be made to happen.
+2.  In the file just opened, use `org-noter` to associate it with the
+    corresponding PDF (if it exists). Be sure to add in any relevant
+    `org-roam` nodes as well. Using keywords from the article and placing
+    corresponding nodes under `:PROPERTIES:` (say, with a `:KEYWORDS:`
+    property) for `org-roam` to refer to might be the best approach here.
+3.  Take any relevant notes on the paper with `org-noter`. Be sure to
+    highlight appropriately using `C-c C-a h` and place precise notes with
+    `M-i`. Highlighted sections are probably best used for placing notes
+    specific to the paper (such as explaining some mathematical computation)
+    while annotation with `org-noter` should focus on observations that I wish
+    to refer to outside of the paper.
+    
+        (when (eq system-type 'darwin)
+          (setq bib-file '("~/Google Drive/My Drive/research/library.bib"
+                           "~/Documents/zotero/library.bib")))
+        (when (eq system-type 'gnu/linux)
+          (setq bib-file '("~/GoogleDrive/research/My Library.bib"
+                           "~/GoogleDrive/research/library-time_scales.bib"
+                           "~/GoogleDrive/research/library-tight_frames-association_schemes.bib"
+                           "~/GoogleDrive/research/library-tight_frames-algorithms.bib")))
+        (when (eq system-type 'windows-nt)
+          (setq bib-file '("C:\\Users\\oldroyd.j\\My Drive\\research\\library.bib")))
+        
+        (use-package citar
+          :ensure t
+          :custom
+          (citar-bibliography bib-file)
+          (org-cite-global-bibliography bib-file)
+          (org-cite-insert-processor 'citar)
+          (org-cite-follow-processor 'citar)
+          (org-cite-activate-processor 'citar)
+          :config (require 'org-roam)
+          :hook
+          (LaTeX-mode . citar-capf-setup)
+          (org-mode . citar-capf-setup))
+        
+        (use-package citar-org-roam
+          :ensure t
+          :after (org-roam citar)
+          :config (citar-org-roam-mode))
+        
+        ;;; Set up citar to use org-roam template
+        (setq citar-org-roam-capture-template-key "n")
+        
+        (use-package citar-embark
+          :ensure t
+          :after (citar embark)
+          :no-require
+          :config (citar-embark-mode))
+        
+        ;; Set library paths for Citar and specify JabRef behavior on Windows
+        (cond
+         ((eq system-type 'windows-nt)
+          (setq citar-library-paths '("C:\\Users\\oldroyd.j\\My Drive\\research")))
+         ((eq system-type 'gnu/linux)
+          (setq citar-library-paths '("~/GoogleDrive/research"))
+          (setq citar-notes-paths '("~/GoogleDrive/research")))
+         ((eq system-type 'darwin)
+          (setq citar-library-paths '("~/Google Drive/My Drive/research"
+                                      "~/Documents/zotero"))
+          (setq citar-notes-paths '("~/Google Drive/My Drive/research"))))
+        
+        ;; On Windows I use JabRef, so I need to tell Citar how to parse JabRef
+        ;; file links
+        (eval-after-load "citar"
+          '(defun citar-file--parser-triplet (file-field)
+             "Return a list of files from DIRS and a FILE-FIELD formatted as a triplet.
+        
+                     This is file-field format seen in, for example, Calibre and Mendeley.
+        
+                     NEW EXAMPLE: '<phrase>:/path/to/paper.pdf:PDF:<url>
+                     Example: ':/path/to/test.pdf:PDF'."
+             (let (filenames)
+               (dolist (sepchar '(?\; ?,))         ; Mendeley and Zotero use ;, Calibre uses ,
+                 (dolist (substring (citar-file--split-escaped-string file-field sepchar))
+                   (let* ((triplet (citar-file--split-escaped-string substring ?:))
+                          (len (length triplet)))
+                     (when (>= len 3)
+                       ;; If there are more than three components, we probably split on unescaped : in the filename.
+                       ;; Take all but the first and last components of TRIPLET and join them with :
+                       ;; (let* ((escaped (string-join (butlast (cdr triplet)) ":"))
+                       (let* ((escaped (string-join (butlast (cdr triplet) 2) ":")) ;; JabRef has extra :, so drop last two elements
+                              (filename (replace-regexp-in-string "\\\\\\(.\\)" "\\1" escaped)))
+                         ;; Calibre doesn't escape file names in BIB files, so try both
+                         ;; See https://github.com/kovidgoyal/calibre/blob/master/src/calibre/library/catalogs/bibtex.py
+                         (push filename filenames)
+                         (push escaped filenames))))))
+               (nreverse filenames))))
+
+
+<a id="org5d5e3e3"></a>
+
+## `org-babel` settings
+
+We need to configure `org-babel` for evaluation of `SRC` blocks in Org mode.
+
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((octave . t)))
+
+
+<a id="orgb5d011f"></a>
+
+### Tangle settings
+
+These are general settings for tangling files to ensure that lexical binding
+is enabled.  This code is taken from [this answer](https://emacs.stackexchange.com/a/84607/45800) on Stack Exchange.
+
+    (defun my-ensure-lexical-binding-cookie()
+      (goto-char(point-min)) ;; beginning of tangled code
+      (insert ";; -*- coding: utf-8; lexical-binding: t -*-")
+      (newline)
+      (newline)
+      (let ((inhibit-message t)) ;; Don't show messages from these functions
+        (basic-save-buffer)
+        (kill-buffer) nil))
+    
+    (add-hook 'org-babel-post-tangle-hook #'my-ensure-lexical-binding-cookie)
+
+
+<a id="org3d4463d"></a>
+
+### `ox-hugo`
+
+We can use `ox-hugo` to quickly generate and preview websites created using
+Hugo.
+
+    (use-package ox-hugo
+      :ensure t   ;Auto-install the package from Melpa
+      :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
+      :after ox)
+
+
+<a id="orga0caedf"></a>
+
+### `impatient-mode`
+
+This package allows for HTML previews of buffers in the browser by
+navigating to `http://localhost:8080/imp`.  The configuration below (copied
+from the `init.el` gist [here](https://gist.github.com/tylerjl))
+
+    (use-package impatient-mode
+      :ensure t)
+    
+    (define-minor-mode tjl/md-preview-mode
+      "Toggles live markdown preview using impatient-mode"
+      :init-value nil
+      :lighter " 󰽛"
+    
+      (if tjl/md-preview-mode
+    
+          (progn
+            (if (process-status "httpd")
+                (setq tjl/httpd-was-running t)
+              (progn (httpd-start)))
+            (impatient-mode)
+            (imp-set-user-filter 'tjl/markdown-filter)
+            (imp-visit-buffer)
+            (message "Live markdown preview enabled"))
+    
+        (progn
+          (impatient-mode -1)
+          (unless (or (imp--buffer-list)
+                      (and (fboundp 'tjl/httpd-was-running) tjl/httpd-was-running))
+            ;; Tear httpd down
+            (progn (httpd-stop)
+                   (setq tjl/httpd-was-running nil)))
+          (message "Live markdown preview disabled"))))
+    
+    ;; For use with impatient-mode filter
+    (defun tjl/markdown-filter (buffer)
+      (princ
+       (with-temp-buffer
+         (let ((tmp (buffer-name)))
+           (set-buffer buffer)
+           (set-buffer (markdown tmp))
+           (format "<!DOCTYPE html><html><title>Markdown preview</title><link rel=\"stylesheet\" href = \"https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css\"/>
+    <body><article class=\"markdown-body\" style=\"box-sizing: border-box;min-width: 200px;max-width: 980px;margin: 0 auto;padding: 45px;\">%s</article></body></html>" (buffer-string))))
+       (current-buffer)))
+
+
+<a id="org2e85bb6"></a>
+
+## Export settings
+
+
+<a id="org6b45d31"></a>
+
+# Packages to consider adding
+
+
+<a id="orga2b3b57"></a>
+
+## `elfeed`
+
+This looks like a good way to keep track of arXiv papers.
+
+
+<a id="orgfeea712"></a>
+
+## `org-reveal`
+
+Create `reveal.js` based slideshows using Org mode.
+
+
+<a id="org06b6ed3"></a>
+
+## `matlab=mode`
+
+This will be useful for using MATLAB in Org files.
+
+
+<a id="org95b6274"></a>
+
+## `org-super-agenda`
+
+This package will improve Org agenda views. See [`org-super-agenda`](https://github.com/alphapapa/org-super-agenda).
+

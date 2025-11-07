@@ -27,6 +27,8 @@ it produces the actual =.el= files required for my Emacs configuration.
   (add-hook 'org-babel-post-tangle-hook #'my-ensure-lexical-binding-cookie)
 
   (org-babel-tangle)
+
+  (org-export-to-file 'md "README.md")
 #+end_src
 
 I use Emacs with native compilation myself.  This process is relatively
@@ -1630,3 +1632,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
    This will be useful for using MATLAB in Org files.
 ** =org-super-agenda=
    This package will improve Org agenda views. See [[https://github.com/alphapapa/org-super-agenda][=org-super-agenda=]].
+
+# Local Variables:
+# after-save-hook: (lambda nil (when (org-md-export-to-markdown) (rename-file "config.md" "README.md" t)))
+# End:
