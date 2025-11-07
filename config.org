@@ -952,8 +952,17 @@ it produces the actual =.el= files required for my Emacs configuration.
                            (mu4e-refile-folder . "/wvwc-mail/[Gmail]/Archive")
                            (user-mail-address . "oldroyd.j@wvwc.edu")
                            (mu4e-maildir-shortcuts . ( ("/wvwc-mail/INBOX" . ?i)))
-                           )))
-               ))))
+                           ))
+                 ,(make-mu4e-context
+                   :name "math-gmail"
+                   :match-func (lambda (msg) (when msg
+                                               (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+                   :vars '((mu4e-trash-folder . "/math-gmail/[Gmail]/Trash")
+                           (mu4e-refile-folder . "/math-gmail/[Gmail]/Archive")
+                           (user-mail-address . "math.oldroyd@gmail.com")
+                           (mu4e-maildir-shortcuts . ( ("/math-gmail/INBOX" . ?m)))
+                           ))
+                 )))))
 
      ;; Headers can be misaligned with columns in header view, so this code
      ;; from https://www.djcbsoftware.nl/code/mu/mu4e/Known-issues.html
