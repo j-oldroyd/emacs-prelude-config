@@ -184,6 +184,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (when (eq system-type 'gnu/linux)
        (pixel-scroll-precision-mode 1))
    #+end_src
+
 ** Keybinds
    We need to tell emacs how to interpret certain keys on MacBook
    keyboards. While we're at it, we'll set up some useful keybinds for moving
@@ -404,6 +405,10 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
                           '(pair ("\\(") ("\\)") ) )
 
      (add-to-list 'meow-char-thing-table '(?m . inline-math))
+
+     ;; Default states for modes
+     (add-to-list 'meow-mode-state-list '(mu4e-main-mode . insert))
+     (add-to-list 'meow-mode-state-list '(mu4e-view-mode . motion))
 
      (cond
       ((eq system-type 'darwin) (meow-setup-colemak))
@@ -877,9 +882,6 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;; we installed this with homebrew
      (setq mu4e-mu-binary (executable-find "mu"))
 
-     ;; this is the directory we created before:
-     ;; (setq mu4e-maildir "~/.maildir")
-
      ;; this command is called to sync imap servers:
      (setq mu4e-get-mail-command (concat (executable-find "mbsync") " -a"))
      ;; how often to call it in seconds:
@@ -963,9 +965,9 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
                    :vars '((mu4e-trash-folder . "/math-gmail/[Gmail]/Trash")
                            (mu4e-refile-folder . "/math-gmail/[Gmail]/Archive")
                            (user-mail-address . "math.oldroyd@gmail.com")
-                           (mu4e-maildir-shortcuts . ( ("/math-gmail/INBOX" . ?m)))
-                           ))
-                 )))))
+                           (mu4e-maildir-shortcuts . ( ("/math-gmail/INBOX" . ?i)))
+                           ))))
+         )))
 
      ;; Headers can be misaligned with columns in header view, so this code
      ;; from https://www.djcbsoftware.nl/code/mu/mu4e/Known-issues.html
@@ -980,6 +982,10 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        ;; by ensuring the `default' face is in the inheritance hierarchy.
        (face-remap-add-relative 'header-line '(:inherit (mu4e-header-face
                                                          default))))
+
+     ;; Run mu4e-mailing-list-info-refresh to update mailing lists after change
+     (add-to-list 'mu4e-user-mailing-lists '(:list-id "tex-live.tug.org"
+      :name "TUG"))
    #+end_src
    The =org-msg= package, located [[https://github.com/jeremy-compostella/org-msg?tab=readme-ov-file][on GitHub]], allows us to format emails using
    the capabilities of Org Mode.  In particular, we can typeset mathematics
