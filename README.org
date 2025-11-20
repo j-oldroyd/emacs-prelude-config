@@ -28,7 +28,7 @@ it produces the actual =.el= files required for my Emacs configuration.
 
   (org-babel-tangle)
 
-  (org-export-to-file 'org "README.org")
+  (write-file "README.org")
 #+end_src
 
 I use Emacs with native compilation myself.  This process is relatively
