@@ -2,14 +2,13 @@
 #+PROPERTY: header-args :results output silent
 
 This file describes my =Emacs= configuration, which is built on top of
-[[https://github.com/bbatsov/prelude?tab=readme-ov-file][Prelude]]. This file currently focuses on including resources for
-creating notes with Org mode, particularly via =org-noter= and
-=org-roam=. Support for BibTeX will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=citar=]],
-[[https://github.com/emacs-citar/citar-org-roam][=citar-org-roam=]] and =org-cite=.  This is also based in part on Prot's
-Emacs configuration, which uses ~org-babel-tangle~ to produce ~.el~
-files instead of loading one potentially large ~.org~ file.  See [[https://github.com/protesilaos/dotfiles/blob/master/emacs/.emacs.d/prot-emacs.org][this
-Github page]].  This command needs to be re-run each time the
-configuration changes.
+[[https://github.com/bbatsov/prelude?tab=readme-ov-file][Prelude]]. This file currently focuses on including resources for creating notes
+with Org mode, particularly via =org-noter= and =org-roam=. Support for BibTeX
+will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][citar]], [[https://github.com/emacs-citar/citar-org-roam][citar-org-roam]] and =org-cite=.  This is also based in
+part on Prot's Emacs configuration, which uses ~org-babel-tangle~ to produce
+~.el~ files instead of loading one potentially large ~.org~ file.  See [[https://github.com/protesilaos/dotfiles/blob/master/emacs/.emacs.d/prot-emacs.org][this
+Github page]].  This command needs to be re-run each time the configuration
+changes.
 
 The following block must be evaluated each time the configuration is updated, as
 it produces the actual =.el= files required for my Emacs configuration.
@@ -33,8 +32,8 @@ it produces the actual =.el= files required for my Emacs configuration.
 
 I use Emacs with native compilation myself.  This process is relatively
 painless, and I use the following commands after cloning Emacs from an
-appropriate repo, such as [[https://github.com/emacs-mirror/emacs][=emacs-mirror=]] on GitHub, although I'm considering
-switching to this modified [[https://github.com/jdtsmith/emacs-mac][=emacs-mac=]] build on macOS:
+appropriate repo, such as [[https://github.com/emacs-mirror/emacs][emacs-mirror]] on GitHub, although I'm considering
+switching to this modified [[https://github.com/jdtsmith/emacs-mac][emacs-mac]] build on macOS:
 #+begin_src bash :tangle "no" :results code
   # From within emacs/
   ./autogen.sh
