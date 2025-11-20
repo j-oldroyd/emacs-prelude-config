@@ -1032,9 +1032,9 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;; Disable fill-paragraph in org-msg to allow mu4e to format=flowed
      ;; each message.  See relevant documentation in mu4e block.
      (require 'messages-are-flowing)
-     (add-hook 'org-msg-mode-hook 'turn-off-auto-fill)
-     (add-hook 'org-msg-mode-hook 'visual-line-mode)
-     (add-hook 'org-msg-mode-hook 'messages-are-flowing-use-and-mark-hard-newlines)
+     (add-hook 'org-msg-edit-mode-hook 'turn-off-auto-fill)
+     (add-hook 'org-msg-edit-mode-hook 'visual-line-mode)
+     (add-hook 'org-msg-edit-mode-hook 'messages-are-flowing-use-and-mark-hard-newlines)
 
 
      ;; Org-msg be default uses /tmp/ for storing message previews.  This

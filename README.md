@@ -1,41 +1,41 @@
 
 # Table of Contents
 
-1.  [General settings and packages](#orgbaab1e6)
-    1.  [`Emacs` settings](#orgd60112d)
-    2.  [UI and navigation settings](#org1e0efb2)
-    3.  [Keybinds](#org5e926ef)
-    4.  [Completion and templates/snippets](#org3c078b4)
-    5.  [Shells](#orged5a97b)
-    6.  [LLM integration](#org5b6b163)
-    7.  [Miscellaneous packages and settings](#orgcdbdfc9)
-2.  [Enhancing modes for files](#orgb9683e9)
-    1.  [Language server protocol](#org129c282)
-    2.  [PDF-tools](#org2034cf6)
-    3.  [AUCTeX](#orgd4b57c2)
-    4.  [`mu4e`](#org58a493c)
-    5.  [Python](#org12253df)
-    6.  [`hledger`](#org871e274)
-    7.  [Magit](#org10aaa48)
-    8.  [PreTeXt](#org85f7cbd)
-    9.  [`lean4-mode`](#orge6e76f2)
-    10. [EPUB files](#org91293af)
-3.  [Org mode](#org54419a5)
-    1.  [General UI and edit settings](#org62116b4)
-    2.  [Agenda and capture settings](#org0865836)
-    3.  [Calendar and diary settings](#orgeec49ea)
-    4.  [Note-taking](#orgb4ea14b)
-    5.  [BibTeX](#org5dd808f)
-    6.  [`org-babel` settings](#orgc0810db)
-        1.  [Tangle settings](#org3ddfa42)
-        2.  [`ox-hugo`](#org121d1dd)
-        3.  [`impatient-mode`](#orgbc08fb9)
-    7.  [Export settings](#orgab87c0f)
-4.  [Packages to consider adding](#org0619345)
-    1.  [`elfeed`](#org3005991)
-    2.  [`org-reveal`](#org447e89b)
-    3.  [`matlab=mode`](#orgffaa81c)
-    4.  [`org-super-agenda`](#org224af64)
+1.  [General settings and packages](#org1dfa288)
+    1.  [`Emacs` settings](#org9a273cb)
+    2.  [UI and navigation settings](#org5ddb193)
+    3.  [Keybinds](#org4603514)
+    4.  [Completion and templates/snippets](#orgf0ea74b)
+    5.  [Shells](#org626c4c3)
+    6.  [LLM integration](#orge744e49)
+    7.  [Miscellaneous packages and settings](#orgff459d4)
+2.  [Enhancing modes for files](#orgd1b5859)
+    1.  [Language server protocol](#orgcda6b00)
+    2.  [PDF-tools](#org5e509b1)
+    3.  [AUCTeX](#org7cc18d4)
+    4.  [`mu4e`](#orgece3d8c)
+    5.  [Python](#orgbf0cebe)
+    6.  [`hledger`](#orgeceaa7c)
+    7.  [Magit](#orgea9a873)
+    8.  [PreTeXt](#org838843f)
+    9.  [`lean4-mode`](#org7e0e0fd)
+    10. [EPUB files](#org0452734)
+3.  [Org mode](#orgbec2328)
+    1.  [General UI and edit settings](#org7120658)
+    2.  [Agenda and capture settings](#orgf75eee8)
+    3.  [Calendar and diary settings](#org9c589ff)
+    4.  [Note-taking](#org85060b1)
+    5.  [BibTeX](#org2a775c3)
+    6.  [`org-babel` settings](#org37cf70d)
+        1.  [Tangle settings](#orgdf30452)
+        2.  [`ox-hugo`](#orgc14dc38)
+        3.  [`impatient-mode`](#org0b13375)
+    7.  [Export settings](#org403d8b4)
+4.  [Packages to consider adding](#org9b0fd75)
+    1.  [`elfeed`](#org18182ae)
+    2.  [`org-reveal`](#org0540a52)
+    3.  [`matlab=mode`](#org9719ae0)
+    4.  [`org-super-agenda`](#org12f523b)
 
 This file describes my `Emacs` configuration, which is built on top of
 [Prelude](https://github.com/bbatsov/prelude?tab=readme-ov-file). This file currently focuses on including resources for
@@ -82,12 +82,12 @@ switching to this modified [`emacs-mac`](https://github.com/jdtsmith/emacs-mac) 
 See [Mastering Emacs](https://www.masteringemacs.org/article/how-to-get-started-tree-sitter) for a good breakdown of this process.
 
 
-<a id="orgbaab1e6"></a>
+<a id="org1dfa288"></a>
 
 # General settings and packages
 
 
-<a id="orgd60112d"></a>
+<a id="org9a273cb"></a>
 
 ## `Emacs` settings
 
@@ -102,9 +102,12 @@ General settings for `emacs`.
     (setq delete-by-moving-to-trash t)
     (if (eq system-type 'darwin)
         (setq trash-directory "~/.Trash"))
+    
+    ;; User information
+    (setq user-full-name "Jesse Oldroyd")
 
 
-<a id="org1e0efb2"></a>
+<a id="org5ddb193"></a>
 
 ## UI and navigation settings
 
@@ -232,7 +235,7 @@ commands.  I'm also including `casual` for its menus, which are based on
       (pixel-scroll-precision-mode 1))
 
 
-<a id="org5e926ef"></a>
+<a id="org4603514"></a>
 
 ## Keybinds
 
@@ -467,7 +470,7 @@ default minor modes can be set via the `meow-mode-state-list` variable.
     (meow-global-mode 1)
 
 
-<a id="org3c078b4"></a>
+<a id="orgf0ea74b"></a>
 
 ## Completion and templates/snippets
 
@@ -607,7 +610,7 @@ config on GitHub.
       (embark-collect-mode . consult-preview-at-point-mode))
 
 
-<a id="orged5a97b"></a>
+<a id="org626c4c3"></a>
 
 ## Shells
 
@@ -631,7 +634,7 @@ requires SageMath, which is tricky to get on Windows.
                (,(kbd "C-c C-z") . sage-shell-edit:pop-to-process-buffer))))
 
 
-<a id="org5b6b163"></a>
+<a id="orge744e49"></a>
 
 ## LLM integration
 
@@ -643,7 +646,7 @@ obviously).
     (require 'gptel)
 
 
-<a id="orgcdbdfc9"></a>
+<a id="orgff459d4"></a>
 
 ## Miscellaneous packages and settings
 
@@ -739,14 +742,14 @@ appropriate `config` file `~/.aspell.conf` in the MSYS2/UCRT64 shell. See
       :ensure t)
 
 
-<a id="orgb9683e9"></a>
+<a id="orgd1b5859"></a>
 
 # Enhancing modes for files
 
 The packages here improve/replace how emacs handles certain files.
 
 
-<a id="org129c282"></a>
+<a id="orgcda6b00"></a>
 
 ## Language server protocol
 
@@ -797,7 +800,7 @@ various file types including `.tex` files.  Another alternative is to use
       (global-treesit-auto-mode))
 
 
-<a id="org2034cf6"></a>
+<a id="org5e509b1"></a>
 
 ## PDF-tools
 
@@ -825,7 +828,7 @@ work with AUCTeX below.
     (advice-add 'display-line-numbers--turn-on :around #'bugfix-display-line-numbers--turn-on)
 
 
-<a id="orgd4b57c2"></a>
+<a id="org7cc18d4"></a>
 
 ## AUCTeX
 
@@ -932,7 +935,7 @@ for extensive customizations and abbreviations.
           '((?0 ("\\emptyset" "\\varnothing"))))
 
 
-<a id="org58a493c"></a>
+<a id="orgece3d8c"></a>
 
 ## `mu4e`
 
@@ -1088,7 +1091,7 @@ Windows to preview messages created in Emacs/WSL.
     (use-package org-msg
       :ensure t)
     
-    (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvipng"
+    (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:imagemagick"
           org-msg-startup "hidestars indent inlineimages"
           org-msg-greeting-fmt "\nHi%s,\n\n"
           ;;org-msg-recipient-names '(("jeremy.compostella@gmail.com" . "Jérémy"))
@@ -1109,9 +1112,9 @@ Windows to preview messages created in Emacs/WSL.
     ;; Disable fill-paragraph in org-msg to allow mu4e to format=flowed
     ;; each message.  See relevant documentation in mu4e block.
     (require 'messages-are-flowing)
-    (add-hook 'org-msg-mode-hook 'turn-off-auto-fill)
-    (add-hook 'org-msg-mode-hook 'visual-line-mode)
-    (add-hook 'org-msg-mode-hook 'messages-are-flowing-use-and-mark-hard-newlines)
+    (add-hook 'org-msg-edit-mode-hook 'turn-off-auto-fill)
+    (add-hook 'org-msg-edit-mode-hook 'visual-line-mode)
+    (add-hook 'org-msg-edit-mode-hook 'messages-are-flowing-use-and-mark-hard-newlines)
     
     
     ;; Org-msg be default uses /tmp/ for storing message previews.  This
@@ -1156,7 +1159,7 @@ Windows to preview messages created in Emacs/WSL.
                           (display-buffer (current-buffer))))))))))
 
 
-<a id="org12253df"></a>
+<a id="orgbf0cebe"></a>
 
 ## Python
 
@@ -1194,7 +1197,7 @@ setting in `core/ultrab.py`.
             ))
 
 
-<a id="org871e274"></a>
+<a id="orgeceaa7c"></a>
 
 ## `hledger`
 
@@ -1285,7 +1288,7 @@ provided configuration for `hledger-mode`.
     ;;               (setq-local company-idle-delay 0.1))))
 
 
-<a id="org10aaa48"></a>
+<a id="orgea9a873"></a>
 
 ## Magit
 
@@ -1301,7 +1304,7 @@ complains about the hook not existing.
        'append))
 
 
-<a id="org85f7cbd"></a>
+<a id="org838843f"></a>
 
 ## PreTeXt
 
@@ -1318,7 +1321,7 @@ For pretty-printing, there is also `sgml-mode` which contains the function
                                  ))
 
 
-<a id="orge6e76f2"></a>
+<a id="org7e0e0fd"></a>
 
 ## `lean4-mode`
 
@@ -1340,7 +1343,7 @@ be installed manually or with `:vc`.
       )
 
 
-<a id="org91293af"></a>
+<a id="org0452734"></a>
 
 ## EPUB files
 
@@ -1357,12 +1360,12 @@ configuration here is adapted from the suggestions on the website.
     (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 
 
-<a id="org54419a5"></a>
+<a id="orgbec2328"></a>
 
 # Org mode
 
 
-<a id="org62116b4"></a>
+<a id="org7120658"></a>
 
 ## General UI and edit settings
 
@@ -1414,7 +1417,7 @@ inserting rows, so I reset them here.
                   ("M-S-<down>" . org-table-insert-row)))
 
 
-<a id="org0865836"></a>
+<a id="orgf75eee8"></a>
 
 ## Agenda and capture settings
 
@@ -1486,7 +1489,7 @@ the WSL settings require a symlink from the Windows Google Drive folder to
             (org-agenda-files :maxlevel . 3)))
 
 
-<a id="orgeec49ea"></a>
+<a id="org9c589ff"></a>
 
 ## Calendar and diary settings
 
@@ -1503,7 +1506,7 @@ for improving the calendar view. This requires using the `cfw:*` commands via
     (require 'calfw-cal)
 
 
-<a id="orgb4ea14b"></a>
+<a id="org85060b1"></a>
 
 ## Note-taking
 
@@ -1571,7 +1574,7 @@ is.
       :ensure t)
 
 
-<a id="org5dd808f"></a>
+<a id="org2a775c3"></a>
 
 ## BibTeX
 
@@ -1676,7 +1679,7 @@ now, a decent workflow seems to be the following:
                (nreverse filenames))))
 
 
-<a id="orgc0810db"></a>
+<a id="org37cf70d"></a>
 
 ## `org-babel` settings
 
@@ -1687,7 +1690,7 @@ We need to configure `org-babel` for evaluation of `SRC` blocks in Org mode.
      '((octave . t)))
 
 
-<a id="org3ddfa42"></a>
+<a id="orgdf30452"></a>
 
 ### Tangle settings
 
@@ -1706,7 +1709,7 @@ is enabled.  This code is taken from [this answer](https://emacs.stackexchange.c
     (add-hook 'org-babel-post-tangle-hook #'my-ensure-lexical-binding-cookie)
 
 
-<a id="org121d1dd"></a>
+<a id="orgc14dc38"></a>
 
 ### `ox-hugo`
 
@@ -1719,7 +1722,7 @@ Hugo.
       :after ox)
 
 
-<a id="orgbc08fb9"></a>
+<a id="org0b13375"></a>
 
 ### `impatient-mode`
 
@@ -1767,38 +1770,38 @@ from the `init.el` gist [here](https://gist.github.com/tylerjl))
        (current-buffer)))
 
 
-<a id="orgab87c0f"></a>
+<a id="org403d8b4"></a>
 
 ## Export settings
 
 
-<a id="org0619345"></a>
+<a id="org9b0fd75"></a>
 
 # Packages to consider adding
 
 
-<a id="org3005991"></a>
+<a id="org18182ae"></a>
 
 ## `elfeed`
 
 This looks like a good way to keep track of arXiv papers.
 
 
-<a id="org447e89b"></a>
+<a id="org0540a52"></a>
 
 ## `org-reveal`
 
 Create `reveal.js` based slideshows using Org mode.
 
 
-<a id="orgffaa81c"></a>
+<a id="org9719ae0"></a>
 
 ## `matlab=mode`
 
 This will be useful for using MATLAB in Org files.
 
 
-<a id="org224af64"></a>
+<a id="org12f523b"></a>
 
 ## `org-super-agenda`
 
