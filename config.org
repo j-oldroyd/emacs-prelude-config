@@ -59,6 +59,9 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (setq delete-by-moving-to-trash t)
      (if (eq system-type 'darwin)
          (setq trash-directory "~/.Trash"))
+
+     ;; User information
+     (setq user-full-name "Jesse Oldroyd")
    #+end_src
 ** UI and navigation settings
    See karthink's [[https://karthinks.com/software/avy-can-do-anything/][blog post]] for ideas on using Avy and its associated
