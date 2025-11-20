@@ -1011,7 +1011,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (use-package org-msg
        :ensure t)
 
-     (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:imagemagick"
+     (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvisvgm"
            org-msg-startup "hidestars indent inlineimages"
            org-msg-greeting-fmt "\nHi%s,\n\n"
            ;;org-msg-recipient-names '(("jeremy.compostella@gmail.com" . "Jérémy"))
@@ -1632,6 +1632,15 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
     #+end_src
 
 ** Export settings
+   These settings control how =.org= files are exported to other formats.  In
+   particular, \( \LaTeX \) is often exported into other file types using
+   formats such as =.svg=, another sizing can be a problem.
+   #+begin_src emacs-lisp :tangle "org-settings.el"
+     ;;; LaTeX export settings
+     ;; Remove foregroud/background colors from previews
+     (plist-put org-format-latex-options :foreground nil)
+     (plist-put org-format-latex-options :background nil)
+   #+end_src
 * Packages to consider adding
 ** =elfeed=
    This looks like a good way to keep track of arXiv papers.
