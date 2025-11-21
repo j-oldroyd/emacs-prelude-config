@@ -1008,7 +1008,10 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (setq mail-user-agent 'mu4e-user-agent)
      ;; Config taken from org-msg github page.
      (use-package org-msg
-       :ensure t)
+       :ensure t
+       :bind (("C-c C-m C-b" . message-goto-bcc)
+              ("C-c C-m C-c" . message-goto-cc))
+       )
 
      (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvisvgm"
            org-msg-startup "hidestars indent inlineimages"
