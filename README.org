@@ -1,17 +1,16 @@
-# Created 2025-11-20 Thu 13:34
+# Created 2025-12-08 Mon 11:13
 #+title: Emacs/Prelude configuration
 #+author: Jesse Oldroyd
 #+property: header-args :results output silent
 
 This file describes my =Emacs= configuration, which is built on top of
-[[https://github.com/bbatsov/prelude?tab=readme-ov-file][Prelude]]. This file currently focuses on including resources for
-creating notes with Org mode, particularly via =org-noter= and
-=org-roam=. Support for BibTeX will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][=citar=]],
-[[https://github.com/emacs-citar/citar-org-roam][=citar-org-roam=]] and =org-cite=.  This is also based in part on Prot's
-Emacs configuration, which uses ~org-babel-tangle~ to produce ~.el~
-files instead of loading one potentially large ~.org~ file.  See [[https://github.com/protesilaos/dotfiles/blob/master/emacs/.emacs.d/prot-emacs.org][this
-Github page]].  This command needs to be re-run each time the
-configuration changes.
+[[https://github.com/bbatsov/prelude?tab=readme-ov-file][Prelude]]. This file currently focuses on including resources for creating notes
+with Org mode, particularly via =org-noter= and =org-roam=. Support for BibTeX
+will be provided by [[https://github.com/emacs-citar/citar?tab=readme-ov-file][citar]], [[https://github.com/emacs-citar/citar-org-roam][citar-org-roam]] and =org-cite=.  This is also based in
+part on Prot's Emacs configuration, which uses ~org-babel-tangle~ to produce
+~.el~ files instead of loading one potentially large ~.org~ file.  See [[https://github.com/protesilaos/dotfiles/blob/master/emacs/.emacs.d/prot-emacs.org][this
+Github page]].  This command needs to be re-run each time the configuration
+changes.
 
 The following block must be evaluated each time the configuration is updated, as
 it produces the actual =.el= files required for my Emacs configuration.
@@ -35,8 +34,8 @@ it produces the actual =.el= files required for my Emacs configuration.
 
 I use Emacs with native compilation myself.  This process is relatively
 painless, and I use the following commands after cloning Emacs from an
-appropriate repo, such as [[https://github.com/emacs-mirror/emacs][=emacs-mirror=]] on GitHub, although I'm considering
-switching to this modified [[https://github.com/jdtsmith/emacs-mac][=emacs-mac=]] build on macOS:
+appropriate repo, such as [[https://github.com/emacs-mirror/emacs][emacs-mirror]] on GitHub, although I'm considering
+switching to this modified [[https://github.com/jdtsmith/emacs-mac][emacs-mac]] build on macOS:
 #+begin_src bash :tangle "no" :results code
   # From within emacs/
   ./autogen.sh
@@ -668,6 +667,7 @@ appropriate ~config~ file ~~/.aspell.conf~ in the MSYS2/UCRT64 shell. See
   ;; format-all provides code-formatting via third-party tools such as
   ;; Black (for Python) and latexindent (for LaTeX)
   (use-package format-all
+    :ensure t
     :bind ("C-c M-i" . format-all-buffer))
 
   ;; This package is useful for patching other packages.  I currently
@@ -756,8 +756,9 @@ AUCTeX, which is included with Prelude modules.
   (add-hook 'LaTeX-mode-hook 'visual-line-mode)
   (add-hook 'LaTeX-mode-hook 'flyspell-mode)
   (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-  ;;; Smartparens uses M-j for join sexp, but I want to use that for Avy
-  ;;; instead.
+
+  ;; Smartparens uses M-j for join sexp, but I want to use that for Avy
+  ;; instead.
   (add-hook 'LaTeX-mode-hook
             (lambda ()
               (setq sp-override-key-bindings '(("M-j" . avy-goto-char-timer)))
@@ -822,6 +823,19 @@ AUCTeX, which is included with Prelude modules.
   (use-package latexdiff
     :ensure t)
 
+  ;;; Asymptote integration
+  ;; Advice for AUCTeX to treat Asymptote comments correctly
+  ;; Taken from https://tex.stackexchange.com/questions/150081/how-to-make-auctex-recognize-asymptote-environment-for-correct-commenting-out
+  (defadvice comment-region (around comment-region-asymptote activate)
+    "Use \"//\" as comment prefix in Asymptote environments."
+    (let ((comment-start
+           (if (and (equal major-mode 'latex-mode)
+                    (or (equal (LaTeX-current-environment) "asy")
+                        (equal (LaTeX-current-environment) "asydef")))
+               "//"
+             comment-start)))
+      ad-do-it))
+
   ;; We need to modify sage-shell to accept filepaths with spaces in their
   ;; names. This appears to require modifying
   ;; sage-shell-sagetex:tex-master-maybe.
@@ -840,7 +854,7 @@ AUCTeX, which is included with Prelude modules.
 
   (advice-add '
    sage-shell-sagetex:tex-master-maybe
-              :filter-return #'shell-quote-argument)
+   :filter-return #'shell-quote-argument)
 #+end_src
 
 The above fix for =sage-shell-mode= also requires editing
@@ -1003,7 +1017,10 @@ Windows to preview messages created in Emacs/WSL.
   (setq mail-user-agent 'mu4e-user-agent)
   ;; Config taken from org-msg github page.
   (use-package org-msg
-    :ensure t)
+    :ensure t
+    :bind (("C-c C-m C-b" . message-goto-bcc)
+           ("C-c C-m C-c" . message-goto-cc))
+    )
 
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvisvgm"
         org-msg-startup "hidestars indent inlineimages"
