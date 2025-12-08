@@ -1,4 +1,4 @@
-# Created 2025-12-08 Mon 11:13
+# Created 2025-12-08 Mon 11:16
 #+title: Emacs/Prelude configuration
 #+author: Jesse Oldroyd
 #+property: header-args :results output silent
@@ -829,7 +829,7 @@ AUCTeX, which is included with Prelude modules.
   (defadvice comment-region (around comment-region-asymptote activate)
     "Use \"//\" as comment prefix in Asymptote environments."
     (let ((comment-start
-           (if (and (equal major-mode 'latex-mode)
+           (if (and (equal major-mode 'LaTeX-mode)
                     (or (equal (LaTeX-current-environment) "asy")
                         (equal (LaTeX-current-environment) "asydef")))
                "//"

@@ -828,19 +828,6 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (use-package latexdiff
        :ensure t)
 
-     ;;; Asymptote integration
-     ;; Advice for AUCTeX to treat Asymptote comments correctly
-     ;; Taken from https://tex.stackexchange.com/questions/150081/how-to-make-auctex-recognize-asymptote-environment-for-correct-commenting-out
-     (defadvice comment-region (around comment-region-asymptote activate)
-       "Use \"//\" as comment prefix in Asymptote environments."
-       (let ((comment-start
-              (if (and (equal major-mode 'latex-mode)
-                       (or (equal (LaTeX-current-environment) "asy")
-                           (equal (LaTeX-current-environment) "asydef")))
-                  "//"
-                comment-start)))
-         ad-do-it))
-
      ;; We need to modify sage-shell to accept filepaths with spaces in their
      ;; names. This appears to require modifying
      ;; sage-shell-sagetex:tex-master-maybe.
