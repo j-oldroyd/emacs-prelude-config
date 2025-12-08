@@ -671,6 +671,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;; format-all provides code-formatting via third-party tools such as
      ;; Black (for Python) and latexindent (for LaTeX)
      (use-package format-all
+       :ensure t
        :bind ("C-c M-i" . format-all-buffer))
 
      ;; This package is useful for patching other packages.  I currently
@@ -760,8 +761,9 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (add-hook 'LaTeX-mode-hook 'visual-line-mode)
      (add-hook 'LaTeX-mode-hook 'flyspell-mode)
      (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-     ;;; Smartparens uses M-j for join sexp, but I want to use that for Avy
-     ;;; instead.
+
+     ;; Smartparens uses M-j for join sexp, but I want to use that for Avy
+     ;; instead.
      (add-hook 'LaTeX-mode-hook
                (lambda ()
                  (setq sp-override-key-bindings '(("M-j" . avy-goto-char-timer)))
@@ -826,6 +828,19 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (use-package latexdiff
        :ensure t)
 
+     ;;; Asymptote integration
+     ;; Advice for AUCTeX to treat Asymptote comments correctly
+     ;; Taken from https://tex.stackexchange.com/questions/150081/how-to-make-auctex-recognize-asymptote-environment-for-correct-commenting-out
+     (defadvice comment-region (around comment-region-asymptote activate)
+       "Use \"//\" as comment prefix in Asymptote environments."
+       (let ((comment-start
+              (if (and (equal major-mode 'latex-mode)
+                       (or (equal (LaTeX-current-environment) "asy")
+                           (equal (LaTeX-current-environment) "asydef")))
+                  "//"
+                comment-start)))
+         ad-do-it))
+
      ;; We need to modify sage-shell to accept filepaths with spaces in their
      ;; names. This appears to require modifying
      ;; sage-shell-sagetex:tex-master-maybe.
@@ -844,7 +859,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
 
      (advice-add '
       sage-shell-sagetex:tex-master-maybe
-                 :filter-return #'shell-quote-argument)
+      :filter-return #'shell-quote-argument)
    #+END_SRC
 
    The above fix for =sage-shell-mode= also requires editing
