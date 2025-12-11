@@ -1358,11 +1358,9 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (cond
       ((eq system-type 'darwin)
        (setq org-agenda-files '("~/Documents/org"
-                                "~/Google Drive/My Drive/org"
-                                "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/org"))
+                                "~/Google Drive/My Drive/org"))
        (setq org-default-notes-file
-             (expand-file-name "/Users/jesseoldroyd/Library/Mobile
-                Documents/com~apple~CloudDocs/Documents/org/notes.org")))
+             (expand-file-name "/Users/jesseoldroyd/Documents/org/notes.org")))
       ((eq system-type 'gnu/linux)
        (setq org-agenda-files '("~/org"
                                 "~/GoogleDrive/org"))
