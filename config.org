@@ -225,6 +225,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        :custom (meow-expand-hint-remove-delay 2.0))
 
      (defun meow-setup ()
+       (interactive)
        (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
        (meow-motion-define-key
         '("j" . meow-next)
@@ -316,6 +317,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
 
      ;; Testing out Colemak on my Mac
      (defun meow-setup-colemak ()
+       (interactive)
        (setq meow-cheatsheet-layout meow-cheatsheet-layout-colemak)
        (meow-motion-define-key
         ;; Use e to move up, n to move down.
@@ -412,9 +414,9 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (add-to-list 'meow-mode-state-list '(mu4e-main-mode . insert))
      (add-to-list 'meow-mode-state-list '(mu4e-view-mode . motion))
 
-     (cond
-      ((eq system-type 'darwin) (meow-setup-colemak))
-      ((eq system-type 'gnu/linux) (meow-setup)))
+     ;; (cond
+     ;;  ((eq system-type 'darwin) (meow-setup-colemak))
+     ;;  ((eq system-type 'gnu/linux) (meow-setup)))
 
      (meow-global-mode 1)
    #+end_src
