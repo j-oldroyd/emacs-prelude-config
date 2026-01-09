@@ -673,7 +673,10 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;; format-all provides code-formatting via third-party tools such as
      ;; Black (for Python) and latexindent (for LaTeX)
      (use-package format-all
-       :bind ("C-c M-i" . format-all-buffer))
+       :bind ("C-c M-i" . format-all-buffer)
+       :config
+       (setq-default format-all-formatters
+                     '(("LaTeX" (latexindent "-m")))))
 
      ;; This package is useful for patching other packages.  I currently
      ;; need it for patching org-msg on WSL.
@@ -1360,7 +1363,8 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (cond
       ((eq system-type 'darwin)
        (setq org-agenda-files '("~/Documents/org"
-                                "~/Google Drive/My Drive/org"))
+                                "~/Google Drive/My Drive/org"
+                                "~/Sync/beorg"))
        (setq org-default-notes-file
              (expand-file-name "/Users/jesseoldroyd/Documents/org/notes.org")))
       ((eq system-type 'gnu/linux)
