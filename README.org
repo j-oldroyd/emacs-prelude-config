@@ -1,4 +1,4 @@
-# Created 2026-01-09 Fri 18:13
+# Created 2026-01-11 Sun 16:36
 #+title: Emacs/Prelude configuration
 #+author: Jesse Oldroyd
 #+property: header-args :results output silent
@@ -672,7 +672,8 @@ appropriate ~config~ file ~~/.aspell.conf~ in the MSYS2/UCRT64 shell. See
     :bind ("C-c M-i" . format-all-buffer)
     :config
     (setq-default format-all-formatters
-                  '(("LaTeX" (latexindent "-m")))))
+                  '(("LaTeX" (latexindent "-m"))
+                    ("nXML" (tidy "-config" "~/.config/tidy/config.txt")))))
 
   ;; This package is useful for patching other packages.  I currently
   ;; need it for patching org-msg on WSL.
@@ -720,13 +721,13 @@ various file types including =.tex= files.  Another alternative is to use
   (add-to-list 'Info-directory-list "/usr/local/texlive/2024/texmf-dist/doc/info")
 
   ;; Auto-activate ts-modes when available
-  (use-package treesit-auto
-    :ensure t
-    :custom
-    (treesit-auto-install 'prompt)
-    :config
-    (treesit-auto-add-to-auto-mode-alist 'all)
-    (global-treesit-auto-mode))
+  ;; (use-package treesit-auto
+  ;;   :ensure t
+  ;;   :custom
+  ;;   (treesit-auto-install 'prompt)
+  ;;   :config
+  ;;   (treesit-auto-add-to-auto-mode-alist 'all)
+  ;;   (global-treesit-auto-mode))
 #+end_src
 ** PDF-tools
 The =pdf-tools= package replaces emacs' own DocView mode for viewing PDF
@@ -1118,6 +1119,7 @@ provided configuration for =hledger-mode=.
 #+begin_src emacs-lisp :tangle "accounting.el"
   (use-package hledger-mode
     :ensure t
+    :after (htmlize)
     :mode ("\\.journal\\'" "\\.hledger\\'")
     :commands hledger-enable-reporting
     :preface

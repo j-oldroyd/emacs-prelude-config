@@ -725,13 +725,13 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (add-to-list 'Info-directory-list "/usr/local/texlive/2024/texmf-dist/doc/info")
 
      ;; Auto-activate ts-modes when available
-     (use-package treesit-auto
-       :ensure t
-       :custom
-       (treesit-auto-install 'prompt)
-       :config
-       (treesit-auto-add-to-auto-mode-alist 'all)
-       (global-treesit-auto-mode))
+     ;; (use-package treesit-auto
+     ;;   :ensure t
+     ;;   :custom
+     ;;   (treesit-auto-install 'prompt)
+     ;;   :config
+     ;;   (treesit-auto-add-to-auto-mode-alist 'all)
+     ;;   (global-treesit-auto-mode))
    #+end_src
 ** PDF-tools
    The =pdf-tools= package replaces emacs' own DocView mode for viewing PDF
@@ -1124,6 +1124,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
    #+begin_src emacs-lisp :tangle "accounting.el"
      (use-package hledger-mode
        :ensure t
+       :after (htmlize)
        :mode ("\\.journal\\'" "\\.hledger\\'")
        :commands hledger-enable-reporting
        :preface
