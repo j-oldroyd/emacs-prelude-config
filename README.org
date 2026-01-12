@@ -1,4 +1,4 @@
-# Created 2026-01-11 Sun 16:36
+# Created 2026-01-12 Mon 10:17
 #+title: Emacs/Prelude configuration
 #+author: Jesse Oldroyd
 #+property: header-args :results output silent
@@ -417,7 +417,7 @@ default minor modes can be set via the ~meow-mode-state-list~ variable.
   ;; (cond
   ;;  ((eq system-type 'darwin) (meow-setup-colemak))
   ;;  ((eq system-type 'gnu/linux) (meow-setup)))
-
+  (meow-setup)
   (meow-global-mode 1)
 #+end_src
 ** Completion and templates/snippets
@@ -672,8 +672,7 @@ appropriate ~config~ file ~~/.aspell.conf~ in the MSYS2/UCRT64 shell. See
     :bind ("C-c M-i" . format-all-buffer)
     :config
     (setq-default format-all-formatters
-                  '(("LaTeX" (latexindent "-m"))
-                    ("nXML" (tidy "-config" "~/.config/tidy/config.txt")))))
+                  '(("LaTeX" (latexindent "-m")))))
 
   ;; This package is useful for patching other packages.  I currently
   ;; need it for patching org-msg on WSL.
@@ -827,19 +826,6 @@ AUCTeX, which is included with Prelude modules.
   ;; Allow for easy use of latexdiff.
   (use-package latexdiff
     :ensure t)
-
-  ;;; Asymptote integration
-  ;; Advice for AUCTeX to treat Asymptote comments correctly
-  ;; Taken from https://tex.stackexchange.com/questions/150081/how-to-make-auctex-recognize-asymptote-environment-for-correct-commenting-out
-  (defadvice comment-region (around comment-region-asymptote activate)
-    "Use \"//\" as comment prefix in Asymptote environments."
-    (let ((comment-start
-           (if (and (equal major-mode 'LaTeX-mode)
-                    (or (equal (LaTeX-current-environment) "asy")
-                        (equal (LaTeX-current-environment) "asydef")))
-               "//"
-             comment-start)))
-      ad-do-it))
 
   ;; We need to modify sage-shell to accept filepaths with spaces in their
   ;; names. This appears to require modifying

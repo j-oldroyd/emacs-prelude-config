@@ -417,7 +417,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;; (cond
      ;;  ((eq system-type 'darwin) (meow-setup-colemak))
      ;;  ((eq system-type 'gnu/linux) (meow-setup)))
-
+     (meow-setup)
      (meow-global-mode 1)
    #+end_src
 
