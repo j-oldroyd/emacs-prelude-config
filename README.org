@@ -1,4 +1,4 @@
-# Created 2025-12-08 Mon 11:16
+# Created 2026-01-11 Sun 16:36
 #+title: Emacs/Prelude configuration
 #+author: Jesse Oldroyd
 #+property: header-args :results output silent
@@ -225,6 +225,7 @@ default minor modes can be set via the ~meow-mode-state-list~ variable.
     :custom (meow-expand-hint-remove-delay 2.0))
 
   (defun meow-setup ()
+    (interactive)
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
     (meow-motion-define-key
      '("j" . meow-next)
@@ -316,6 +317,7 @@ default minor modes can be set via the ~meow-mode-state-list~ variable.
 
   ;; Testing out Colemak on my Mac
   (defun meow-setup-colemak ()
+    (interactive)
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-colemak)
     (meow-motion-define-key
      ;; Use e to move up, n to move down.
@@ -412,9 +414,9 @@ default minor modes can be set via the ~meow-mode-state-list~ variable.
   (add-to-list 'meow-mode-state-list '(mu4e-main-mode . insert))
   (add-to-list 'meow-mode-state-list '(mu4e-view-mode . motion))
 
-  (cond
-   ((eq system-type 'darwin) (meow-setup-colemak))
-   ((eq system-type 'gnu/linux) (meow-setup)))
+  ;; (cond
+  ;;  ((eq system-type 'darwin) (meow-setup-colemak))
+  ;;  ((eq system-type 'gnu/linux) (meow-setup)))
 
   (meow-global-mode 1)
 #+end_src
@@ -667,8 +669,11 @@ appropriate ~config~ file ~~/.aspell.conf~ in the MSYS2/UCRT64 shell. See
   ;; format-all provides code-formatting via third-party tools such as
   ;; Black (for Python) and latexindent (for LaTeX)
   (use-package format-all
-    :ensure t
-    :bind ("C-c M-i" . format-all-buffer))
+    :bind ("C-c M-i" . format-all-buffer)
+    :config
+    (setq-default format-all-formatters
+                  '(("LaTeX" (latexindent "-m"))
+                    ("nXML" (tidy "-config" "~/.config/tidy/config.txt")))))
 
   ;; This package is useful for patching other packages.  I currently
   ;; need it for patching org-msg on WSL.
@@ -716,13 +721,13 @@ various file types including =.tex= files.  Another alternative is to use
   (add-to-list 'Info-directory-list "/usr/local/texlive/2024/texmf-dist/doc/info")
 
   ;; Auto-activate ts-modes when available
-  (use-package treesit-auto
-    :ensure t
-    :custom
-    (treesit-auto-install 'prompt)
-    :config
-    (treesit-auto-add-to-auto-mode-alist 'all)
-    (global-treesit-auto-mode))
+  ;; (use-package treesit-auto
+  ;;   :ensure t
+  ;;   :custom
+  ;;   (treesit-auto-install 'prompt)
+  ;;   :config
+  ;;   (treesit-auto-add-to-auto-mode-alist 'all)
+  ;;   (global-treesit-auto-mode))
 #+end_src
 ** PDF-tools
 The =pdf-tools= package replaces emacs' own DocView mode for viewing PDF
@@ -1131,6 +1136,7 @@ provided configuration for =hledger-mode=.
 #+begin_src emacs-lisp :tangle "accounting.el"
   (use-package hledger-mode
     :ensure t
+    :after (htmlize)
     :mode ("\\.journal\\'" "\\.hledger\\'")
     :commands hledger-enable-reporting
     :preface
@@ -1369,10 +1375,9 @@ the WSL settings require a symlink from the Windows Google Drive folder to
    ((eq system-type 'darwin)
     (setq org-agenda-files '("~/Documents/org"
                              "~/Google Drive/My Drive/org"
-                             "~/Library/Mobile Documents/com~apple~CloudDocs/Documents/org"))
+                             "~/Sync/beorg"))
     (setq org-default-notes-file
-          (expand-file-name "/Users/jesseoldroyd/Library/Mobile
-             Documents/com~apple~CloudDocs/Documents/org/notes.org")))
+          (expand-file-name "/Users/jesseoldroyd/Documents/org/notes.org")))
    ((eq system-type 'gnu/linux)
     (setq org-agenda-files '("~/org"
                              "~/GoogleDrive/org"))
