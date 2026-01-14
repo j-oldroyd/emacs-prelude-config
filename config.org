@@ -65,11 +65,27 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
    #+end_src
 ** UI and navigation settings
    Nicolas Rougier's [[https://github.com/rougier/nano-emacs][N A N O]] configuration is a very slick and modern-looking
-   Emacs set up.  See also: Sophie Bosio's [[https://github.com/SophieBosio/.emacs.d][configuration]].
+   Emacs set up.  See also: Sophie Bosio's [[https://github.com/SophieBosio/.emacs.d][configuration]].  The =mu4e=
+   configuration requires =svg-tag-mode=.  =N A N O= comes with a light and dark
+   theme that can be toggled using ~nano-toggle-theme~.
    #+begin_src emacs-lisp :tangle "general-settings.el" :results silent
+     (setq nano-font-family-monospaced "Roboto Mono")
+     (setq nano-font-family-proportional "Fira Code")
+
+     (use-package svg-tag-mode
+       :vc (:url "https://github.com/rougier/svg-tag-mode.git"
+                 :rev :newest))
      (use-package nano
        :vc (:url "https://github.com/rougier/nano-emacs.git"
                  :rev :newest))
+
+     (require 'nano-layout)
+     (require 'nano-colors)
+
+     (use-package mu4e-dashboard
+       :vc (:url "https://github.com/rougier/mu4e-dashboard.git"
+                 :rev :newest))
+     (require 'nano-mu4e)
    #+end_src
    See karthink's [[https://karthinks.com/software/avy-can-do-anything/][blog post]] for ideas on using Avy and its associated
    commands.  I'm also including =casual= for its menus, which are based on
