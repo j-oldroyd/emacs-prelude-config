@@ -64,6 +64,13 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (setq user-full-name "Jesse Oldroyd")
    #+end_src
 ** UI and navigation settings
+   Nicolas Rougier's [[https://github.com/rougier/nano-emacs][N A N O]] configuration is a very slick and modern-looking
+   Emacs set up.  See also: Sophie Bosio's [[https://github.com/SophieBosio/.emacs.d][configuration]].
+   #+begin_src emacs-lisp :tangle "general-settings.el" :results silent
+     (use-package nano
+       :vc (:url "https://github.com/rougier/nano-emacs.git"
+                 :rev :newest))
+   #+end_src
    See karthink's [[https://karthinks.com/software/avy-can-do-anything/][blog post]] for ideas on using Avy and its associated
    commands.  I'm also including =casual= for its menus, which are based on
    =transient=.
