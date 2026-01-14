@@ -1,4 +1,4 @@
-# Created 2026-01-12 Mon 10:17
+# Created 2026-01-14 Wed 13:56
 #+title: Emacs/Prelude configuration
 #+author: Jesse Oldroyd
 #+property: header-args :results output silent
@@ -41,7 +41,8 @@ switching to this modified [[https://github.com/jdtsmith/emacs-mac][emacs-mac]] 
   ./autogen.sh
   ./configure --with-native-compilation --with-tree-sitter \
               --without-compress-install --with-imagemagick \
-              --with-mailutils --with-xml2
+              --with-mailutils --with-xml2 \
+              --with-x-toolkit=lucid # GTK and emacs daemon have problems
   make -j8 # or some other appropriate number of cores
   sudo make install
 #+end_src

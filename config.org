@@ -39,7 +39,8 @@ switching to this modified [[https://github.com/jdtsmith/emacs-mac][emacs-mac]] 
   ./autogen.sh
   ./configure --with-native-compilation --with-tree-sitter \
               --without-compress-install --with-imagemagick \
-              --with-mailutils --with-xml2
+              --with-mailutils --with-xml2 \
+              --with-x-toolkit=lucid # GTK and emacs daemon have problems
   make -j8 # or some other appropriate number of cores
   sudo make install
 #+end_src
