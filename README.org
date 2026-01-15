@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Created 2026-01-13 Tue 16:08
+=======
+# Created 2026-01-14 Wed 14:56
+>>>>>>> origin/main
 #+title: Emacs/Prelude configuration
 #+author: Jesse Oldroyd
 #+property: header-args :results output silent
@@ -41,7 +45,8 @@ switching to this modified [[https://github.com/jdtsmith/emacs-mac][emacs-mac]] 
   ./autogen.sh
   ./configure --with-native-compilation --with-tree-sitter \
               --without-compress-install --with-imagemagick \
-              --with-mailutils --with-xml2
+              --with-mailutils --with-xml2 \
+              --with-x-toolkit=lucid # GTK and emacs daemon have problems
   make -j8 # or some other appropriate number of cores
   sudo make install
 #+end_src
@@ -417,7 +422,7 @@ default minor modes can be set via the ~meow-mode-state-list~ variable.
   ;; (cond
   ;;  ((eq system-type 'darwin) (meow-setup-colemak))
   ;;  ((eq system-type 'gnu/linux) (meow-setup)))
-
+  (meow-setup)
   (meow-global-mode 1)
 #+end_src
 ** Completion and templates/snippets
@@ -647,6 +652,36 @@ appropriate ~config~ file ~~/.aspell.conf~ in the MSYS2/UCRT64 shell. See
     (define-key vundo-mode-map (kbd "C-g") #'vundo-quit)
     (define-key vundo-mode-map (kbd "RET") #'vundo-confirm))
 
+  ;;; Editing and kill ring
+  ;; easy-kill provides the easy-kill and easy-mark commands for more
+  ;; convenient killing and marking of text in buffers.  Note that the
+  ;; default keybindings for the replaced commands are "M-w" and
+  ;; "C-M-@", so these keybindings are now used to call the easy-*
+  ;; commands.  See the GitHub for the easy-kill package for available
+  ;; options, but some convenient ones are given by
+  ;;
+  ;; M-w w: save word at point
+  ;; M-w s: save sexp at point
+  ;;
+  ;; The selection is automatically saved and can be killed with a
+  ;; subsequent use of "C-w".  These can be repeated or applied to an
+  ;; integer for a larger selection.  For example, "M-w w w" and "M-w w
+  ;; 2" will copy two words.  You can use =/- as well to increase or
+  ;; decrease the selection.  A more complete list of bindings is given
+  ;; by "M-w ?".
+  (use-package easy-kill
+    :ensure t)
+  (global-set-key [remap kill-ring-save] 'easy-kill)
+  (global-set-key [remap mark-sexp] 'easy-mark)
+
+  ;; browse-kill-ring provides functionality to, you guessed it, browse
+  ;; the kill ring.  This is included in Emacs Prelude, which binds
+  ;; browse-kill-ring to "s-y".  If using a keyboard that doesn't have
+  ;; nice a super key (looking at you, Windows), then "C-x @ s" can be
+  ;; used instead.
+  ;; (use-package browse-kill-ring)
+
+  ;;; Tree-sitter
   ;; Make use of tree-sitter.  Per Mastering Emacs blog, you will need
   ;; to call treesit-install-language-grammar for each language wanted.
   (setq treesit-language-source-alist
@@ -666,6 +701,7 @@ appropriate ~config~ file ~~/.aspell.conf~ in the MSYS2/UCRT64 shell. See
           (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
           (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
 
+  ;;; Formatting
   ;; format-all provides code-formatting via third-party tools such as
   ;; Black (for Python) and latexindent (for LaTeX)
   (use-package format-all
@@ -674,6 +710,7 @@ appropriate ~config~ file ~~/.aspell.conf~ in the MSYS2/UCRT64 shell. See
     (setq-default format-all-formatters
                   '(("LaTeX" (latexindent "-m")))))
 
+  ;;; Patches
   ;; This package is useful for patching other packages.  I currently
   ;; need it for patching org-msg on WSL.
   (use-package el-patch
@@ -760,8 +797,9 @@ AUCTeX, which is included with Prelude modules.
   (add-hook 'LaTeX-mode-hook 'visual-line-mode)
   (add-hook 'LaTeX-mode-hook 'flyspell-mode)
   (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-  ;;; Smartparens uses M-j for join sexp, but I want to use that for Avy
-  ;;; instead.
+
+  ;; Smartparens uses M-j for join sexp, but I want to use that for Avy
+  ;; instead.
   (add-hook 'LaTeX-mode-hook
             (lambda ()
               (setq sp-override-key-bindings '(("M-j" . avy-goto-char-timer)))
@@ -844,7 +882,7 @@ AUCTeX, which is included with Prelude modules.
 
   (advice-add '
    sage-shell-sagetex:tex-master-maybe
-              :filter-return #'shell-quote-argument)
+   :filter-return #'shell-quote-argument)
 #+end_src
 
 The above fix for =sage-shell-mode= also requires editing
@@ -1007,7 +1045,10 @@ Windows to preview messages created in Emacs/WSL.
   (setq mail-user-agent 'mu4e-user-agent)
   ;; Config taken from org-msg github page.
   (use-package org-msg
-    :ensure t)
+    :ensure t
+    :bind (("C-c C-m C-b" . message-goto-bcc)
+           ("C-c C-m C-c" . message-goto-cc))
+    )
 
   (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvisvgm"
         org-msg-startup "hidestars indent inlineimages"
