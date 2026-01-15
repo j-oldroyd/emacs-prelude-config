@@ -1,4 +1,4 @@
-# Created 2026-01-15 Thu 17:39
+# Created 2026-01-15 Thu 18:12
 #+title: Emacs/Prelude configuration
 #+author: Jesse Oldroyd
 #+property: header-args :results output silent
@@ -1548,21 +1548,6 @@ We need to configure =org-babel= for evaluation of ~SRC~ blocks in Org mode.
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((octave . t)))
-#+end_src
-*** Tangle settings
-These are general settings for tangling files to ensure that lexical binding
-is enabled.  This code is taken from [[https://emacs.stackexchange.com/a/84607/45800][this answer]] on Stack Exchange.
-#+begin_src emacs-lisp :tangle "org-settings.el"
-  (defun my-ensure-lexical-binding-cookie()
-    (goto-char(point-min)) ;; beginning of tangled code
-    (insert ";; -*- coding: utf-8; lexical-binding: t -*-")
-    (newline)
-    (newline)
-    (let ((inhibit-message t)) ;; Don't show messages from these functions
-      (basic-save-buffer)
-      (kill-buffer) nil))
-
-  (add-hook 'org-babel-post-tangle-hook #'my-ensure-lexical-binding-cookie)
 #+end_src
 *** =ox-hugo=
 We can use =ox-hugo= to quickly generate and preview websites created using
