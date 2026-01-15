@@ -1,4 +1,4 @@
-# Created 2026-01-11 Sun 16:36
+# Created 2026-01-13 Tue 16:08
 #+title: Emacs/Prelude configuration
 #+author: Jesse Oldroyd
 #+property: header-args :results output silent
@@ -672,8 +672,7 @@ appropriate ~config~ file ~~/.aspell.conf~ in the MSYS2/UCRT64 shell. See
     :bind ("C-c M-i" . format-all-buffer)
     :config
     (setq-default format-all-formatters
-                  '(("LaTeX" (latexindent "-m"))
-                    ("nXML" (tidy "-config" "~/.config/tidy/config.txt")))))
+                  '(("LaTeX" (latexindent "-m")))))
 
   ;; This package is useful for patching other packages.  I currently
   ;; need it for patching org-msg on WSL.
