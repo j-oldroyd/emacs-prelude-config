@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-# Created 2026-01-13 Tue 16:08
-=======
-# Created 2026-01-14 Wed 14:56
->>>>>>> origin/main
+# Created 2026-01-15 Thu 17:39
 #+title: Emacs/Prelude configuration
 #+author: Jesse Oldroyd
 #+property: header-args :results output silent
@@ -148,8 +144,8 @@ commands.  I'm also including =casual= for its menus, which are based on
   (keymap-set Info-mode-map "M-[" #'Info-history-back)
   (keymap-set Info-mode-map "M-]" #'Info-history-forward)
   ;; Bind p and n to paragraph navigation
-  (keymap-set Info-mode-map "p" #'casual-info-browse-backward-paragraph)
-  (keymap-set Info-mode-map "n" #'casual-info-browse-forward-paragraph)
+  (keymap-set Info-mode-map "p" #'casual-lib-browse-backward-paragraph)
+  (keymap-set Info-mode-map "n" #'casual-lib-browse-forward-paragraph)
   ;; Bind h and l to navigate to previous and next nodes
   ;; Bind j and k to navigate to next and previous references
   (keymap-set Info-mode-map "h" #'Info-prev)
@@ -558,8 +554,9 @@ config on GitHub.
   ;; Consult users will also want the embark-consult package.
   (use-package embark-consult
     :ensure t ; only need to install it, embark loads it after consult if found
-    :hook
-    (embark-collect-mode . consult-preview-at-point-mode))
+    ;; :hook
+    ;; (embark-collect-mode . consult-preview-at-point-mode)
+    )
 #+end_src
 ** Shells
 Settings for enhancing the shell in emacs. Note that =sage-shell-mode=
@@ -880,8 +877,7 @@ AUCTeX, which is included with Prelude modules.
         (if nondir (file-name-nondirectory ms)
           ms))))
 
-  (advice-add '
-   sage-shell-sagetex:tex-master-maybe
+  (advice-add 'sage-shell-sagetex:tex-master-maybe
    :filter-return #'shell-quote-argument)
 #+end_src
 
@@ -1260,7 +1256,7 @@ For pretty-printing, there is also =sgml-mode= which contains the function
 #+begin_src emacs-lisp :tangle "pretext-settings.el"
   ;; fill-paragraph does not respect XML tags, so we use this code adapted from
   ;; https://stackoverflow.com/a/1042118/3901257
-  (add-hook 'nxml-mode-hook '(lambda ()
+  (add-hook 'nxml-mode-hook #'(lambda ()
                                (setq paragraph-separate "[     ]*\\(//+\\|\\**\\)\\([  ]*\\| <.*>\\)$\\|^\f")
                                ))
 #+end_src
@@ -1299,9 +1295,9 @@ configuration here is adapted from the suggestions on the website.
 ** General UI and edit settings
 It's easier to read if we limit horizontal text to 80 characters wide.  We
 also want to enable flyspell in Org buffers along with LaTeX previews.
-CDLaTeX will also be useful for handling \LaTeX code.  Note that \LaTeX
-snippets have been enabled via an appropriate =.yas-parents= file in
-=snippets/org-mode=.
+CDLaTeX will also be useful for handling \( \LaTeX \) code.  Note that
+\(\LaTeX\) snippets have been enabled via an appropriate =.yas-parents= file
+in =snippets/org-mode=.
 #+begin_src emacs-lisp :tangle "org-settings.el"
   ;; Org mode 80 character limit
   ;; Taken from
@@ -1319,7 +1315,7 @@ snippets have been enabled via an appropriate =.yas-parents= file in
   ;; Buffer previews and spellcheck
   (setq org-src-fontify-natively t)
   (add-hook 'org-mode-hook 'flyspell-mode)
-  (setq org-latex-create-formula-image-program 'dvipng)
+  (setq org-preview-latex-default-process 'dvipng)
 
   ;; Default dvipng alist setting caused issues with org LaTeX previews. This
   ;; is fixed by implementing code below, taken from:
@@ -1354,7 +1350,7 @@ the WSL settings require a symlink from the Windows Google Drive folder to
   (global-set-key "\C-cl" 'org-store-link)
   (global-set-key "\C-ca" 'org-agenda)
   (global-set-key "\C-cc" 'org-capture)
-  (global-set-key "\C-cb" 'org-iswitchb)
+  (global-set-key "\C-cb" 'org-switchb)
 
   ;; Changes TODO to DONE automatically if children tasks done
   (defun org-summary-todo (n-done n-not-done)
@@ -1410,19 +1406,6 @@ the WSL settings require a symlink from the Windows Google Drive folder to
   (setq org-refile-targets
         '((nil :maxlevel . 3)
           (org-agenda-files :maxlevel . 3)))
-#+end_src
-** Calendar and diary settings
-We also make use of the =Emacs= diary to schedule appointments and check for
-sunrise/sunset times if necessary (as any text editor should be capable of
-doing). Currently, diary settings have been adjusted using
-~customize-variable~ via =M-x=. This includes integration of diary
-appointments with Org agenda. We also include the =calfw= suite of packages
-for improving the calendar view. This requires using the ~cfw:*~ commands via
-=M-x= for now, but could become a keyboard shortcut later.
-#+begin_src emacs-lisp :tangle "calendar-settings.el"
-  (require 'calfw)
-  (require 'calfw-org)
-  (require 'calfw-cal)
 #+end_src
 ** Note-taking
 This config is adapted from the recommended config for [[https://github.com/org-roam/org-roam-bibtex][=org-roam=]]. The
@@ -1549,10 +1532,8 @@ now, a decent workflow seems to be the following:
        :no-require
        :config (citar-embark-mode))
 
-     ;; Set library paths for Citar and specify JabRef behavior on Windows
+     ;; Set library paths for Citar
      (cond
-      ((eq system-type 'windows-nt)
-       (setq citar-library-paths '("C:\\Users\\oldroyd.j\\My Drive\\research")))
       ((eq system-type 'gnu/linux)
        (setq citar-library-paths '("~/GoogleDrive/research"))
        (setq citar-notes-paths '("~/GoogleDrive/research")))
@@ -1560,33 +1541,6 @@ now, a decent workflow seems to be the following:
        (setq citar-library-paths '("~/Google Drive/My Drive/research"
                                    "~/Documents/zotero"))
        (setq citar-notes-paths '("~/Google Drive/My Drive/research"))))
-
-     ;; On Windows I use JabRef, so I need to tell Citar how to parse JabRef
-     ;; file links
-     (eval-after-load "citar"
-       '(defun citar-file--parser-triplet (file-field)
-          "Return a list of files from DIRS and a FILE-FIELD formatted as a triplet.
-
-                  This is file-field format seen in, for example, Calibre and Mendeley.
-
-                  NEW EXAMPLE: '<phrase>:/path/to/paper.pdf:PDF:<url>
-                  Example: ':/path/to/test.pdf:PDF'."
-          (let (filenames)
-            (dolist (sepchar '(?\; ?,))         ; Mendeley and Zotero use ;, Calibre uses ,
-              (dolist (substring (citar-file--split-escaped-string file-field sepchar))
-                (let* ((triplet (citar-file--split-escaped-string substring ?:))
-                       (len (length triplet)))
-                  (when (>= len 3)
-                    ;; If there are more than three components, we probably split on unescaped : in the filename.
-                    ;; Take all but the first and last components of TRIPLET and join them with :
-                    ;; (let* ((escaped (string-join (butlast (cdr triplet)) ":"))
-                    (let* ((escaped (string-join (butlast (cdr triplet) 2) ":")) ;; JabRef has extra :, so drop last two elements
-                           (filename (replace-regexp-in-string "\\\\\\(.\\)" "\\1" escaped)))
-                      ;; Calibre doesn't escape file names in BIB files, so try both
-                      ;; See https://github.com/kovidgoyal/calibre/blob/master/src/calibre/library/catalogs/bibtex.py
-                      (push filename filenames)
-                      (push escaped filenames))))))
-            (nreverse filenames))))
    #+end_src
 ** =org-babel= settings
 We need to configure =org-babel= for evaluation of ~SRC~ blocks in Org mode.
@@ -1618,50 +1572,6 @@ Hugo.
     :ensure t   ;Auto-install the package from Melpa
     :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
     :after ox)
-#+end_src
-*** =impatient-mode=
-This package allows for HTML previews of buffers in the browser by
-navigating to =http://localhost:8080/imp=.  The configuration below (copied
-from the =init.el= gist [[https://gist.github.com/tylerjl][here]])
-#+begin_src emacs-lisp :tangle "org-export-settings.el"
-  (use-package impatient-mode
-    :ensure t)
-
-  (define-minor-mode tjl/md-preview-mode
-    "Toggles live markdown preview using impatient-mode"
-    :init-value nil
-    :lighter " 󰽛"
-
-    (if tjl/md-preview-mode
-
-        (progn
-          (if (process-status "httpd")
-              (setq tjl/httpd-was-running t)
-            (progn (httpd-start)))
-          (impatient-mode)
-          (imp-set-user-filter 'tjl/markdown-filter)
-          (imp-visit-buffer)
-          (message "Live markdown preview enabled"))
-
-      (progn
-        (impatient-mode -1)
-        (unless (or (imp--buffer-list)
-                    (and (fboundp 'tjl/httpd-was-running) tjl/httpd-was-running))
-          ;; Tear httpd down
-          (progn (httpd-stop)
-                 (setq tjl/httpd-was-running nil)))
-        (message "Live markdown preview disabled"))))
-
-  ;; For use with impatient-mode filter
-  (defun tjl/markdown-filter (buffer)
-    (princ
-     (with-temp-buffer
-       (let ((tmp (buffer-name)))
-         (set-buffer buffer)
-         (set-buffer (markdown tmp))
-         (format "<!DOCTYPE html><html><title>Markdown preview</title><link rel=\"stylesheet\" href = \"https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css\"/>
-  <body><article class=\"markdown-body\" style=\"box-sizing: border-box;min-width: 200px;max-width: 980px;margin: 0 auto;padding: 45px;\">%s</article></body></html>" (buffer-string))))
-     (current-buffer)))
 #+end_src
 ** Export settings
 These settings control how =.org= files are exported to other formats.  In
