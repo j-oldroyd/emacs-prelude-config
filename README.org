@@ -1,4 +1,4 @@
-# Created 2026-01-16 Fri 10:46
+# Created 2026-01-16 Fri 12:59
 #+title: Emacs/Prelude configuration
 #+author: Jesse Oldroyd
 #+property: header-args :results output silent
@@ -1020,7 +1020,21 @@ in the ~.msmtprc~ file for this to work properly.
 
   ;; Run mu4e-mailing-list-info-refresh to update mailing lists after change
   (add-to-list 'mu4e-user-mailing-lists '(:list-id "tex-live.tug.org"
-   :name "TUG"))
+                                                   :name "TUG"))
+
+  ;; This is taken from 8.2.1 in mu4e manual
+  (setq mu4e-headers-fields
+        '((:human-date      .  10)
+          (:flags           .  4)
+          (:from-or-to      .  20)
+          (:mailing-list    .  8)
+          (:maildir         .  8)
+          (:labels          .  8)
+          (:thread-subject  .  nil)))
+  (setq mu4e-view-fields
+        '(:from :date :to :cc :bcc :subject
+                :flags  :maildir
+                :message-id :labels))
 #+end_src
 The =org-msg= package, located [[https://github.com/jeremy-compostella/org-msg?tab=readme-ov-file][on GitHub]], allows us to format emails using
 the capabilities of Org Mode.  In particular, we can typeset mathematics
@@ -1399,9 +1413,9 @@ the WSL settings require a symlink from the Windows Google Drive folder to
           (expand-file-name "/Users/jesseoldroyd/Documents/org/notes.org")))
    ((eq system-type 'gnu/linux)
     (setq org-agenda-files '("~/org"
-                             "~/GoogleDrive/org"))
+                             "~/beorg"))
     (setq org-default-notes-file
-          (expand-file-name "~/org/notes.org"))))
+          (expand-file-name "~/beorg/inbox.org"))))
 
   (setq org-refile-targets
         '((nil :maxlevel . 3)

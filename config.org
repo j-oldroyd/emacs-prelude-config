@@ -1421,9 +1421,9 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
              (expand-file-name "/Users/jesseoldroyd/Documents/org/notes.org")))
       ((eq system-type 'gnu/linux)
        (setq org-agenda-files '("~/org"
-                                "~/GoogleDrive/org"))
+                                "~/beorg"))
        (setq org-default-notes-file
-             (expand-file-name "~/org/notes.org"))))
+             (expand-file-name "~/beorg/inbox.org"))))
 
      (setq org-refile-targets
            '((nil :maxlevel . 3)
