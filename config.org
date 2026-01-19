@@ -451,7 +451,8 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;; https://gist.github.com/karthink/7d89df35ee9b7ac0c93d0177b862dadb
      (use-package cdlatex
        :hook ((cdlatex-tab . yas-expand)
-              (cdlatex-tab . cdlatex-in-yas-field))
+              (cdlatex-tab . cdlatex-in-yas-field)
+              (org-mode . turn-on-org-cdlatex))
        :config
        (use-package yasnippet
          :bind (:map yas-keymap
@@ -1321,18 +1322,19 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
    \(\LaTeX\) snippets have been enabled via an appropriate =.yas-parents= file
    in =snippets/org-mode=.
    #+begin_src emacs-lisp :tangle "org-settings.el"
-     ;; Org mode 80 character limit
-     ;; Taken from
-     ;; https://emacs.stackexchange.com/questions/35266/org-mode-auto-new-line-at-80th-column
-     (add-hook 'org-mode-hook (lambda () (setq fill-column 80)))
-     (add-hook 'org-mode-hook 'auto-fill-mode)
+     (use-package org
+       :hook
+       ;; Org mode 80 character limit.  Taken from
+       ;; https://emacs.stackexchange.com/questions/35266/org-mode-auto-new-line-at-80th-column
+       ((org-mode . (lambda () (setq fill-column 80)))
+        (org-mode . auto-fill-mode)))
 
      ;; Make Org bullets a little nicer
      (use-package org-bullets
-       :ensure t)
-     (add-hook 'org-mode-hook
-               (lambda ()
-                 (org-bullets-mode 1)))
+       :ensure t
+       :after (org)
+       :hook
+       (org-mode . org-bullets-mode))
 
      ;; Buffer previews and spellcheck
      (setq org-src-fontify-natively t)
@@ -1346,9 +1348,6 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        (plist-put png :latex-compiler '("latex -interaction nonstopmode -output-directory %o %F"))
        (plist-put png :image-converter '("dvipng -D %D -T tight -o %O %F"))
        (plist-put png :transparent-image-converter '("dvipng -D %D -T tight -bg Transparent -o %O %F")))
-
-     ;; Enable CDLaTeX in Org.
-     (add-hook 'org-mode-hook #'turn-on-org-cdlatex)
 
      ;; Set Org-mode indentation
      (setq org-adapt-indentation t)
@@ -1387,13 +1386,14 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (setq org-todo-keywords
            '((sequence "TODO(t)" "NEXT(n)" "PROG(p)" "INTR(i)"
                        "|" "CANCELED(c)" "DONE(d)" "WAITING(w)" "SHELVED(s)")))
+
      (setq org-todo-keyword-faces
            '(("TODO" . org-todo)
-             ("NEXT" . (:foreground "cyan" :weight bold))
+             ("NEXT" . (:foreground "#D35400" :weight bold))
              ("INTR" . org-warning)
              ("PROG" . (:foreground "green" :weight bold))
-             ("CANCELED" . (:foreground "red" :weight bold))
-             ("WAITING" . (:foreground "yellow" :weight bold))
+             ("CANCELED" . (:foreground "#7F8CFD" :strike-through t :weight bold))
+             ("WAITING" . (:foreground "#8E44AD" :weight bold))
              ("SHELVED" . (:foreground "gray" :weight bold))))
 
      ;; Define the custom capture templates
@@ -1491,6 +1491,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
                "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
                "#+title: ${citar-citekey} (${citar-date}). ${note-title}.\n#+created: %U\n#+last_modified: %U\n\n* Main idea(s)\n* Key results\n* Questions")
               :unnarrowed t)))
+
      (use-package org-noter
        :ensure t)
    #+END_SRC
