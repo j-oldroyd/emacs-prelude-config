@@ -1518,53 +1518,85 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
       while annotation with =org-noter= should focus on observations that I wish
       to refer to outside of the paper.
       #+BEGIN_SRC emacs-lisp :tangle "bibtex-settings.el"
-        (when (eq system-type 'darwin)
-          (setq bib-file '("~/Google Drive/My Drive/research/library.bib"
-                           "~/Documents/zotero/library.bib")))
-        (when (eq system-type 'gnu/linux)
-          (setq bib-file '("~/GoogleDrive/research/My Library.bib"
-                           "~/GoogleDrive/research/library-time_scales.bib"
-                           "~/GoogleDrive/research/library-tight_frames-association_schemes.bib"
-                           "~/GoogleDrive/research/library-tight_frames-algorithms.bib")))
-        (when (eq system-type 'windows-nt)
-          (setq bib-file '("C:\\Users\\oldroyd.j\\My Drive\\research\\library.bib")))
+        (use-package bib-mode
+          ;; I don't want to load this just yet.  Instead, I'll set
+          ;; OS-specific variables first.
+          :defer t
+          :if (eq system-type 'darwin)
+          :custom
+          (bib-file '("~/Google Drive/My Drive/research/library.bib"
+                      "~/Documents/zotero/library.bib")))
+
+        (use-package bib-mode
+          ;; I don't want to load this just yet.  Instead, I'll set
+          ;; OS-specific variables first.
+          :defer t
+          :if (eq system-type 'gnu/linux)
+          :custom
+          (bib-file '("~/GoogleDrive/research/My Library.bib"
+                      "~/GoogleDrive/research/library-time_scales.bib"
+                      "~/GoogleDrive/research/library-tight_frames-association_schemes.bib"
+                      "~/GoogleDrive/research/library-tight_frames-algorithms.bib")))
+
+        (use-package org
+          :custom
+          (org-cite-global-bibliography bib-file)
+          (org-cite-insert-processor 'citar)
+          (org-cite-follow-processor 'citar)
+          (org-cite-activate-processor 'citar))
+
+        (use-package citar
+          ;; I don't want to load this just yet.  Instead, I'll set
+          ;; OS-specific variables first.
+          :defer t
+          :if (eq system-type 'darwin)
+          :custom
+          (citar-library-paths '("~/Google Drive/My Drive/research"
+                                 "~/Documents/zotero"))
+          (citar-notes-paths '("~/Google Drive/My Drive/research")))
+
+        (use-package citar
+          ;; I don't want to load this just yet.  Instead, I'll set
+          ;; OS-specific variables first.
+          :defer t
+          :if (eq system-type 'gnu/linux)
+          :custom
+          (citar-library-paths '("~/GoogleDrive/research"))
+          (citar-notes-paths '("~/GoogleDrive/research")))
 
         (use-package citar
           :ensure t
           :custom
-          (citar-bibliography bib-file)
-          (org-cite-global-bibliography bib-file)
-          (org-cite-insert-processor 'citar)
-          (org-cite-follow-processor 'citar)
-          (org-cite-activate-processor 'citar)
-          :config (require 'org-roam)
+          (citar-bibliography org-cite-global-bibliography)
           :hook
           (LaTeX-mode . citar-capf-setup)
           (org-mode . citar-capf-setup))
 
+        ;; (use-package citar
+        ;;   :ensure t
+        ;;   :custom
+        ;;   (citar-bibliography bib-file)
+        ;;   (org-cite-global-bibliography bib-file)
+        ;;   (org-cite-insert-processor 'citar)
+        ;;   (org-cite-follow-processor 'citar)
+        ;;   (org-cite-activate-processor 'citar)
+        ;;   :config (require 'org-roam)
+        ;;   :hook
+        ;;   (LaTeX-mode . citar-capf-setup)
+        ;;   (org-mode . citar-capf-setup))
+
         (use-package citar-org-roam
           :ensure t
+          :custom
+          (citar-org-roam-capture-template-key "n")
           :after (org-roam citar)
           :config (citar-org-roam-mode))
-
-        ;;; Set up citar to use org-roam template
-        (setq citar-org-roam-capture-template-key "n")
 
         (use-package citar-embark
           :ensure t
           :after (citar embark)
           :no-require
           :config (citar-embark-mode))
-
-        ;; Set library paths for Citar
-        (cond
-         ((eq system-type 'gnu/linux)
-          (setq citar-library-paths '("~/GoogleDrive/research"))
-          (setq citar-notes-paths '("~/GoogleDrive/research")))
-         ((eq system-type 'darwin)
-          (setq citar-library-paths '("~/Google Drive/My Drive/research"
-                                      "~/Documents/zotero"))
-          (setq citar-notes-paths '("~/Google Drive/My Drive/research"))))
       #+END_SRC
 
 ** =org-babel= settings
