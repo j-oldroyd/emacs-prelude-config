@@ -1603,17 +1603,17 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
    We need to configure =org-babel= for evaluation of ~SRC~ blocks in Org mode.
    #+begin_src emacs-lisp :tangle "org-settings.el"
      (org-babel-do-load-languages
-      'org-babel-load-languages
-      '((octave . t)))
+      'org-babel-load-languages '((octave . t)))
    #+end_src
 
 *** =ox-hugo=
     We can use =ox-hugo= to quickly generate and preview websites created using
-    Hugo.
+    Hugo.  This is currently on the backburner since I haven't been working on a
+    website.
     #+begin_src emacs-lisp :tangle "hugo-settings.el"
       (use-package ox-hugo
-        :ensure t   ;Auto-install the package from Melpa
-        :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
+        :ensure t   ; Auto-install the package from Melpa
+        :pin melpa
         :after ox)
     #+end_src
 
@@ -1621,12 +1621,12 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
    These settings control how =.org= files are exported to other formats.  In
    particular, \( \LaTeX \) is often exported into other file types using
    formats such as =.svg=, another sizing can be a problem.
-   #+begin_src emacs-lisp :tangle "org-settings.el"
-     ;;; LaTeX export settings
-     ;; Remove foregroud/background colors from previews
-     (plist-put org-format-latex-options :foreground nil)
-     (plist-put org-format-latex-options :background nil)
-   #+end_src
+   # #+begin_src emacs-lisp :tangle "org-settings.el"
+   #   ;;; LaTeX export settings
+   #   ;; Remove foregroud/background colors from previews
+   #   ;; (plist-put org-format-latex-options :foreground nil)
+   #   ;; (plist-put org-format-latex-options :background nil)
+   # #+end_src
 * Packages to consider adding
 ** =elfeed=
    This looks like a good way to keep track of arXiv papers.
