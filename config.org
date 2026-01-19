@@ -1288,6 +1288,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
    be installed manually or with =:vc=.
    #+begin_src emacs-lisp :tangle "lean-settings.el"
      (use-package lean4-mode
+       ;; :defer t
        :commands lean4-mode
        :vc (:url "https://github.com/leanprover-community/lean4-mode.git"
                  :rev :last-release)
@@ -1297,8 +1298,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        ;; Disable Crux binding in favor of Lean infoview.
        :bind (:map prelude-mode-map
                    ("C-c C-i" . nil))
-       :hook (after-init . lean4-mode)
-       )
+       :mode (("\\.lean\\'" . lean4-mode)))
    #+end_src
 ** EPUB files
    We can read EPUB files in Emacs using =nov.el=, a [[https://depp.brause.cc/nov.el/][major mode]].  The
