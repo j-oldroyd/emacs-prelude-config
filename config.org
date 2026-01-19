@@ -166,7 +166,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (keymap-set reb-mode-map "C-o" #'casual-re-builder-tmenu)
      (keymap-set reb-lisp-mode-map "C-o" #'casual-re-builder-tmenu)
 
-     ;;: Doom modeline
+     ;;: Modeline
      ;; Taken from
      ;; https://github.com/MatthewZMD/.emacs.d?tab=readme-ov-file#doom-modeline
      (use-package doom-modeline
@@ -179,6 +179,10 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        (doom-modeline-height 15)
        :config
        (doom-modeline-mode))
+
+     ;; Diminish will help keep the modeline clean via :diminish keyword
+     (use-package diminish
+       :ensure t)
 
      ;;: Scrolling
      ;;Later versions of Emacs support pixel scrolling, so we
@@ -223,6 +227,11 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;; (require 'meow)
      (use-package meow
        :ensure t
+       ; We already have special icons for Meow from Doom Modeline
+       :diminish meow-insert-mode
+       :diminish meow-normal-mode
+       :diminish meow-beacon-mode
+       :diminish meow-motion-mode
        :custom (meow-expand-hint-remove-delay 2.0))
 
      (defun meow-setup ()
@@ -444,7 +453,9 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
 
      ;; Enable YASnippet.
      (use-package yasnippet
-       :ensure t)
+       :ensure t
+       :diminish yas-minor-mode)
+
      (yas-global-mode 1)
 
      ;; karthink's code for integrating CDLaTeX with YASnippet.  Taken from
@@ -453,6 +464,8 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        :hook ((cdlatex-tab . yas-expand)
               (cdlatex-tab . cdlatex-in-yas-field)
               (org-mode . turn-on-org-cdlatex))
+       :diminish cdlatex-mode
+       :diminish org-cdlatex-mode
        :config
        (use-package yasnippet
          :bind (:map yas-keymap
@@ -1567,6 +1580,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
 
         (use-package citar
           :ensure t
+          :diminish
           :custom
           (citar-bibliography org-cite-global-bibliography)
           :hook
@@ -1588,6 +1602,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
 
         (use-package citar-org-roam
           :ensure t
+          :diminish
           :custom
           (citar-org-roam-capture-template-key "n")
           :after (org-roam citar)
@@ -1595,6 +1610,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
 
         (use-package citar-embark
           :ensure t
+          :diminish
           :after (citar embark)
           :no-require
           :config (citar-embark-mode))

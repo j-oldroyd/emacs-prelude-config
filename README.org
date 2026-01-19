@@ -1,4 +1,4 @@
-# Created 2026-01-16 Fri 12:59
+# Created 2026-01-19 Mon 01:34
 #+title: Emacs/Prelude configuration
 #+author: Jesse Oldroyd
 #+property: header-args :results output silent
@@ -167,7 +167,7 @@ commands.  I'm also including =casual= for its menus, which are based on
   (keymap-set reb-mode-map "C-o" #'casual-re-builder-tmenu)
   (keymap-set reb-lisp-mode-map "C-o" #'casual-re-builder-tmenu)
 
-  ;;: Doom modeline
+  ;;: Modeline
   ;; Taken from
   ;; https://github.com/MatthewZMD/.emacs.d?tab=readme-ov-file#doom-modeline
   (use-package doom-modeline
@@ -180,6 +180,10 @@ commands.  I'm also including =casual= for its menus, which are based on
     (doom-modeline-height 15)
     :config
     (doom-modeline-mode))
+
+  ;; Diminish will help keep the modeline clean via :diminish keyword
+  (use-package diminish
+    :ensure t)
 
   ;;: Scrolling
   ;;Later versions of Emacs support pixel scrolling, so we
@@ -223,6 +227,11 @@ default minor modes can be set via the ~meow-mode-state-list~ variable.
   ;; (require 'meow)
   (use-package meow
     :ensure t
+    ; We already have special icons for Meow from Doom Modeline
+    :diminish meow-insert-mode
+    :diminish meow-normal-mode
+    :diminish meow-beacon-mode
+    :diminish meow-motion-mode
     :custom (meow-expand-hint-remove-delay 2.0))
 
   (defun meow-setup ()
@@ -443,14 +452,19 @@ config on GitHub.
 
   ;; Enable YASnippet.
   (use-package yasnippet
-    :ensure t)
+    :ensure t
+    :diminish yas-minor-mode)
+
   (yas-global-mode 1)
 
   ;; karthink's code for integrating CDLaTeX with YASnippet.  Taken from
   ;; https://gist.github.com/karthink/7d89df35ee9b7ac0c93d0177b862dadb
   (use-package cdlatex
     :hook ((cdlatex-tab . yas-expand)
-           (cdlatex-tab . cdlatex-in-yas-field))
+           (cdlatex-tab . cdlatex-in-yas-field)
+           (org-mode . turn-on-org-cdlatex))
+    :diminish cdlatex-mode
+    :diminish org-cdlatex-mode
     :config
     (use-package yasnippet
       :bind (:map yas-keymap
@@ -1280,6 +1294,7 @@ between Lean and Emacs.  Note that =lean4-mode= is not on MELPA, and so must
 be installed manually or with =:vc=.
 #+begin_src emacs-lisp :tangle "lean-settings.el"
   (use-package lean4-mode
+    ;; :defer t
     :commands lean4-mode
     :vc (:url "https://github.com/leanprover-community/lean4-mode.git"
               :rev :last-release)
@@ -1289,8 +1304,7 @@ be installed manually or with =:vc=.
     ;; Disable Crux binding in favor of Lean infoview.
     :bind (:map prelude-mode-map
                 ("C-c C-i" . nil))
-    :hook (after-init . lean4-mode)
-    )
+    :mode (("\\.lean\\'" . lean4-mode)))
 #+end_src
 ** EPUB files
 We can read EPUB files in Emacs using =nov.el=, a [[https://depp.brause.cc/nov.el/][major mode]].  The
@@ -1313,18 +1327,19 @@ CDLaTeX will also be useful for handling \( \LaTeX \) code.  Note that
 \(\LaTeX\) snippets have been enabled via an appropriate =.yas-parents= file
 in =snippets/org-mode=.
 #+begin_src emacs-lisp :tangle "org-settings.el"
-  ;; Org mode 80 character limit
-  ;; Taken from
-  ;; https://emacs.stackexchange.com/questions/35266/org-mode-auto-new-line-at-80th-column
-  (add-hook 'org-mode-hook (lambda () (setq fill-column 80)))
-  (add-hook 'org-mode-hook 'auto-fill-mode)
+  (use-package org
+    :hook
+    ;; Org mode 80 character limit.  Taken from
+    ;; https://emacs.stackexchange.com/questions/35266/org-mode-auto-new-line-at-80th-column
+    ((org-mode . (lambda () (setq fill-column 80)))
+     (org-mode . auto-fill-mode)))
 
   ;; Make Org bullets a little nicer
   (use-package org-bullets
-    :ensure t)
-  (add-hook 'org-mode-hook
-            (lambda ()
-              (org-bullets-mode 1)))
+    :ensure t
+    :after (org)
+    :hook
+    (org-mode . org-bullets-mode))
 
   ;; Buffer previews and spellcheck
   (setq org-src-fontify-natively t)
@@ -1338,9 +1353,6 @@ in =snippets/org-mode=.
     (plist-put png :latex-compiler '("latex -interaction nonstopmode -output-directory %o %F"))
     (plist-put png :image-converter '("dvipng -D %D -T tight -o %O %F"))
     (plist-put png :transparent-image-converter '("dvipng -D %D -T tight -bg Transparent -o %O %F")))
-
-  ;; Enable CDLaTeX in Org.
-  (add-hook 'org-mode-hook #'turn-on-org-cdlatex)
 
   ;; Set Org-mode indentation
   (setq org-adapt-indentation t)
@@ -1379,13 +1391,14 @@ the WSL settings require a symlink from the Windows Google Drive folder to
   (setq org-todo-keywords
         '((sequence "TODO(t)" "NEXT(n)" "PROG(p)" "INTR(i)"
                     "|" "CANCELED(c)" "DONE(d)" "WAITING(w)" "SHELVED(s)")))
+
   (setq org-todo-keyword-faces
         '(("TODO" . org-todo)
-          ("NEXT" . (:foreground "cyan" :weight bold))
+          ("NEXT" . (:foreground "#D35400" :weight bold))
           ("INTR" . org-warning)
           ("PROG" . (:foreground "green" :weight bold))
-          ("CANCELED" . (:foreground "red" :weight bold))
-          ("WAITING" . (:foreground "yellow" :weight bold))
+          ("CANCELED" . (:foreground "#7F8CFD" :strike-through t :weight bold))
+          ("WAITING" . (:foreground "#8E44AD" :weight bold))
           ("SHELVED" . (:foreground "gray" :weight bold))))
 
   ;; Define the custom capture templates
@@ -1482,6 +1495,7 @@ is.
             "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
             "#+title: ${citar-citekey} (${citar-date}). ${note-title}.\n#+created: %U\n#+last_modified: %U\n\n* Main idea(s)\n* Key results\n* Questions")
            :unnarrowed t)))
+
   (use-package org-noter
     :ensure t)
 #+end_src
@@ -1508,80 +1522,109 @@ now, a decent workflow seems to be the following:
    while annotation with =org-noter= should focus on observations that I wish
    to refer to outside of the paper.
    #+begin_src emacs-lisp :tangle "bibtex-settings.el"
-     (when (eq system-type 'darwin)
-       (setq bib-file '("~/Google Drive/My Drive/research/library.bib"
-                        "~/Documents/zotero/library.bib")))
-     (when (eq system-type 'gnu/linux)
-       (setq bib-file '("~/GoogleDrive/research/My Library.bib"
-                        "~/GoogleDrive/research/library-time_scales.bib"
-                        "~/GoogleDrive/research/library-tight_frames-association_schemes.bib"
-                        "~/GoogleDrive/research/library-tight_frames-algorithms.bib")))
-     (when (eq system-type 'windows-nt)
-       (setq bib-file '("C:\\Users\\oldroyd.j\\My Drive\\research\\library.bib")))
-
-     (use-package citar
-       :ensure t
+     (use-package bib-mode
+       ;; I don't want to load this just yet.  Instead, I'll set
+       ;; OS-specific variables first.
+       :defer t
+       :if (eq system-type 'darwin)
        :custom
-       (citar-bibliography bib-file)
+       (bib-file '("~/Google Drive/My Drive/research/library.bib"
+                   "~/Documents/zotero/library.bib")))
+
+     (use-package bib-mode
+       ;; I don't want to load this just yet.  Instead, I'll set
+       ;; OS-specific variables first.
+       :defer t
+       :if (eq system-type 'gnu/linux)
+       :custom
+       (bib-file '("~/GoogleDrive/research/My Library.bib"
+                   "~/GoogleDrive/research/library-time_scales.bib"
+                   "~/GoogleDrive/research/library-tight_frames-association_schemes.bib"
+                   "~/GoogleDrive/research/library-tight_frames-algorithms.bib")))
+
+     (use-package org
+       :custom
        (org-cite-global-bibliography bib-file)
        (org-cite-insert-processor 'citar)
        (org-cite-follow-processor 'citar)
-       (org-cite-activate-processor 'citar)
-       :config (require 'org-roam)
+       (org-cite-activate-processor 'citar))
+
+     (use-package citar
+       ;; I don't want to load this just yet.  Instead, I'll set
+       ;; OS-specific variables first.
+       :defer t
+       :if (eq system-type 'darwin)
+       :custom
+       (citar-library-paths '("~/Google Drive/My Drive/research"
+                              "~/Documents/zotero"))
+       (citar-notes-paths '("~/Google Drive/My Drive/research")))
+
+     (use-package citar
+       ;; I don't want to load this just yet.  Instead, I'll set
+       ;; OS-specific variables first.
+       :defer t
+       :if (eq system-type 'gnu/linux)
+       :custom
+       (citar-library-paths '("~/GoogleDrive/research"))
+       (citar-notes-paths '("~/GoogleDrive/research")))
+
+     (use-package citar
+       :ensure t
+       :diminish
+       :custom
+       (citar-bibliography org-cite-global-bibliography)
        :hook
        (LaTeX-mode . citar-capf-setup)
        (org-mode . citar-capf-setup))
 
+     ;; (use-package citar
+     ;;   :ensure t
+     ;;   :custom
+     ;;   (citar-bibliography bib-file)
+     ;;   (org-cite-global-bibliography bib-file)
+     ;;   (org-cite-insert-processor 'citar)
+     ;;   (org-cite-follow-processor 'citar)
+     ;;   (org-cite-activate-processor 'citar)
+     ;;   :config (require 'org-roam)
+     ;;   :hook
+     ;;   (LaTeX-mode . citar-capf-setup)
+     ;;   (org-mode . citar-capf-setup))
+
      (use-package citar-org-roam
        :ensure t
+       :diminish
+       :custom
+       (citar-org-roam-capture-template-key "n")
        :after (org-roam citar)
        :config (citar-org-roam-mode))
 
-     ;;; Set up citar to use org-roam template
-     (setq citar-org-roam-capture-template-key "n")
-
      (use-package citar-embark
        :ensure t
+       :diminish
        :after (citar embark)
        :no-require
        :config (citar-embark-mode))
-
-     ;; Set library paths for Citar
-     (cond
-      ((eq system-type 'gnu/linux)
-       (setq citar-library-paths '("~/GoogleDrive/research"))
-       (setq citar-notes-paths '("~/GoogleDrive/research")))
-      ((eq system-type 'darwin)
-       (setq citar-library-paths '("~/Google Drive/My Drive/research"
-                                   "~/Documents/zotero"))
-       (setq citar-notes-paths '("~/Google Drive/My Drive/research"))))
    #+end_src
 ** =org-babel= settings
 We need to configure =org-babel= for evaluation of ~SRC~ blocks in Org mode.
 #+begin_src emacs-lisp :tangle "org-settings.el"
   (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((octave . t)))
+   'org-babel-load-languages '((octave . t)))
 #+end_src
 *** =ox-hugo=
 We can use =ox-hugo= to quickly generate and preview websites created using
-Hugo.
+Hugo.  This is currently on the backburner since I haven't been working on a
+website.
 #+begin_src emacs-lisp :tangle "hugo-settings.el"
   (use-package ox-hugo
-    :ensure t   ;Auto-install the package from Melpa
-    :pin melpa  ;`package-archives' should already have ("melpa" . "https://melpa.org/packages/")
+    :ensure t   ; Auto-install the package from Melpa
+    :pin melpa
     :after ox)
 #+end_src
 ** Export settings
 These settings control how =.org= files are exported to other formats.  In
 particular, \( \LaTeX \) is often exported into other file types using
 formats such as =.svg=, another sizing can be a problem.
-#+begin_src emacs-lisp :tangle "org-settings.el"
-  ;;; LaTeX export settings
-  ;; Remove foregroud/background colors from previews
-  (plist-put org-format-latex-options :foreground nil)
-  (plist-put org-format-latex-options :background nil)
-#+end_src
 * Packages to consider adding
 ** =elfeed=
 This looks like a good way to keep track of arXiv papers.
