@@ -1,4 +1,4 @@
-# Created 2026-01-19 Mon 01:34
+# Created 2026-01-20 Tue 17:22
 #+title: Emacs/Prelude configuration
 #+author: Jesse Oldroyd
 #+property: header-args :results output silent
@@ -63,6 +63,18 @@ General settings for =emacs=.
 
   ;; User information
   (setq user-full-name "Jesse Oldroyd")
+
+  (use-package prelude-mode
+    :diminish)
+
+  (use-package projectile
+    :diminish)
+
+  (use-package flycheck
+    :diminish)
+
+  (use-package ispell
+    :diminish)
 #+end_src
 ** UI and navigation settings
 See karthink's [[https://karthinks.com/software/avy-can-do-anything/][blog post]] for ideas on using Avy and its associated
@@ -76,6 +88,10 @@ commands.  I'm also including =casual= for its menus, which are based on
   ;; Prelude hides the toolbar, so turn it back on with code below.
   ;; (tool-bar-mode 1)
 
+  ;; Toggle whitespace visibility
+  (use-package whitespace
+    :diminish)
+
   ;; Default to fullscreen. Taken from
   ;; https://stackoverflow.com/questions/78245398/how-can-i-make-emacsclient-open-in-native-fullscreen-every-time-i-launch-it-fr
   ;; (setq ns-use-native-fullscreen :true)
@@ -87,6 +103,7 @@ commands.  I'm also including =casual= for its menus, which are based on
   ;;: Which-key
   ;; Provide keybinding completions.
   (use-package which-key
+    :diminish
     :config
     (which-key-mode))
 
@@ -453,9 +470,11 @@ config on GitHub.
   ;; Enable YASnippet.
   (use-package yasnippet
     :ensure t
-    :diminish yas-minor-mode)
+    :diminish yas-minor-mode
+    :config
+    (yas-global-mode))
 
-  (yas-global-mode 1)
+  ;; (yas-global-mode 1)
 
   ;; karthink's code for integrating CDLaTeX with YASnippet.  Taken from
   ;; https://gist.github.com/karthink/7d89df35ee9b7ac0c93d0177b862dadb

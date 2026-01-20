@@ -62,6 +62,18 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
 
      ;; User information
      (setq user-full-name "Jesse Oldroyd")
+
+     (use-package prelude-mode
+       :diminish)
+
+     (use-package projectile
+       :diminish)
+
+     (use-package flycheck
+       :diminish)
+
+     (use-package ispell
+       :diminish)
    #+end_src
 ** UI and navigation settings
    See karthink's [[https://karthinks.com/software/avy-can-do-anything/][blog post]] for ideas on using Avy and its associated
@@ -75,6 +87,10 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;; Prelude hides the toolbar, so turn it back on with code below.
      ;; (tool-bar-mode 1)
 
+     ;; Toggle whitespace visibility
+     (use-package whitespace
+       :diminish)
+
      ;; Default to fullscreen. Taken from
      ;; https://stackoverflow.com/questions/78245398/how-can-i-make-emacsclient-open-in-native-fullscreen-every-time-i-launch-it-fr
      ;; (setq ns-use-native-fullscreen :true)
@@ -86,6 +102,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;;: Which-key
      ;; Provide keybinding completions.
      (use-package which-key
+       :diminish
        :config
        (which-key-mode))
 
@@ -454,9 +471,11 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;; Enable YASnippet.
      (use-package yasnippet
        :ensure t
-       :diminish yas-minor-mode)
+       :diminish yas-minor-mode
+       :config
+       (yas-global-mode))
 
-     (yas-global-mode 1)
+     ;; (yas-global-mode 1)
 
      ;; karthink's code for integrating CDLaTeX with YASnippet.  Taken from
      ;; https://gist.github.com/karthink/7d89df35ee9b7ac0c93d0177b862dadb
