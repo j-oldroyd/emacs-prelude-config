@@ -63,17 +63,17 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;; User information
      (setq user-full-name "Jesse Oldroyd")
 
-     (use-package prelude-mode
-       :diminish)
+     ;; (use-package prelude-mode
+     ;;   :diminish)
 
-     (use-package projectile
-       :diminish)
+     ;; (use-package projectile
+     ;;   :diminish)
 
-     (use-package flycheck
-       :diminish)
+     ;; (use-package flycheck
+     ;;   :diminish)
 
-     (use-package ispell
-       :diminish)
+     ;; (use-package ispell
+     ;;   :diminish)
    #+end_src
 ** UI and navigation settings
    See karthink's [[https://karthinks.com/software/avy-can-do-anything/][blog post]] for ideas on using Avy and its associated
