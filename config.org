@@ -1762,22 +1762,25 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
          (insert (format "Total Score: *%s*" total))))
 
      (defun my/org-grading-broadcast-item (heading-name item-text)
-       "Add ITEM-TEXT to HEADING-NAME in all .org files in the current directory."
-       (interactive "sHeading Name (exact match): \nsRubric Item (e.g., '- [ ] Foo :: -1'): ")
+       "Add ITEM-TEXT to HEADING-NAME in all .org files in the current
+     directory."
+       (interactive "sHeading Name (exact match): \nsRubric Item (e.g., '- [ ] Foo :: -1'):")
        (let ((files (directory-files "." t "\\.org$")))
          (dolist (file files)
            (with-current-buffer (find-file-noselect file)
              (save-excursion
                (goto-char (point-min))
                ;; Find the specific headline
-               (if (re-search-forward (format "^\\*+ .*\\b%s\\b" (regexp-quote heading-name)) nil t)
+               (if (re-search-forward (format "^\\*+ .*\\b%s\\b" (regexp-quote
+      heading-name)) nil t)
                    (progn
                      ;; Move to end of this subtree to append the item
                      (org-end-of-subtree)
                      (insert (format "\n%s" item-text))
                      (save-buffer)
                      (message "Updated %s" (file-name-nondirectory file)))
-                 (message "Heading '%s' not found in %s" heading-name (file-name-nondirectory file))))))))
+                 (message "Heading '%s' not found in %s" heading-name (file-name-nondirectory
+      file))))))))
 
      (defun my/grading-generate-summary-report ()
        "Generate a summary grade report from all .org files in the 'students/' directory.
@@ -1798,7 +1801,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
 
                ;; Calculate Score (Sum all checked items with ":: points")
                (goto-char (point-min))
-               (while (re-search-forward "^[ \t]*- \\[[xX]\\] .* :: \\([+-]?[0-9]+\\)" nil t)
+               (while (re-search-forward "^[ \t]*- \\[[xX]\\] .* :: \\(.*\\)" nil t)
                  (setq total (+ total (string-to-number (match-string 1)))))
 
                (push (list name total) results))))
@@ -1851,7 +1854,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
              (let ((total 0))
                ;; Sum checked items
                (goto-char (point-min))
-               (while (re-search-forward "^[ \t]*- \\[[xX]\\] .* :: \\([+-]?[0-9]+\\)" nil t)
+               (while (re-search-forward "^[ \t]*- \\[[xX]\\] .* :: \\(.*\\)" nil t)
                  (setq total (+ total (string-to-number (match-string 1)))))
                (push total scores)
                (setq max-score (max max-score total)))))
@@ -1907,7 +1910,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
                    (setq name (match-string 1)))
                ;; Calculate Score
                (goto-char (point-min))
-               (while (re-search-forward "^[ \t]*- \\[[xX]\\] .* :: \\([+-]?[0-9]+\\)" nil t)
+               (while (re-search-forward "^[ \t]*- \\[[xX]\\] .* :: \\(.*\\)" nil t)
                  (setq total (+ total (string-to-number (match-string 1)))))
 
                (push (cons name total) student-data)
