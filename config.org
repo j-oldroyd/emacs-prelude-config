@@ -1671,10 +1671,12 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
    The code below is used to draft rubrics in Org mode.  This code has been
    produced using Google Gemini.  This is based on creating a master rubric file
    for each assignment within a =students/= directory.  Student files are also
-   placed here.  The essentials are as follows:
+   placed here.  The "essentials" are as follows:
    1. ~my/org-grading-calculate-score~ will sum up the total points earned or
       lost in a given problem (as marked by a heading) using checkboxes of the
-      form ~- [ ] TEXT :: +/-NUM~.
+      form ~- [ ] TEXT :: +/-NUM~.  This command is intended to be used on a
+      per-problem basis; eventually, I will want to update this to print points
+      earned as well.  Currently, this function isn't very useful.
    2. Points are added across the questions by placing the block
       =* Total Grade=
       =#+BEGIN: grading-score=
@@ -1730,8 +1732,8 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
    [g]rading).
    #+begin_src emacs-lisp :tangle "org-settings.el"
      (defun my/org-grading-calculate-score ()
-       "Calculate points in the current subtree based on checked items with ':: +/-N'.
-                 Returns the total points."
+       "Calculate points in the current subtree based on checked items with '::
+     +/-N'.  Returns the total points."
        (interactive)
        (save-excursion
          ;; If we are inside a code block, move out to the parent headline first
@@ -1744,7 +1746,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
            (goto-char (point-min))
 
            ;; Search for lines with checkboxes and ":: value"
-           (while (re-search-forward "^[ \t]*- \\[[xX]\\] .* :: \\([+-]?[0-9]+\\)" nil t)
+           (while (re-search-forward "^[ \t]*- \\[[xX]\\] .* :: \\(.*\\)" nil t)
              (setq points (+ points (string-to-number (match-string 1)))))
 
            (widen)
@@ -1755,7 +1757,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        (let ((total 0))
          (save-excursion
            (goto-char (point-min))
-           (while (re-search-forward "^[ \t]*- \\[[xX]\\] .* :: \\([+-]?[0-9]+\\)" nil t)
+           (while (re-search-forward "^[ \t]*- \\[[xX]\\] .* :: \\(.*\\)" nil t)
              (setq total (+ total (string-to-number (match-string 1))))))
          (insert (format "Total Score: *%s*" total))))
 
