@@ -1761,10 +1761,13 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
              (setq total (+ total (string-to-number (match-string 1))))))
          (insert (format "Total Score: *%s*" total))))
 
-     (defun my/org-grading-broadcast-item (heading-name item-text)
+     (defun my/org-grading-broadcast-item (heading-name item-text points-text)
        "Add ITEM-TEXT to HEADING-NAME in all .org files in the current
      directory."
-       (interactive "sHeading Name (exact match): \nsRubric Item (e.g., '- [ ] Foo :: -1'):")
+       ;;(interactive "sHeading Name (exact match): \nsRubric Item (e.g., '- [ ] Foo :: -1'):")
+       (interactive (list (read-string "Enter heading name (exact match): " (org-get-heading))
+                          (read-string "Rubric item: " "Text")
+                          (read-string "Points (include +/-): " "+1")))
        (let ((files (directory-files "." t "\\.org$")))
          (dolist (file files)
            (with-current-buffer (find-file-noselect file)
@@ -1772,15 +1775,15 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
                (goto-char (point-min))
                ;; Find the specific headline
                (if (re-search-forward (format "^\\*+ .*\\b%s\\b" (regexp-quote
-      heading-name)) nil t)
+                                                                  heading-name)) nil t)
                    (progn
                      ;; Move to end of this subtree to append the item
                      (org-end-of-subtree)
-                     (insert (format "\n%s" item-text))
+                     (insert (format "%s%s%s" (progn (org-insert-item t) "") item-text points-text))
                      (save-buffer)
                      (message "Updated %s" (file-name-nondirectory file)))
                  (message "Heading '%s' not found in %s" heading-name (file-name-nondirectory
-      file))))))))
+                                                                       file))))))))
 
      (defun my/grading-generate-summary-report ()
        "Generate a summary grade report from all .org files in the 'students/' directory.
