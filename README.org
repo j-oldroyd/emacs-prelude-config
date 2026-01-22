@@ -1,4 +1,4 @@
-# Created 2026-01-22 Thu 11:37
+# Created 2026-01-22 Thu 11:43
 #+title: Emacs/Prelude configuration
 #+author: Jesse Oldroyd
 #+property: header-args :results output silent
@@ -1686,7 +1686,7 @@ A basic rubric template is given by the following code:
     ,:max_points: 15
     ,:END:
 
-    ,- [ ] Correct bounds               :: +5
+    ,- [X] Correct bounds               :: +5
     ,- [X] Correct integration          :: +5
     ,- [ ] Final answer simplified      :: +5
     ,- [ ] Incorrect bounds             :: -5
