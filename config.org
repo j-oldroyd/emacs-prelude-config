@@ -1638,6 +1638,10 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
 ** =org-babel= settings
    We need to configure =org-babel= for evaluation of ~SRC~ blocks in Org mode.
    #+begin_src emacs-lisp :tangle "org-settings.el"
+     (use-package gnuplot
+       :ensure t
+       :defer t)
+
      (org-babel-do-load-languages
       'org-babel-load-languages '((octave . t) (gnuplot . t)))
    #+end_src
