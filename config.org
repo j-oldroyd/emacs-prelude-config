@@ -1687,28 +1687,28 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ,#+PROPERTY: header-args :exports none :results value
 
      ,* Problem 1 - Derivatives
-       ,:PROPERTIES:
-       ,:max_points: 10
-       ,:END:
+       :PROPERTIES:
+       :max_points: 10
+       :END:
 
-       ,- [X] Correct method               :: +5
-       ,- [X] Correct final answer         :: +5
-       ,- [ ] Minor algebra mistake        :: -1
-       ,- [ ] Wrong method                 :: -5
+       - [X] Correct method               :: +5
+       - [X] Correct final answer         :: +5
+       - [ ] Minor algebra mistake        :: -1
+       - [ ] Wrong method                 :: -5
 
        ,#+BEGIN_SRC emacs-lisp
          (my/org-grading-calculate-score)
        ,#+END_SRC
 
      ,* Problem 2 - Integrals
-       ,:PROPERTIES:
-       ,:max_points: 15
-       ,:END:
+       :PROPERTIES:
+       :max_points: 15
+       :END:
 
-       ,- [X] Correct bounds               :: +5
-       ,- [X] Correct integration          :: +5
-       ,- [ ] Final answer simplified      :: +5
-       ,- [ ] Incorrect bounds             :: -5
+       - [X] Correct bounds               :: +5
+       - [X] Correct integration          :: +5
+       - [ ] Final answer simplified      :: +5
+       - [ ] Incorrect bounds             :: -5
 
        ,#+BEGIN_SRC emacs-lisp
          (my/org-grading-calculate-score)
@@ -1716,7 +1716,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
 
      ,* Total Grade
        ,#+BEGIN: grading-score
-       ,Total Score: *20*
+       Total Score: *20*
        ,#+END:
    #+end_src
    The functions ~my/grading-generate-summary-report~ and
