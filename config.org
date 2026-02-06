@@ -55,25 +55,75 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (when (eq system-type 'windows-nt)
        (setq find-program "C:\\msys64\\usr\\bin\\find.exe"))
 
-     ;; Move deleted files to trash in Dired instead of deleting them outright.
-     (setq delete-by-moving-to-trash t)
-     (if (eq system-type 'darwin)
-         (setq trash-directory "~/.Trash"))
+     (use-package emacs
+       :init
+       (setq user-full-name "Jesse Ernest Oldroyd"))
 
-     ;; User information
-     (setq user-full-name "Jesse Oldroyd")
+     ;; macOS-specific config
+     (use-package emacs
+       :if (eq system-type 'darwin)
+       :init
+       (setq trash-directory "~/.Trash"))
 
-     ;; (use-package prelude-mode
-     ;;   :diminish)
+     ;; Windows-specific config
+     (use-package emacs
+       :if (eq system-type 'windows-nt)
+       :init
+       (setq find-program "C:\\msys64\\usr\\bin\\find.exe"))
 
-     ;; (use-package projectile
-     ;;   :diminish)
+     ;; The following are taken from Prot's basic config at
+     ;; https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
+     (use-package modus-themes
+       :ensure t
+       :config
+       (load-theme 'modus-vivendi-tinted :no-confirm-loading))
 
-     ;; (use-package flycheck
-     ;;   :diminish)
+     (use-package nerd-icons
+       :ensure t)
 
-     ;; (use-package ispell
-     ;;   :diminish)
+     (use-package nerd-icons-completion
+       :ensure t
+       :after marginalia
+       :config
+       (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
+
+     (use-package nerd-icons-dired
+       :ensure t
+       :hook
+       (dired-mode . nerd-icons-dired-mode))
+
+     (use-package dired
+       :ensure nil
+       :commands (dired)
+       :hook
+       ((dired-mode . dired-hide-details-mode)
+        (dired-mode . hl-line-mode))
+       :config
+       (setq dired-recursive-copies 'always)
+       (setq dired-recursive-deletes 'always)
+       (setq delete-by-moving-to-trash t)
+       (setq dired-dwim-target t))
+
+     (use-package dired-subtree
+       :ensure t
+       :after dired
+       :bind
+       ( :map dired-mode-map
+         ("<tab>" . dired-subtree-toggle)
+         ("TAB" . dired-subtree-toggle)
+         ("<backtab>" . dired-subtree-remove)
+         ("S-TAB" . dired-subtree-remove))
+       :config
+       (setq dired-subtree-use-backgrounds nil))
+
+     (use-package trashed
+       :ensure t
+       :commands (trashed)
+       :config
+       (setq trashed-action-confirmer 'y-or-n-p)
+       (setq trashed-use-header-line t)
+       (setq trashed-sort-key '("Date deleted" . t))
+       (setq trashed-date-format "%Y-%m-%d %H:%M:%S"))
    #+end_src
 ** UI and navigation settings
    See karthink's [[https://karthinks.com/software/avy-can-do-anything/][blog post]] for ideas on using Avy and its associated
