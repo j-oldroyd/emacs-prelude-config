@@ -1425,12 +1425,17 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        ((org-mode . (lambda () (setq fill-column 80)))
         (org-mode . auto-fill-mode)))
 
-     ;; Make Org bullets a little nicer
-     (use-package org-bullets
-       :ensure t
-       :after (org)
+     (use-package org-modern
        :hook
-       (org-mode . org-bullets-mode))
+       ((org-mode . org-modern-mode)
+        (org-agenda-finalize . org-modern-agenda)))
+
+     ;; Make Org bullets a little nicer
+     ;; (use-package org-bullets
+     ;;   :ensure t
+     ;;   :after (org)
+     ;;   :hook
+     ;;   (org-mode . org-bullets-mode))
 
      ;; Buffer previews and spellcheck
      (setq org-src-fontify-natively t)
@@ -1720,17 +1725,6 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
         :pin melpa
         :after ox)
     #+end_src
-
-** Export settings
-   These settings control how =.org= files are exported to other formats.  In
-   particular, \( \LaTeX \) is often exported into other file types using
-   formats such as =.svg=, another sizing can be a problem.
-   # #+begin_src emacs-lisp :tangle "org-settings.el"
-   #   ;;; LaTeX export settings
-   #   ;; Remove foregroud/background colors from previews
-   #   ;; (plist-put org-format-latex-options :foreground nil)
-   #   ;; (plist-put org-format-latex-options :background nil)
-   # #+end_src
 ** Rubric settings
    The code below is used to draft rubrics in Org mode.  This code has been
    produced using Google Gemini.  This is based on creating a master rubric file
