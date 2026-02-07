@@ -1,4 +1,4 @@
-# Created 2026-02-06 Fri 20:11
+# Created 2026-02-06 Fri 20:19
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1121,13 +1121,13 @@ in the ~.msmtprc~ file for this to work properly.
 #+end_src
 The =org-msg= package, located [[https://github.com/jeremy-compostella/org-msg?tab=readme-ov-file][on GitHub]], allows us to format emails using
 the capabilities of Org Mode.  In particular, we can typeset mathematics
-using $\LaTeX$ and send (and evaluate!) code snippets using Org Babel.  There
-are many options for this package, but one that we can note in particular is
-~org-msg-recipient-names~, which allows replies to automatically use a
-different name than what is given in "From" section of the message.  This is
-handy if students choose to go by a different name than what is on the course
-roster.  At the moment, my customizations for this variable are /not/ tracked
-by GitHub for privacy reasons.
+using \( \LaTeX \) and send (and evaluate!) code snippets using Org Babel.
+There are many options for this package, but one that we can note in
+particular is ~org-msg-recipient-names~, which allows replies to
+automatically use a different name than what is given in "From" section of
+the message.  This is handy if students choose to go by a different name than
+what is on the course roster.  At the moment, my customizations for this
+variable are /not/ tracked by GitHub for privacy reasons.
 
 This code also contains a patch using =el-patch=, see [[https://github.com/radian-software/el-patch][here]], for the
 ~org-msg-preview~ function.  My WSL setup requires this patch to make the
