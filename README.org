@@ -1,4 +1,4 @@
-# Created 2026-02-06 Fri 20:19
+# Created 2026-02-09 Mon 10:27
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -819,11 +819,9 @@ various file types including =.tex= files.  Another alternative is to use
     (setq lsp-pylsp-plugins-black-enabled t))
 
   ;; optionally
-  (use-package lsp-ui :commands lsp-ui-mode)
-  ;; if you are helm user
-  ;; (use-package helm-lsp :commands helm-lsp-workspace-symbol)
-  ;; if you are ivy user
-  ;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+  (use-package lsp-ui
+    :commands lsp-ui-mode)
+
   ;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
   ;; optionally if you want to use debugger
@@ -834,7 +832,7 @@ various file types including =.tex= files.  Another alternative is to use
   (setq lsp-tex-server 'digestif)
 
   ;; Make Emacs/digestif aware of TeX info paths.
-  (add-to-list 'Info-directory-list "/usr/local/texlive/2024/texmf-dist/doc/info")
+  (add-to-list 'Info-directory-list "/usr/local/texlive/2025/texmf-dist/doc/info")
 
   ;; Auto-activate ts-modes when available
   ;; (use-package treesit-auto
@@ -896,6 +894,8 @@ AUCTeX, which is included with Prelude modules.
   (when (eq system-type 'darwin)
     (setq preview-gs-command "/usr/local/bin/gs"))
 
+  ;; I want the error overview to appear whenever the document is compiled
+  (setq TeX-error-overview-open-after-TeX-run t)
 
   ;; Change inline math delimiters that AUCTeX and CDLaTeX
   ;; insert from $...$ to \(...\)
