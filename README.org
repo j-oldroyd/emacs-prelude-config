@@ -1,4 +1,4 @@
-# Created 2026-02-06 Fri 10:44
+# Created 2026-02-06 Fri 20:19
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1121,13 +1121,13 @@ in the ~.msmtprc~ file for this to work properly.
 #+end_src
 The =org-msg= package, located [[https://github.com/jeremy-compostella/org-msg?tab=readme-ov-file][on GitHub]], allows us to format emails using
 the capabilities of Org Mode.  In particular, we can typeset mathematics
-using $\LaTeX$ and send (and evaluate!) code snippets using Org Babel.  There
-are many options for this package, but one that we can note in particular is
-~org-msg-recipient-names~, which allows replies to automatically use a
-different name than what is given in "From" section of the message.  This is
-handy if students choose to go by a different name than what is on the course
-roster.  At the moment, my customizations for this variable are /not/ tracked
-by GitHub for privacy reasons.
+using \( \LaTeX \) and send (and evaluate!) code snippets using Org Babel.
+There are many options for this package, but one that we can note in
+particular is ~org-msg-recipient-names~, which allows replies to
+automatically use a different name than what is given in "From" section of
+the message.  This is handy if students choose to go by a different name than
+what is on the course roster.  At the moment, my customizations for this
+variable are /not/ tracked by GitHub for privacy reasons.
 
 This code also contains a patch using =el-patch=, see [[https://github.com/radian-software/el-patch][here]], for the
 ~org-msg-preview~ function.  My WSL setup requires this patch to make the
@@ -1351,11 +1351,26 @@ For pretty-printing, there is also =sgml-mode= which contains the function
 =sgml-pretty-print=.  This is on top of command line utilities such as
 ~xmllint~ and ~tidy~.
 #+begin_src emacs-lisp :tangle "pretext-settings.el"
-  ;; fill-paragraph does not respect XML tags, so we use this code adapted from
-  ;; https://stackoverflow.com/a/1042118/3901257
-  (add-hook 'nxml-mode-hook #'(lambda ()
-                               (setq paragraph-separate "[     ]*\\(//+\\|\\**\\)\\([  ]*\\| <.*>\\)$\\|^\f")
-                               ))
+  ;; ;; fill-paragraph does not respect XML tags, so we use this code adapted from
+  ;; ;; https://stackoverflow.com/a/1042118/3901257
+  ;; (add-hook 'nxml-mode-hook #'(lambda ()
+  ;;                              (setq paragraph-separate "[     ]*\\(//+\\|\\**\\)\\([  ]*\\| <.*>\\)$\\|^\f")
+  ;;                              ))
+
+  ;; Custom PreTeXt mode package created by Michael Shulman.  Accessed
+  ;; on pretext-support Google Group on Jan 21, 2026:
+  ;; https://groups.google.com/g/pretext-support/c/ts2Xcbkyj9k/m/i-cEX-A_CQAJ
+  ;; This requires imenu-list and mmm-mode, which are not currently part
+  ;; of my config.
+  (use-package pretext-mode
+    :load-path "personal/packages/"
+    :mode "\\.ptx\\'")
+
+  ;; pretext-mode allows for using asy-mode and AUCTeX within a .ptx
+  ;; file, so for now we load asy-mode here.
+  (use-package asy-mode
+    :load-path "/usr/local/texlive/2025/texmf-dist/asymptote/"
+    :mode "\\.asy\\'")
 #+end_src
 ** =lean4-mode=
 Lean is an automated theorem prover.  This package provides integration
@@ -1403,12 +1418,17 @@ in =snippets/org-mode=.
     ((org-mode . (lambda () (setq fill-column 80)))
      (org-mode . auto-fill-mode)))
 
-  ;; Make Org bullets a little nicer
-  (use-package org-bullets
-    :ensure t
-    :after (org)
+  (use-package org-modern
     :hook
-    (org-mode . org-bullets-mode))
+    ((org-mode . org-modern-mode)
+     (org-agenda-finalize . org-modern-agenda)))
+
+  ;; Make Org bullets a little nicer
+  ;; (use-package org-bullets
+  ;;   :ensure t
+  ;;   :after (org)
+  ;;   :hook
+  ;;   (org-mode . org-bullets-mode))
 
   ;; Buffer previews and spellcheck
   (setq org-src-fontify-natively t)
@@ -1694,10 +1714,6 @@ website.
     :pin melpa
     :after ox)
 #+end_src
-** Export settings
-These settings control how =.org= files are exported to other formats.  In
-particular, \( \LaTeX \) is often exported into other file types using
-formats such as =.svg=, another sizing can be a problem.
 ** Rubric settings
 The code below is used to draft rubrics in Org mode.  This code has been
 produced using Google Gemini.  This is based on creating a master rubric file
