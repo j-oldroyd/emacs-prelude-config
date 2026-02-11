@@ -479,23 +479,29 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;; issue. This can be done by removing org-mode from the variable
      ;; meow-expand-exclude-mode-list.
 
-     ;; LaTeX settings for meow. Taken from
-     ;; https://aatmunbaxi.netlify.app/comp/configuring_meow_friendly_latex/
-     (meow-thing-register 'inline-math
-                          '(pair ("\\(") ("\\)"))
-                          '(pair ("\\(") ("\\)") ) )
-
-     (add-to-list 'meow-char-thing-table '(?m . inline-math))
-
-     ;; Default states for modes
-     (add-to-list 'meow-mode-state-list '(mu4e-main-mode . insert))
-     (add-to-list 'meow-mode-state-list '(mu4e-view-mode . motion))
-
      ;; (cond
      ;;  ((eq system-type 'darwin) (meow-setup-colemak))
      ;;  ((eq system-type 'gnu/linux) (meow-setup)))
-     (meow-setup)
-     (meow-global-mode 1)
+
+     ;; Magit/angle config adapted from
+     ;; https://github.com/mclear-tools/dotemacs/blob/master/cpm-setup-meow.el
+     (use-package meow
+       :config
+       (meow-thing-register 'angle '(regexp "<" ">") '(regexp "<" ">"))
+       (add-to-list 'meow-char-thing-table '(?a . angle))
+       ;; LaTeX settings for meow. Taken from
+       ;; https://aatmunbaxi.netlify.app/comp/configuring_meow_friendly_latex/
+       (meow-thing-register 'inline-math
+                          '(pair ("\\(") ("\\)"))
+                          '(pair ("\\(") ("\\)") ) )
+       (add-to-list 'meow-char-thing-table '(?m . inline-math))
+       ;; Default states for modes
+       (add-to-list 'meow-mode-state-list '(mu4e-main-mode . insert))
+       (add-to-list 'meow-mode-state-list '(mu4e-view-mode . motion))
+       (add-to-list 'meow-mode-state-list '(magit-status-mode . insert))
+       (add-to-list 'meow-mode-state-list '(magit-log-mode . normal))
+       (meow-setup)
+       (meow-global-mode 1))
    #+end_src
 
 ** Completion and templates/snippets
@@ -824,11 +830,9 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        (setq lsp-pylsp-plugins-black-enabled t))
 
      ;; optionally
-     (use-package lsp-ui :commands lsp-ui-mode)
-     ;; if you are helm user
-     ;; (use-package helm-lsp :commands helm-lsp-workspace-symbol)
-     ;; if you are ivy user
-     ;; (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+     (use-package lsp-ui
+       :commands lsp-ui-mode)
+
      ;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
      ;; optionally if you want to use debugger
@@ -839,7 +843,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (setq lsp-tex-server 'digestif)
 
      ;; Make Emacs/digestif aware of TeX info paths.
-     (add-to-list 'Info-directory-list "/usr/local/texlive/2024/texmf-dist/doc/info")
+     (add-to-list 'Info-directory-list "/usr/local/texlive/2025/texmf-dist/doc/info")
 
      ;; Auto-activate ts-modes when available
      ;; (use-package treesit-auto
@@ -901,6 +905,8 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (when (eq system-type 'darwin)
        (setq preview-gs-command "/usr/local/bin/gs"))
 
+     ;; I want the error overview to appear whenever the document is compiled
+     (setq TeX-error-overview-open-after-TeX-run t)
 
      ;; Change inline math delimiters that AUCTeX and CDLaTeX
      ;; insert from $...$ to \(...\)
@@ -1427,9 +1433,14 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        ;; Org mode 80 character limit.  Taken from
        ;; https://emacs.stackexchange.com/questions/35266/org-mode-auto-new-line-at-80th-column
        ((org-mode . (lambda () (setq fill-column 80)))
-        (org-mode . auto-fill-mode)))
+        (org-mode . auto-fill-mode))
+       :config
+       ;; Toggle TeX input method with C-\
+       (setq default-input-method "TeX")
+       (toggle-input-method))
 
      (use-package org-modern
+       :ensure t
        :hook
        ((org-mode . org-modern-mode)
         (org-agenda-finalize . org-modern-agenda)))
