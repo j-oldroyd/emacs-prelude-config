@@ -1429,7 +1429,11 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        ;; Org mode 80 character limit.  Taken from
        ;; https://emacs.stackexchange.com/questions/35266/org-mode-auto-new-line-at-80th-column
        ((org-mode . (lambda () (setq fill-column 80)))
-        (org-mode . auto-fill-mode)))
+        (org-mode . auto-fill-mode))
+       :config
+       ;; Toggle TeX input method with C-\
+       (setq default-input-method "TeX")
+       (toggle-input-method))
 
      (use-package org-modern
        :ensure t
