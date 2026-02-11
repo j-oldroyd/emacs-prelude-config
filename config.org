@@ -1371,7 +1371,11 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;; of my config.
      (use-package pretext-mode
        :load-path "personal/packages/"
-       :mode "\\.ptx\\'")
+       :mode "\\.ptx\\'"
+       :hook
+       ((pretext-mode . (lambda () (undo-tree-mode -1)))))
+
+     (add-to-list 'auto-mode-alist '("\\.ptx" . pretext-mode))
 
      ;; pretext-mode allows for using asy-mode and AUCTeX within a .ptx
      ;; file, so for now we load asy-mode here.
