@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-# Created 2026-02-11 Wed 15:35
-=======
-# Created 2026-02-11 Wed 23:46
->>>>>>> origin/main
+# Created 2026-02-21 Sat 16:24
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1534,7 +1530,8 @@ the WSL settings require a symlink from the Windows Google Drive folder to
           (expand-file-name "/Users/jesseoldroyd/Documents/org/notes.org")))
    ((eq system-type 'gnu/linux)
     (setq org-agenda-files '("~/org"
-                             "~/beorg"))
+                             "~/beorg"
+                             "~/beorg/projects"))
     (setq org-default-notes-file
           (expand-file-name "~/beorg/inbox.org"))))
 

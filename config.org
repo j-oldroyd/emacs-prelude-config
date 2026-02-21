@@ -1537,7 +1537,8 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
              (expand-file-name "/Users/jesseoldroyd/Documents/org/notes.org")))
       ((eq system-type 'gnu/linux)
        (setq org-agenda-files '("~/org"
-                                "~/beorg"))
+                                "~/beorg"
+                                "~/beorg/projects"))
        (setq org-default-notes-file
              (expand-file-name "~/beorg/inbox.org"))))
 
