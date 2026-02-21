@@ -1,4 +1,4 @@
-# Created 2026-02-11 Wed 14:49
+# Created 2026-02-11 Wed 15:35
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1175,7 +1175,7 @@ Windows to preview messages created in Emacs/WSL.
   (add-hook 'org-msg-edit-mode-hook 'messages-are-flowing-use-and-mark-hard-newlines)
 
 
-  ;; Org-msg be default uses /tmp/ for storing message previews.  This
+  ;; Org-msg by default uses /tmp/ for storing message previews.  This
   ;; is normally not a problem, except that I sometimes use WSL with my
   ;; browser in the Windows filesystem.  Therefore, I need to modify the
   ;; filepath created for the browse-url function.  This uses el-patch
@@ -1209,7 +1209,7 @@ Windows to preview messages created in Emacs/WSL.
   ;;                          (write-file tmp-file))
   ;;                        (el-patch-swap
   ;;                          (browse-url (concat "file://" tmp-file))
-  ;;                          (browse-url (concat "file://///wsl.localhost/Ubuntu/" tmp-file)))))
+  ;;                          (browse-url (concat "file://///wsl.localhost/archlinux" tmp-file)))))
   ;;                    (t (with-current-buffer
   ;;                           (get-buffer-create (format "*OrgMsg %s Preview*" (car alt)))
   ;;                         (delete-region (point-min) (point-max))
