@@ -903,7 +903,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;; find it on macOS. Live preview on Windows is very troublesome, so we
      ;; don't worry about it.
      (when (eq system-type 'darwin)
-       (setq preview-gs-command "/usr/local/bin/gs"))
+       (setq preview-gs-command "/usr/homebrew/bin/gs"))
 
      ;; I want the error overview to appear whenever the document is compiled
      (setq TeX-error-overview-open-after-TeX-run t)
@@ -1377,7 +1377,11 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;; of my config.
      (use-package pretext-mode
        :load-path "personal/packages/"
-       :mode "\\.ptx\\'")
+       :mode "\\.ptx\\'"
+       :hook
+       ((pretext-mode . (lambda () (undo-tree-mode -1)))))
+
+     (add-to-list 'auto-mode-alist '("\\.ptx" . pretext-mode))
 
      ;; pretext-mode allows for using asy-mode and AUCTeX within a .ptx
      ;; file, so for now we load asy-mode here.
