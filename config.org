@@ -807,6 +807,21 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;;   :ensure t)
    #+end_src
 
+** Elfeed
+   Elfeed is a web feed reader for Emacs.  Some of the code below is taken from
+   the suggested code at [[https://github.com/skeeto/elfeed][Elfeed's GitHub repo]].
+   #+begin_src emacs-lisp :tangle "general-settings.el"
+     (use-package elfeed
+       :bind
+       ;; Mnemonic: "C-x NEWS"
+       ("C-x N" . 'elfeed)
+       :config
+       (setq elfeed-feeds '(("https://archlinux.org/feeds/news/" archlinux news)
+                            ("https://wiki.archlinux.org/index.php?title=Special:RecentChanges&feed=rss" archlinux changes)
+                            ("https://archlinux.org/feeds/packages/" archlinux packages)
+                            ("https://aur.archlinux.org/rss" archlinux aur)
+                            ("http://www.npr.org/rss/rss.php?id=1001" npr news))))
+   #+end_src
 * Enhancing modes for files
   The packages here improve/replace how emacs handles certain files.
 ** Language server protocol
