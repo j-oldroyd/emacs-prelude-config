@@ -815,6 +815,20 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;;   :ensure t)
    #+end_src
 
+** Elfeed
+   Elfeed is a web feed reader for Emacs.  Some of the code below is taken from
+   the suggested code at [[https://github.com/skeeto/elfeed][Elfeed's GitHub repo]].
+   #+begin_src emacs-lisp :tangle "general-settings.el"
+     (use-package elfeed
+       :bind (("C-c E" . elfeed))
+       :config
+       (setq elfeed-feeds '(("https://archlinux.org/feeds/news/" archlinux news)
+                            ("https://wiki.archlinux.org/index.php?title=Special:RecentChanges&feed=rss" archlinux changes)
+                            ("https://archlinux.org/feeds/packages/" archlinux packages)
+                            ("https://aur.archlinux.org/rss" archlinux aur)
+                            ("http://www.npr.org/rss/rss.php?id=1001" npr news)
+                            ("https://sachachua.com/blog/category/emacs-news/feed" emacs news))))
+   #+end_src
 * Enhancing modes for files
   The packages here improve/replace how emacs handles certain files.
 ** Language server protocol
@@ -1012,7 +1026,8 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        (setq mu4e-path (expand-file-name "/usr/local/share/emacs/site-lisp/mu4e"))))
 
      (use-package mu4e
-       :load-path  mu4e-path)
+       :load-path  mu4e-path
+       :bind (("C-c M" . mu4e)))
 
      ;; for sending mails
      (require 'smtpmail)

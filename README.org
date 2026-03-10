@@ -1,4 +1,4 @@
-# Created 2026-03-10 Tue 18:25
+# Created 2026-03-10 Tue 18:31
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -810,6 +810,20 @@ appropriate ~config~ file ~~/.aspell.conf~ in the MSYS2/UCRT64 shell. See
   ;; (use-package el-patch
   ;;   :ensure t)
 #+end_src
+** Elfeed
+Elfeed is a web feed reader for Emacs.  Some of the code below is taken from
+the suggested code at [[https://github.com/skeeto/elfeed][Elfeed's GitHub repo]].
+#+begin_src emacs-lisp :tangle "general-settings.el"
+  (use-package elfeed
+    :bind (("C-c E" . elfeed))
+    :config
+    (setq elfeed-feeds '(("https://archlinux.org/feeds/news/" archlinux news)
+                         ("https://wiki.archlinux.org/index.php?title=Special:RecentChanges&feed=rss" archlinux changes)
+                         ("https://archlinux.org/feeds/packages/" archlinux packages)
+                         ("https://aur.archlinux.org/rss" archlinux aur)
+                         ("http://www.npr.org/rss/rss.php?id=1001" npr news)
+                         ("https://sachachua.com/blog/category/emacs-news/feed" emacs news))))
+#+end_src
 * Enhancing modes for files
 The packages here improve/replace how emacs handles certain files.
 ** Language server protocol
@@ -1006,7 +1020,8 @@ and [[https://frostyx.cz/posts/synchronize-your-2fa-gmail-with-mbsync][here]].
     (setq mu4e-path (expand-file-name "/usr/local/share/emacs/site-lisp/mu4e"))))
 
   (use-package mu4e
-    :load-path  mu4e-path)
+    :load-path  mu4e-path
+    :bind (("C-c M" . mu4e)))
 
   ;; for sending mails
   (require 'smtpmail)
@@ -1636,77 +1651,78 @@ now, a decent workflow seems to be the following:
    specific to the paper (such as explaining some mathematical computation)
    while annotation with =org-noter= should focus on observations that I wish
    to refer to outside of the paper.
-   #+begin_src emacs-lisp :tangle "bibtex-settings.el"
-     (use-package bib-mode
-       ;; I don't want to load this just yet.  Instead, I'll set
-       ;; OS-specific variables first.
-       :defer t
-       :if (eq system-type 'darwin)
-       :custom
-       (bib-file '("~/Google Drive/My Drive/research/library.bib"
-                   "~/Documents/zotero/library.bib")))
 
-     (use-package bib-mode
-       ;; I don't want to load this just yet.  Instead, I'll set
-       ;; OS-specific variables first.
-       :defer t
-       :if (eq system-type 'gnu/linux)
-       :custom
-       (bib-file '("~/GoogleDrive/research/My Library.bib"
-                   "~/GoogleDrive/research/library-time_scales.bib"
-                   "~/GoogleDrive/research/library-tight_frames-association_schemes.bib"
-                   "~/GoogleDrive/research/library-tight_frames-algorithms.bib")))
+#+begin_src emacs-lisp :tangle "bibtex-settings.el"
+  (use-package bib-mode
+    ;; I don't want to load this just yet.  Instead, I'll set
+    ;; OS-specific variables first.
+    :defer t
+    :if (eq system-type 'darwin)
+    :custom
+    (bib-file '("~/Google Drive/My Drive/research/library.bib"
+                "~/Documents/zotero/library.bib")))
 
-     (use-package org
-       :custom
-       (org-cite-global-bibliography bib-file)
-       (org-cite-insert-processor 'citar)
-       (org-cite-follow-processor 'citar)
-       (org-cite-activate-processor 'citar))
+  (use-package bib-mode
+    ;; I don't want to load this just yet.  Instead, I'll set
+    ;; OS-specific variables first.
+    :defer t
+    :if (eq system-type 'gnu/linux)
+    :custom
+    (bib-file '("~/GoogleDrive/research/My Library.bib"
+                "~/GoogleDrive/research/library-time_scales.bib"
+                "~/GoogleDrive/research/library-tight_frames-association_schemes.bib"
+                "~/GoogleDrive/research/library-tight_frames-algorithms.bib")))
 
-     (use-package citar
-       ;; I don't want to load this just yet.  Instead, I'll set
-       ;; OS-specific variables first.
-       :defer t
-       :if (eq system-type 'darwin)
-       :custom
-       (citar-library-paths '("~/Google Drive/My Drive/research"
-                              "~/Documents/zotero"))
-       (citar-notes-paths '("~/Google Drive/My Drive/research")))
+  (use-package org
+    :custom
+    (org-cite-global-bibliography bib-file)
+    (org-cite-insert-processor 'citar)
+    (org-cite-follow-processor 'citar)
+    (org-cite-activate-processor 'citar))
 
-     (use-package citar
-       ;; I don't want to load this just yet.  Instead, I'll set
-       ;; OS-specific variables first.
-       :defer t
-       :if (eq system-type 'gnu/linux)
-       :custom
-       (citar-library-paths '("~/GoogleDrive/research"))
-       (citar-notes-paths '("~/GoogleDrive/research")))
+  (use-package citar
+    ;; I don't want to load this just yet.  Instead, I'll set
+    ;; OS-specific variables first.
+    :defer t
+    :if (eq system-type 'darwin)
+    :custom
+    (citar-library-paths '("~/Google Drive/My Drive/research"
+                           "~/Documents/zotero"))
+    (citar-notes-paths '("~/Google Drive/My Drive/research")))
 
-     (use-package citar
-       :ensure t
-       :diminish
-       :custom
-       (citar-bibliography org-cite-global-bibliography)
-       :hook
-       (LaTeX-mode . citar-capf-setup)
-       (org-mode . citar-capf-setup))
+  (use-package citar
+    ;; I don't want to load this just yet.  Instead, I'll set
+    ;; OS-specific variables first.
+    :defer t
+    :if (eq system-type 'gnu/linux)
+    :custom
+    (citar-library-paths '("~/GoogleDrive/research"))
+    (citar-notes-paths '("~/GoogleDrive/research")))
 
-     (use-package citar-org-roam
-       :ensure t
-       :diminish
-       :custom
-       (citar-org-roam-capture-template-key "n")
-       :after (org-roam citar)
-       :config (citar-org-roam-mode))
+  (use-package citar
+    :ensure t
+    :diminish
+    :custom
+    (citar-bibliography org-cite-global-bibliography)
+    :hook
+    (LaTeX-mode . citar-capf-setup)
+    (org-mode . citar-capf-setup))
 
-     (use-package citar-embark
-       :ensure t
-       :diminish
-       :after (citar embark)
-       :no-require
-       :config (citar-embark-mode))
-   #+end_src
+  (use-package citar-org-roam
+    :ensure t
+    :diminish
+    :custom
+    (citar-org-roam-capture-template-key "n")
+    :after (org-roam citar)
+    :config (citar-org-roam-mode))
+
+  (use-package citar-embark
+    :ensure t
+    :diminish
+    :after (citar embark)
+    :no-require
+    :config (citar-embark-mode))
+#+end_src
 ** =org-babel= settings
 We need to configure =org-babel= for evaluation of ~SRC~ blocks in Org mode.
 #+begin_src emacs-lisp :tangle "org-settings.el"
