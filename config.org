@@ -1240,9 +1240,6 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
    as described [[https://emacs.stackexchange.com/questions/76652/overlay-makes-text-unreadable-where-does-it-come-from-overlay-face-is-undef][here]], but the jist is that we need to alter the ~bg:ansiyellow~
    setting in =core/ultrab.py=.
    #+begin_src emacs-lisp :tangle "python-settings.el"
-     ;; (use-package pyvenv
-     ;;   :ensure nil)
-
      (use-package python
        :ensure nil
        :mode
@@ -1260,9 +1257,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        :config
        (setq python-indent-offset 4
              python-indent-guess-indent-offset-verbose nil
-             python-shell-interpreter "python"
-             ;; python-shell-interpreter-args "-i --simple-prompt"
-             ))
+             python-shell-interpreter "python"))
    #+end_src
 ** =hledger=
    =hledger= is a plaintext accounting tool that is designed to be run from the
@@ -1646,88 +1641,75 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
       while annotation with =org-noter= should focus on observations that I wish
       to refer to outside of the paper.
       #+BEGIN_SRC emacs-lisp :tangle "bibtex-settings.el"
-        (use-package bib-mode
-          ;; I don't want to load this just yet.  Instead, I'll set
-          ;; OS-specific variables first.
-          :defer t
-          :if (eq system-type 'darwin)
-          :custom
-          (bib-file '("~/Google Drive/My Drive/research/library.bib"
-                      "~/Documents/zotero/library.bib")))
+     (use-package bib-mode
+       ;; I don't want to load this just yet.  Instead, I'll set
+       ;; OS-specific variables first.
+       :defer t
+       :if (eq system-type 'darwin)
+       :custom
+       (bib-file '("~/Google Drive/My Drive/research/library.bib"
+                   "~/Documents/zotero/library.bib")))
 
-        (use-package bib-mode
-          ;; I don't want to load this just yet.  Instead, I'll set
-          ;; OS-specific variables first.
-          :defer t
-          :if (eq system-type 'gnu/linux)
-          :custom
-          (bib-file '("~/GoogleDrive/research/My Library.bib"
-                      "~/GoogleDrive/research/library-time_scales.bib"
-                      "~/GoogleDrive/research/library-tight_frames-association_schemes.bib"
-                      "~/GoogleDrive/research/library-tight_frames-algorithms.bib")))
+     (use-package bib-mode
+       ;; I don't want to load this just yet.  Instead, I'll set
+       ;; OS-specific variables first.
+       :defer t
+       :if (eq system-type 'gnu/linux)
+       :custom
+       (bib-file '("~/GoogleDrive/research/My Library.bib"
+                   "~/GoogleDrive/research/library-time_scales.bib"
+                   "~/GoogleDrive/research/library-tight_frames-association_schemes.bib"
+                   "~/GoogleDrive/research/library-tight_frames-algorithms.bib")))
 
-        (use-package org
-          :custom
-          (org-cite-global-bibliography bib-file)
-          (org-cite-insert-processor 'citar)
-          (org-cite-follow-processor 'citar)
-          (org-cite-activate-processor 'citar))
+     (use-package org
+       :custom
+       (org-cite-global-bibliography bib-file)
+       (org-cite-insert-processor 'citar)
+       (org-cite-follow-processor 'citar)
+       (org-cite-activate-processor 'citar))
 
-        (use-package citar
-          ;; I don't want to load this just yet.  Instead, I'll set
-          ;; OS-specific variables first.
-          :defer t
-          :if (eq system-type 'darwin)
-          :custom
-          (citar-library-paths '("~/Google Drive/My Drive/research"
-                                 "~/Documents/zotero"))
-          (citar-notes-paths '("~/Google Drive/My Drive/research")))
+     (use-package citar
+       ;; I don't want to load this just yet.  Instead, I'll set
+       ;; OS-specific variables first.
+       :defer t
+       :if (eq system-type 'darwin)
+       :custom
+       (citar-library-paths '("~/Google Drive/My Drive/research"
+                              "~/Documents/zotero"))
+       (citar-notes-paths '("~/Google Drive/My Drive/research")))
 
-        (use-package citar
-          ;; I don't want to load this just yet.  Instead, I'll set
-          ;; OS-specific variables first.
-          :defer t
-          :if (eq system-type 'gnu/linux)
-          :custom
-          (citar-library-paths '("~/GoogleDrive/research"))
-          (citar-notes-paths '("~/GoogleDrive/research")))
+     (use-package citar
+       ;; I don't want to load this just yet.  Instead, I'll set
+       ;; OS-specific variables first.
+       :defer t
+       :if (eq system-type 'gnu/linux)
+       :custom
+       (citar-library-paths '("~/GoogleDrive/research"))
+       (citar-notes-paths '("~/GoogleDrive/research")))
 
-        (use-package citar
-          :ensure t
-          :diminish
-          :custom
-          (citar-bibliography org-cite-global-bibliography)
-          :hook
-          (LaTeX-mode . citar-capf-setup)
-          (org-mode . citar-capf-setup))
+     (use-package citar
+       :ensure t
+       :diminish
+       :custom
+       (citar-bibliography org-cite-global-bibliography)
+       :hook
+       (LaTeX-mode . citar-capf-setup)
+       (org-mode . citar-capf-setup))
 
-        ;; (use-package citar
-        ;;   :ensure t
-        ;;   :custom
-        ;;   (citar-bibliography bib-file)
-        ;;   (org-cite-global-bibliography bib-file)
-        ;;   (org-cite-insert-processor 'citar)
-        ;;   (org-cite-follow-processor 'citar)
-        ;;   (org-cite-activate-processor 'citar)
-        ;;   :config (require 'org-roam)
-        ;;   :hook
-        ;;   (LaTeX-mode . citar-capf-setup)
-        ;;   (org-mode . citar-capf-setup))
+     (use-package citar-org-roam
+       :ensure t
+       :diminish
+       :custom
+       (citar-org-roam-capture-template-key "n")
+       :after (org-roam citar)
+       :config (citar-org-roam-mode))
 
-        (use-package citar-org-roam
-          :ensure t
-          :diminish
-          :custom
-          (citar-org-roam-capture-template-key "n")
-          :after (org-roam citar)
-          :config (citar-org-roam-mode))
-
-        (use-package citar-embark
-          :ensure t
-          :diminish
-          :after (citar embark)
-          :no-require
-          :config (citar-embark-mode))
+     (use-package citar-embark
+       :ensure t
+       :diminish
+       :after (citar embark)
+       :no-require
+       :config (citar-embark-mode))
       #+END_SRC
 
 ** =org-babel= settings
