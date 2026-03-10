@@ -1351,7 +1351,8 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
 ** Magit
    I want to be able to access tracked files via ~j t~ from ~magit-dispatch~.
    We need to load these settings after =magit= is loaded, otherwise Emacs
-   complains about the hook not existing.
+   complains about the hook not existing.  I also want to use =magit-todos= for
+   tracking ~TODO~ and ~FIXME~ comments in code.
    #+begin_src emacs-lisp :tangle "magit-settings.el"
      (with-eval-after-load "magit"
        (magit-add-section-hook
@@ -1359,7 +1360,12 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
         'magit-insert-tracked-files
         nil
         'append))
-   #+end_src
+
+     (use-package magit-todos
+       :after magit
+       :config (magit-todos-mode 1))
+        #+end_src
+
 ** PreTeXt
    PreTeXt uses XML markup to produce documents in multiple formats.  Emacs
    already had an =nxml-mode= with schema support that we can use with PreTeXt.
@@ -1640,7 +1646,8 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
       specific to the paper (such as explaining some mathematical computation)
       while annotation with =org-noter= should focus on observations that I wish
       to refer to outside of the paper.
-      #+BEGIN_SRC emacs-lisp :tangle "bibtex-settings.el"
+
+   #+begin_src emacs-lisp :tangle "bibtex-settings.el"
      (use-package bib-mode
        ;; I don't want to load this just yet.  Instead, I'll set
        ;; OS-specific variables first.
@@ -1710,7 +1717,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        :after (citar embark)
        :no-require
        :config (citar-embark-mode))
-      #+END_SRC
+   #+end_src
 
 ** =org-babel= settings
    We need to configure =org-babel= for evaluation of ~SRC~ blocks in Org mode.

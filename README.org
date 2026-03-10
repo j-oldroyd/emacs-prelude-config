@@ -1,4 +1,4 @@
-# Created 2026-03-10 Tue 17:47
+# Created 2026-03-10 Tue 18:25
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1234,9 +1234,6 @@ against the background.  This can be dealt with by adjusting =IPython= itself
 as described [[https://emacs.stackexchange.com/questions/76652/overlay-makes-text-unreadable-where-does-it-come-from-overlay-face-is-undef][here]], but the jist is that we need to alter the ~bg:ansiyellow~
 setting in =core/ultrab.py=.
 #+begin_src emacs-lisp :tangle "python-settings.el"
-  ;; (use-package pyvenv
-  ;;   :ensure nil)
-
   (use-package python
     :ensure nil
     :mode
@@ -1254,9 +1251,7 @@ setting in =core/ultrab.py=.
     :config
     (setq python-indent-offset 4
           python-indent-guess-indent-offset-verbose nil
-          python-shell-interpreter "python"
-          ;; python-shell-interpreter-args "-i --simple-prompt"
-          ))
+          python-shell-interpreter "python"))
 #+end_src
 ** =hledger=
 =hledger= is a plaintext accounting tool that is designed to be run from the
@@ -1349,7 +1344,8 @@ provided configuration for =hledger-mode=.
 ** Magit
 I want to be able to access tracked files via ~j t~ from ~magit-dispatch~.
 We need to load these settings after =magit= is loaded, otherwise Emacs
-complains about the hook not existing.
+complains about the hook not existing.  I also want to use =magit-todos= for
+tracking ~TODO~ and ~FIXME~ comments in code.
 #+begin_src emacs-lisp :tangle "magit-settings.el"
   (with-eval-after-load "magit"
     (magit-add-section-hook
@@ -1357,6 +1353,10 @@ complains about the hook not existing.
      'magit-insert-tracked-files
      nil
      'append))
+
+  (use-package magit-todos
+    :after magit
+    :config (magit-todos-mode 1))
 #+end_src
 ** PreTeXt
 PreTeXt uses XML markup to produce documents in multiple formats.  Emacs
@@ -1490,13 +1490,15 @@ the WSL settings require a symlink from the Windows Google Drive folder to
   (global-set-key "\C-cc" 'org-capture)
   (global-set-key "\C-cb" 'org-switchb)
 
-  ;; Changes TODO to DONE automatically if children tasks done
-  (defun org-summary-todo (n-done n-not-done)
-    "Switch entry to DONE when all subentries are done, to TODO otherwise."
-    (let (org-log-done org-log-states)   ; turn off logging
-      (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+  ;; TODO: Determine if code below is necessary for automatically
+  ;; changing TODO states with children to DONE
 
-  (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+  ;; Changes TODO to DONE automatically if children
+  ;; tasks done (defun org-summary-todo (n-done n-not-done) "Switch
+  ;; entry to DONE when all subentries are done, to TODO otherwise."
+  ;; (let (org-log-done org-log-states) ; turn off logging (org-todo (if
+  ;; (= n-not-done 0) "DONE" "TODO"))))
+  ;; (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
 
   ;; Define TODO sequence and faces.  Based on
   ;; https://whhone.com/posts/org-mode-task-management/
@@ -1689,19 +1691,6 @@ now, a decent workflow seems to be the following:
        :hook
        (LaTeX-mode . citar-capf-setup)
        (org-mode . citar-capf-setup))
-
-     ;; (use-package citar
-     ;;   :ensure t
-     ;;   :custom
-     ;;   (citar-bibliography bib-file)
-     ;;   (org-cite-global-bibliography bib-file)
-     ;;   (org-cite-insert-processor 'citar)
-     ;;   (org-cite-follow-processor 'citar)
-     ;;   (org-cite-activate-processor 'citar)
-     ;;   :config (require 'org-roam)
-     ;;   :hook
-     ;;   (LaTeX-mode . citar-capf-setup)
-     ;;   (org-mode . citar-capf-setup))
 
      (use-package citar-org-roam
        :ensure t
