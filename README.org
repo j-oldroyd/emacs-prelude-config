@@ -1,4 +1,4 @@
-# Created 2026-02-22 Sun 14:33
+# Created 2026-03-10 Tue 17:47
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -64,7 +64,15 @@ General settings for =emacs=.
   (use-package emacs
     :if (eq system-type 'darwin)
     :init
-    (setq trash-directory "~/.Trash"))
+    (setq trash-directory "~/.Trash")
+    :config
+    ;; On macOS, running emacsclient -nw causes the theme to load incorrectly.  See
+    ;; https://www.reddit.com/r/emacs/comments/1jie2cc/colors_not_loading_properly_when_launched_from/
+    (when (server-running-p)
+      (add-hook 'after-make-frame-functions
+                (lambda (frame)
+                  (with-selected-frame frame
+                    (load-theme 'modus-vivendi-tinted t))))))
 
   ;; Windows-specific config
   (use-package emacs

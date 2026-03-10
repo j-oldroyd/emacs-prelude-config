@@ -63,7 +63,15 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (use-package emacs
        :if (eq system-type 'darwin)
        :init
-       (setq trash-directory "~/.Trash"))
+       (setq trash-directory "~/.Trash")
+       :config
+       ;; On macOS, running emacsclient -nw causes the theme to load incorrectly.  See
+       ;; https://www.reddit.com/r/emacs/comments/1jie2cc/colors_not_loading_properly_when_launched_from/
+       (when (server-running-p)
+         (add-hook 'after-make-frame-functions
+                   (lambda (frame)
+                     (with-selected-frame frame
+                       (load-theme 'modus-vivendi-tinted t))))))
 
      ;; Windows-specific config
      (use-package emacs
@@ -1489,13 +1497,15 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (global-set-key "\C-cc" 'org-capture)
      (global-set-key "\C-cb" 'org-switchb)
 
-     ;; Changes TODO to DONE automatically if children tasks done
-     (defun org-summary-todo (n-done n-not-done)
-       "Switch entry to DONE when all subentries are done, to TODO otherwise."
-       (let (org-log-done org-log-states)   ; turn off logging
-         (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+     ;; TODO: Determine if code below is necessary for automatically
+     ;; changing TODO states with children to DONE
 
-     (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+     ;; Changes TODO to DONE automatically if children
+     ;; tasks done (defun org-summary-todo (n-done n-not-done) "Switch
+     ;; entry to DONE when all subentries are done, to TODO otherwise."
+     ;; (let (org-log-done org-log-states) ; turn off logging (org-todo (if
+     ;; (= n-not-done 0) "DONE" "TODO"))))
+     ;; (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
 
      ;; Define TODO sequence and faces.  Based on
      ;; https://whhone.com/posts/org-mode-task-management/
