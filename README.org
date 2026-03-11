@@ -1,4 +1,4 @@
-# Created 2026-03-10 Tue 18:31
+# Created 2026-03-11 Wed 14:49
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1022,6 +1022,13 @@ and [[https://frostyx.cz/posts/synchronize-your-2fa-gmail-with-mbsync][here]].
   (use-package mu4e
     :load-path  mu4e-path
     :bind (("C-c M" . mu4e)))
+
+  ;; mu4e likes to open in full frame, so... don't do that
+  ;; Taken from
+  ;; https://irreal.org/blog/?p=11323
+  (add-to-list 'display-buffer-alist
+               `(,(regexp-quote mu4e-main-buffer-name)
+                 display-buffer-same-window))
 
   ;; for sending mails
   (require 'smtpmail)

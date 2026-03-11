@@ -1029,6 +1029,13 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        :load-path  mu4e-path
        :bind (("C-c M" . mu4e)))
 
+     ;; mu4e likes to open in full frame, so... don't do that
+     ;; Taken from
+     ;; https://irreal.org/blog/?p=11323
+     (add-to-list 'display-buffer-alist
+                  `(,(regexp-quote mu4e-main-buffer-name)
+                    display-buffer-same-window))
+
      ;; for sending mails
      (require 'smtpmail)
 
