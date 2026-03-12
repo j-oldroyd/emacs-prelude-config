@@ -1860,6 +1860,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        "Add ITEM-TEXT to HEADING-NAME in all .org files in the current
      directory."
        ;;(interactive "sHeading Name (exact match): \nsRubric Item (e.g., '- [ ] Foo :: -1'):")
+       ;; FIXME: Not quite working right
        (interactive (list (read-string "Enter heading name (exact match): " (org-get-heading))
                           (read-string "Rubric item: " "Text")
                           (read-string "Points (include +/-): " "+1")))
@@ -2085,8 +2086,6 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
                 ("c" . my/org-grading-calculate-score))
    #+end_src
 * Packages to consider adding
-** =elfeed=
-   This looks like a good way to keep track of arXiv papers.
 ** =org-reveal=
    Create ~reveal.js~ based slideshows using Org mode.
 ** =matlab=mode=
