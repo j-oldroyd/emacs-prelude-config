@@ -1,4 +1,4 @@
-# Created 2026-03-14 Sat 16:31
+# Created 2026-03-14 Sat 17:14
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1478,18 +1478,20 @@ in =snippets/org-mode=.
     (setq default-input-method "TeX")
     (toggle-input-method))
 
+  ;; Make Org mode look a little nicer.
   (use-package org-modern
     :ensure t
     :hook
     ((org-mode . org-modern-mode)
      (org-agenda-finalize . org-modern-agenda)))
 
-  ;; Make Org bullets a little nicer
-  ;; (use-package org-bullets
-  ;;   :ensure t
-  ;;   :after (org)
-  ;;   :hook
-  ;;   (org-mode . org-bullets-mode))
+  ;; Org-modern clashes with org-indent, so we add org-modern-indent to
+  ;; address this.
+  (use-package org-modern-indent
+    :vc (org-modern-indent :url https://github.com/jdtsmith/org-modern-indent
+                           :branch main)
+    :config ; add late to hook
+    (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
 
   ;; Buffer previews and spellcheck
   (setq org-src-fontify-natively t)

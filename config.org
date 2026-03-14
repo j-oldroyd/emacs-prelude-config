@@ -132,7 +132,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        (setq trashed-use-header-line t)
        (setq trashed-sort-key '("Date deleted" . t))
        (setq trashed-date-format "%Y-%m-%d %H:%M:%S"))
-   #+end_src
+  #+end_src
 ** UI and navigation settings
    See karthink's [[https://karthinks.com/software/avy-can-do-anything/][blog post]] for ideas on using Avy and its associated
    commands.  I'm also including =casual= for its menus, which are based on
@@ -1486,18 +1486,20 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        (setq default-input-method "TeX")
        (toggle-input-method))
 
+     ;; Make Org mode look a little nicer.
      (use-package org-modern
        :ensure t
        :hook
        ((org-mode . org-modern-mode)
         (org-agenda-finalize . org-modern-agenda)))
 
-     ;; Make Org bullets a little nicer
-     ;; (use-package org-bullets
-     ;;   :ensure t
-     ;;   :after (org)
-     ;;   :hook
-     ;;   (org-mode . org-bullets-mode))
+     ;; Org-modern clashes with org-indent, so we add org-modern-indent to
+     ;; address this.
+     (use-package org-modern-indent
+       :vc (org-modern-indent :url https://github.com/jdtsmith/org-modern-indent
+                              :branch main)
+       :config ; add late to hook
+       (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
 
      ;; Buffer previews and spellcheck
      (setq org-src-fontify-natively t)
@@ -1519,11 +1521,12 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
    =move-text= commands.  This unfortunately overrides org-table keybinds for
    inserting rows, so I reset them here.
    #+begin_src emacs-lisp :tangle "org-settings.el"
-     (use-package org
-       :bind (:map org-mode-map
-                   ("M-S-<up>" . org-table-kill-row)
-                   ("M-S-<down>" . org-table-insert-row)))
+      (use-package org
+        :bind (:map org-mode-map
+                    ("M-S-<up>" . org-table-kill-row)
+                    ("M-S-<down>" . org-table-insert-row)))
    #+end_src
+
 ** Agenda and capture settings
    Org-agenda is one of the best reasons to become familiar with Org mode.  We
    need to set up our agenda files and capture templates/keybinds.  Currently,
