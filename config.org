@@ -16,7 +16,7 @@ it produces the actual =.el= files required for my Emacs configuration.
   ;; Add lexical binding to tangled files.  Taken from
   ;; https://emacs.stackexchange.com/questions/81540/lexical-binding-in-a-tangled-init-el-file
   (defun my-ensure-lexical-binding-cookie()
-      (goto-char(point-min)) ;; beginning of tangled code
+      (goto-char (point-min)) ;; beginning of tangled code
     (insert ";; -*- coding: utf-8; lexical-binding: t -*-")
     (newline)
     (newline)
@@ -886,7 +886,8 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (use-package pdf-tools
        :ensure t
        :bind
-       (("M-g g" . pdf-view-goto-page))
+       (:map pdf-view-mode-map
+             ("M-g g" . pdf-view-goto-page))
        :config
        (pdf-tools-install)
        (setq-default pdf-view-display-size 'fit-page))

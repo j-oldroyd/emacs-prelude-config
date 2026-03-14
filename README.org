@@ -1,4 +1,4 @@
-# Created 2026-03-11 Wed 14:49
+# Created 2026-03-14 Sat 15:40
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -880,6 +880,8 @@ work with AUCTeX below.
   ;; https://www.reddit.com/r/emacs/comments/gm1c2p/pdftools_installation/
   (use-package pdf-tools
     :ensure t
+    :bind
+    (("M-g g" . pdf-view-goto-page))
     :config
     (pdf-tools-install)
     (setq-default pdf-view-display-size 'fit-page))
@@ -894,6 +896,16 @@ work with AUCTeX below.
       (apply fun args)))
 
   (advice-add 'display-line-numbers--turn-on :around #'bugfix-display-line-numbers--turn-on)
+#+end_src
+
+The [[https://github.com/krisbalintona/pdf-meta-edit/tree/main][=pdf-meta-edit=]] package allows for the editing of PDF metadata from
+within Emacs itself.  This is intended to be used with =pdf-tools=.  One
+possible use case is setting appropriate pagination for a document, so the
+=pdf-view-goto-page= (bound to ~M-g g~) is consistent with page labeling in
+the PDF.  This package relies on the =pdftk= utility.
+#+begin_src emacs-lisp :tangle "pdf-settings.el"
+  (use-package pdf-meta-edit
+    :ensure t)
 #+end_src
 ** AUCTeX
 These are settings for working with LaTeX documents in emacs. This requires
@@ -1026,6 +1038,7 @@ and [[https://frostyx.cz/posts/synchronize-your-2fa-gmail-with-mbsync][here]].
   ;; mu4e likes to open in full frame, so... don't do that
   ;; Taken from
   ;; https://irreal.org/blog/?p=11323
+  ;; FIXME: This causes an error on startup since mu4e isn't loaded yet
   (add-to-list 'display-buffer-alist
                `(,(regexp-quote mu4e-main-buffer-name)
                  display-buffer-same-window))
@@ -1848,6 +1861,7 @@ These functions can be accessed using =C-c C-g= (mnemonic: [c]ompile
     "Add ITEM-TEXT to HEADING-NAME in all .org files in the current
   directory."
     ;;(interactive "sHeading Name (exact match): \nsRubric Item (e.g., '- [ ] Foo :: -1'):")
+    ;; FIXME: Not quite working right
     (interactive (list (read-string "Enter heading name (exact match): " (org-get-heading))
                        (read-string "Rubric item: " "Text")
                        (read-string "Points (include +/-): " "+1")))
@@ -2073,8 +2087,6 @@ These functions can be accessed using =C-c C-g= (mnemonic: [c]ompile
              ("c" . my/org-grading-calculate-score))
 #+end_src
 * Packages to consider adding
-** =elfeed=
-This looks like a good way to keep track of arXiv papers.
 ** =org-reveal=
 Create ~reveal.js~ based slideshows using Org mode.
 ** =matlab=mode=
