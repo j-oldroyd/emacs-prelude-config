@@ -904,11 +904,13 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (advice-add 'display-line-numbers--turn-on :around #'bugfix-display-line-numbers--turn-on)
    #+END_SRC
 
-   The [[https://github.com/krisbalintona/pdf-meta-edit/tree/main][=pdf-meta-edit=]] package allows for the editing of PDF metadata from
-   within Emacs itself.  This is intended to be used with =pdf-tools=.  One
-   possible use case is setting appropriate pagination for a document, so the
-   =pdf-view-goto-page= (bound to ~M-g g~) is consistent with page labeling in
-   the PDF.  This package relies on the =pdftk= utility.
+   The [[https://github.com/krisbalintona/pdf-meta-edit/tree/main][=pdf-meta-edit=]] package allows for the editing of PDF metadata
+   from within Emacs itself via commands such as
+   ~pdf-meta-edit-modify~.  This is intended to be used with
+   =pdf-tools= and activated from =pdf-view-mode=.  One possible use
+   case is setting appropriate pagination for a document, so the
+   =pdf-view-goto-label= (bound to ~M-g l~) is consistent with page
+   labeling in the PDF.  This package relies on the =pdftk= utility.
    #+begin_src emacs-lisp :tangle "pdf-settings.el"
      (use-package pdf-meta-edit
        :ensure t)
@@ -1040,15 +1042,15 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
 
      (use-package mu4e
        :load-path  mu4e-path
-       :bind (("C-c M" . mu4e)))
-
-     ;; mu4e likes to open in full frame, so... don't do that
-     ;; Taken from
-     ;; https://irreal.org/blog/?p=11323
-     ;; FIXME: This causes an error on startup since mu4e isn't loaded yet
-     (add-to-list 'display-buffer-alist
-                  `(,(regexp-quote mu4e-main-buffer-name)
-                    display-buffer-same-window))
+       :bind (("C-c M" . mu4e))
+       :config
+       ;; mu4e likes to open in full frame, so... don't do that
+       ;; Taken from
+       ;; https://irreal.org/blog/?p=11323
+       ;; FIXME: This causes an error on startup since mu4e isn't loaded yet
+       (add-to-list 'display-buffer-alist
+                    `(,(regexp-quote mu4e-main-buffer-name)
+                      display-buffer-same-window)))
 
      ;; for sending mails
      (require 'smtpmail)

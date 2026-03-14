@@ -1,4 +1,4 @@
-# Created 2026-03-14 Sat 15:40
+# Created 2026-03-14 Sat 16:31
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -18,7 +18,7 @@ it produces the actual =.el= files required for my Emacs configuration.
   ;; Add lexical binding to tangled files.  Taken from
   ;; https://emacs.stackexchange.com/questions/81540/lexical-binding-in-a-tangled-init-el-file
   (defun my-ensure-lexical-binding-cookie()
-      (goto-char(point-min)) ;; beginning of tangled code
+      (goto-char (point-min)) ;; beginning of tangled code
     (insert ";; -*- coding: utf-8; lexical-binding: t -*-")
     (newline)
     (newline)
@@ -881,7 +881,8 @@ work with AUCTeX below.
   (use-package pdf-tools
     :ensure t
     :bind
-    (("M-g g" . pdf-view-goto-page))
+    (:map pdf-view-mode-map
+          ("M-g g" . pdf-view-goto-page))
     :config
     (pdf-tools-install)
     (setq-default pdf-view-display-size 'fit-page))
@@ -898,11 +899,13 @@ work with AUCTeX below.
   (advice-add 'display-line-numbers--turn-on :around #'bugfix-display-line-numbers--turn-on)
 #+end_src
 
-The [[https://github.com/krisbalintona/pdf-meta-edit/tree/main][=pdf-meta-edit=]] package allows for the editing of PDF metadata from
-within Emacs itself.  This is intended to be used with =pdf-tools=.  One
-possible use case is setting appropriate pagination for a document, so the
-=pdf-view-goto-page= (bound to ~M-g g~) is consistent with page labeling in
-the PDF.  This package relies on the =pdftk= utility.
+The [[https://github.com/krisbalintona/pdf-meta-edit/tree/main][=pdf-meta-edit=]] package allows for the editing of PDF metadata
+from within Emacs itself via commands such as
+~pdf-meta-edit-modify~.  This is intended to be used with
+=pdf-tools= and activated from =pdf-view-mode=.  One possible use
+case is setting appropriate pagination for a document, so the
+=pdf-view-goto-label= (bound to ~M-g l~) is consistent with page
+labeling in the PDF.  This package relies on the =pdftk= utility.
 #+begin_src emacs-lisp :tangle "pdf-settings.el"
   (use-package pdf-meta-edit
     :ensure t)
@@ -1033,15 +1036,15 @@ and [[https://frostyx.cz/posts/synchronize-your-2fa-gmail-with-mbsync][here]].
 
   (use-package mu4e
     :load-path  mu4e-path
-    :bind (("C-c M" . mu4e)))
-
-  ;; mu4e likes to open in full frame, so... don't do that
-  ;; Taken from
-  ;; https://irreal.org/blog/?p=11323
-  ;; FIXME: This causes an error on startup since mu4e isn't loaded yet
-  (add-to-list 'display-buffer-alist
-               `(,(regexp-quote mu4e-main-buffer-name)
-                 display-buffer-same-window))
+    :bind (("C-c M" . mu4e))
+    :config
+    ;; mu4e likes to open in full frame, so... don't do that
+    ;; Taken from
+    ;; https://irreal.org/blog/?p=11323
+    ;; FIXME: This causes an error on startup since mu4e isn't loaded yet
+    (add-to-list 'display-buffer-alist
+                 `(,(regexp-quote mu4e-main-buffer-name)
+                   display-buffer-same-window)))
 
   ;; for sending mails
   (require 'smtpmail)
