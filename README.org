@@ -1,4 +1,4 @@
-# Created 2026-03-14 Sat 17:14
+# Created 2026-03-16 Mon 18:06
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1044,7 +1044,10 @@ and [[https://frostyx.cz/posts/synchronize-your-2fa-gmail-with-mbsync][here]].
     ;; FIXME: This causes an error on startup since mu4e isn't loaded yet
     (add-to-list 'display-buffer-alist
                  `(,(regexp-quote mu4e-main-buffer-name)
-                   display-buffer-same-window)))
+                   display-buffer-same-window))
+    ;; Run mu4e-mailing-list-info-refresh to update mailing lists after change
+    (add-to-list 'mu4e-user-mailing-lists '(:list-id "tex-live.tug.org"
+                                                     :name "TUG")))
 
   ;; for sending mails
   (require 'smtpmail)
@@ -1152,10 +1155,6 @@ in the ~.msmtprc~ file for this to work properly.
     ;; by ensuring the `default' face is in the inheritance hierarchy.
     (face-remap-add-relative 'header-line '(:inherit (mu4e-header-face
                                                       default))))
-
-  ;; Run mu4e-mailing-list-info-refresh to update mailing lists after change
-  (add-to-list 'mu4e-user-mailing-lists '(:list-id "tex-live.tug.org"
-                                                   :name "TUG"))
 
   ;; This is taken from 8.2.1 in mu4e manual
   (setq mu4e-headers-fields
