@@ -1,4 +1,4 @@
-# Created 2026-03-16 Mon 18:06
+# Created 2026-03-25 Wed 14:41
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1580,7 +1580,8 @@ the WSL settings require a symlink from the Windows Google Drive folder to
    ((eq system-type 'gnu/linux)
     (setq org-agenda-files '("~/org"
                              "~/beorg"
-                             "~/beorg/projects"))
+                             "~/beorg/projects"
+                             "~/GoogleDrive/wvwc-teaching"))
     (setq org-default-notes-file
           (expand-file-name "~/beorg/inbox.org"))))
 

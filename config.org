@@ -1589,7 +1589,8 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
       ((eq system-type 'gnu/linux)
        (setq org-agenda-files '("~/org"
                                 "~/beorg"
-                                "~/beorg/projects"))
+                                "~/beorg/projects"
+                                "~/GoogleDrive/wvwc-teaching"))
        (setq org-default-notes-file
              (expand-file-name "~/beorg/inbox.org"))))
 
