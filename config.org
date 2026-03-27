@@ -59,8 +59,12 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        :init
        (setq user-full-name "Jesse Ernest Oldroyd"))
 
+     ;; Prelude uses undo-tree, but undo-tree seems to cause issues with
+     ;; XML files.  I also use vundo anyway, so turn this off.
+     (undo-tree-mode -1)
+
      ;; macOS-specific config
-     (use-package emacs
+      (use-package emacs
        :if (eq system-type 'darwin)
        :init
        (setq trash-directory "~/.Trash")

@@ -1,4 +1,4 @@
-# Created 2026-03-27 Fri 14:13
+# Created 2026-03-27 Fri 14:23
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -60,8 +60,12 @@ General settings for =emacs=.
     :init
     (setq user-full-name "Jesse Ernest Oldroyd"))
 
+  ;; Prelude uses undo-tree, but undo-tree seems to cause issues with
+  ;; XML files.  I also use vundo anyway, so turn this off.
+  (undo-tree-mode -1)
+
   ;; macOS-specific config
-  (use-package emacs
+   (use-package emacs
     :if (eq system-type 'darwin)
     :init
     (setq trash-directory "~/.Trash")
