@@ -832,28 +832,31 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
 * Enhancing modes for files
   The packages here improve/replace how emacs handles certain files.
 ** Language server protocol
-   A language server protocol (LSP) can be used to provide completions for
-   various file types including =.tex= files.  Another alternative is to use
-   =eglot=, which is a built-in package.
+   Prelude now uses Eglot by default, so this configuration reflects that.
    #+begin_src emacs-lisp :tangle "lsp-settings.el"
-     (use-package lsp-mode
-       :init
-       ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-       ;; (setq lsp-keymap-prefix "C-c l")
-       :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-              (python-mode . lsp-deferred)
-              (python-ts-mode . lsp-deferred)
-              (latex-mode . lsp-deferred)
-              (LaTeX-mode . lsp-deferred)
-              ;; if you want which-key integration
-              (lsp-mode . lsp-enable-which-key-integration))
-       :commands lsp
-       :config
-       (setq lsp-pylsp-plugins-black-enabled t))
+     (use-package eglot
+       :hook
+       (latex-mode . eglot-ensure)
+       (LaTeX-mode . eglot-ensure))
+
+     ;; (use-package lsp-mode
+     ;;   :init
+     ;;   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+     ;;   ;; (setq lsp-keymap-prefix "C-c l")
+     ;;   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+     ;;          (python-mode . lsp-deferred)
+     ;;          (python-ts-mode . lsp-deferred)
+     ;;          (latex-mode . lsp-deferred)
+     ;;          (LaTeX-mode . lsp-deferred)
+     ;;          ;; if you want which-key integration
+     ;;          (lsp-mode . lsp-enable-which-key-integration))
+     ;;   :commands lsp
+     ;;   :config
+     ;;   (setq lsp-pylsp-plugins-black-enabled t))
 
      ;; optionally
-     (use-package lsp-ui
-       :commands lsp-ui-mode)
+     ;; (use-package lsp-ui
+     ;;   :commands lsp-ui-mode)
 
      ;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
@@ -862,7 +865,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
      ;; Set digestif as lsp server
-     (setq lsp-tex-server 'digestif)
+     ;; (setq lsp-tex-server 'digestif)
 
      ;; Make Emacs/digestif aware of TeX info paths.
      (add-to-list 'Info-directory-list "/usr/local/texlive/2025/texmf-dist/doc/info")
@@ -1533,12 +1536,12 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
    =~/GoogleDrive/=.
    #+BEGIN_SRC emacs-lisp :tangle "org-settings.el"
      ;; This is for key bindings to invoke agenda mode
-     (global-set-key "\C-cl" 'org-store-link)
-     (global-set-key "\C-ca" 'org-agenda)
-     (global-set-key "\C-cc" 'org-capture)
-     (global-set-key "\C-cb" 'org-switchb)
+     ;; (global-set-key "\C-cl" 'org-store-link)
+     ;; (global-set-key "\C-ca" 'org-agenda)
+     ;; (global-set-key "\C-cc" 'org-capture)
+     ;; (global-set-key "\C-cb" 'org-switchb)
 
-     ;; TODO: Determine if code below is necessary for automatically
+     ;; ;; TODO: Determine if code below is necessary for automatically
      ;; changing TODO states with children to DONE
 
      ;; Changes TODO to DONE automatically if children
@@ -1590,7 +1593,8 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        (setq org-agenda-files '("~/org"
                                 "~/beorg"
                                 "~/beorg/projects"
-                                "~/GoogleDrive/wvwc-teaching"))
+                                "~/GoogleDrive/wvwc-teaching"
+                                "~/GoogleDrive/org/roam/daily/"))
        (setq org-default-notes-file
              (expand-file-name "~/beorg/inbox.org"))))
 
@@ -1698,13 +1702,14 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        (bib-file '("~/Google Drive/My Drive/research/library.bib"
                    "~/Documents/zotero/library.bib")))
 
+(setq bib-file "~/GoogleDrive/research/library.bib")
      (use-package bib-mode
        ;; I don't want to load this just yet.  Instead, I'll set
        ;; OS-specific variables first.
        :defer t
        :if (eq system-type 'gnu/linux)
        :custom
-       (bib-file '("~/GoogleDrive/research/My Library.bib"
+       (bib-file '("~/GoogleDrive/research/library.bib"
                    "~/GoogleDrive/research/library-time_scales.bib"
                    "~/GoogleDrive/research/library-tight_frames-association_schemes.bib"
                    "~/GoogleDrive/research/library-tight_frames-algorithms.bib")))
@@ -1876,8 +1881,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
          (insert (format "Total Score: *%s*" total))))
 
      (defun my/org-grading-broadcast-item (heading-name item-text points-text)
-       "Add ITEM-TEXT to HEADING-NAME in all .org files in the current
-     directory."
+       "Add ITEM-TEXT to HEADING-NAME in all .org files in the current directory."
        ;;(interactive "sHeading Name (exact match): \nsRubric Item (e.g., '- [ ] Foo :: -1'):")
        ;; FIXME: Not quite working right
        (interactive (list (read-string "Enter heading name (exact match): " (org-get-heading))
@@ -1902,7 +1906,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
 
      (defun my/grading-generate-summary-report ()
        "Generate a summary grade report from all .org files in the 'students/' directory.
-                 Calculates scores on the fly and prepares a buffer for PDF export."
+      Calculates scores on the fly and prepares a buffer for PDF export."
        (interactive)
        (let ((files (directory-files "students" t "\\.org$"))
              (results '()))
@@ -1957,7 +1961,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
 
      (defun my/grading-distribution-histogram (&optional bin-size)
        "Generate a grade distribution histogram (frequency table) and Gnuplot header.
-              BIN-SIZE defaults to 5 if not provided."
+      BIN-SIZE defaults to 5 if not provided."
        (interactive "nBin size (default 5): ")
        (let ((size (if (or (not bin-size) (zerop bin-size)) 5 bin-size))
              (files (directory-files "students" t "\\.org$"))

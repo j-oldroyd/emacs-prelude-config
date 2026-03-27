@@ -1,4 +1,4 @@
-# Created 2026-03-25 Wed 14:41
+# Created 2026-03-27 Fri 14:13
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -827,28 +827,31 @@ the suggested code at [[https://github.com/skeeto/elfeed][Elfeed's GitHub repo]]
 * Enhancing modes for files
 The packages here improve/replace how emacs handles certain files.
 ** Language server protocol
-A language server protocol (LSP) can be used to provide completions for
-various file types including =.tex= files.  Another alternative is to use
-=eglot=, which is a built-in package.
+Prelude now uses Eglot by default, so this configuration reflects that.
 #+begin_src emacs-lisp :tangle "lsp-settings.el"
-  (use-package lsp-mode
-    :init
-    ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-    ;; (setq lsp-keymap-prefix "C-c l")
-    :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-           (python-mode . lsp-deferred)
-           (python-ts-mode . lsp-deferred)
-           (latex-mode . lsp-deferred)
-           (LaTeX-mode . lsp-deferred)
-           ;; if you want which-key integration
-           (lsp-mode . lsp-enable-which-key-integration))
-    :commands lsp
-    :config
-    (setq lsp-pylsp-plugins-black-enabled t))
+  (use-package eglot
+    :hook
+    (latex-mode . eglot-ensure)
+    (LaTeX-mode . eglot-ensure))
+
+  ;; (use-package lsp-mode
+  ;;   :init
+  ;;   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  ;;   ;; (setq lsp-keymap-prefix "C-c l")
+  ;;   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+  ;;          (python-mode . lsp-deferred)
+  ;;          (python-ts-mode . lsp-deferred)
+  ;;          (latex-mode . lsp-deferred)
+  ;;          (LaTeX-mode . lsp-deferred)
+  ;;          ;; if you want which-key integration
+  ;;          (lsp-mode . lsp-enable-which-key-integration))
+  ;;   :commands lsp
+  ;;   :config
+  ;;   (setq lsp-pylsp-plugins-black-enabled t))
 
   ;; optionally
-  (use-package lsp-ui
-    :commands lsp-ui-mode)
+  ;; (use-package lsp-ui
+  ;;   :commands lsp-ui-mode)
 
   ;; (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
@@ -857,7 +860,7 @@ various file types including =.tex= files.  Another alternative is to use
   ;; (use-package dap-LANGUAGE) to load the dap adapter for your language
 
   ;; Set digestif as lsp server
-  (setq lsp-tex-server 'digestif)
+  ;; (setq lsp-tex-server 'digestif)
 
   ;; Make Emacs/digestif aware of TeX info paths.
   (add-to-list 'Info-directory-list "/usr/local/texlive/2025/texmf-dist/doc/info")
@@ -1524,12 +1527,12 @@ the WSL settings require a symlink from the Windows Google Drive folder to
 =~/GoogleDrive/=.
 #+begin_src emacs-lisp :tangle "org-settings.el"
   ;; This is for key bindings to invoke agenda mode
-  (global-set-key "\C-cl" 'org-store-link)
-  (global-set-key "\C-ca" 'org-agenda)
-  (global-set-key "\C-cc" 'org-capture)
-  (global-set-key "\C-cb" 'org-switchb)
+  ;; (global-set-key "\C-cl" 'org-store-link)
+  ;; (global-set-key "\C-ca" 'org-agenda)
+  ;; (global-set-key "\C-cc" 'org-capture)
+  ;; (global-set-key "\C-cb" 'org-switchb)
 
-  ;; TODO: Determine if code below is necessary for automatically
+  ;; ;; TODO: Determine if code below is necessary for automatically
   ;; changing TODO states with children to DONE
 
   ;; Changes TODO to DONE automatically if children
@@ -1581,7 +1584,8 @@ the WSL settings require a symlink from the Windows Google Drive folder to
     (setq org-agenda-files '("~/org"
                              "~/beorg"
                              "~/beorg/projects"
-                             "~/GoogleDrive/wvwc-teaching"))
+                             "~/GoogleDrive/wvwc-teaching"
+                             "~/GoogleDrive/org/roam/daily/"))
     (setq org-default-notes-file
           (expand-file-name "~/beorg/inbox.org"))))
 
@@ -1678,75 +1682,76 @@ now, a decent workflow seems to be the following:
    to refer to outside of the paper.
 
 #+begin_src emacs-lisp :tangle "bibtex-settings.el"
-  (use-package bib-mode
-    ;; I don't want to load this just yet.  Instead, I'll set
-    ;; OS-specific variables first.
-    :defer t
-    :if (eq system-type 'darwin)
-    :custom
-    (bib-file '("~/Google Drive/My Drive/research/library.bib"
-                "~/Documents/zotero/library.bib")))
+       (use-package bib-mode
+         ;; I don't want to load this just yet.  Instead, I'll set
+         ;; OS-specific variables first.
+         :defer t
+         :if (eq system-type 'darwin)
+         :custom
+         (bib-file '("~/Google Drive/My Drive/research/library.bib"
+                     "~/Documents/zotero/library.bib")))
 
-  (use-package bib-mode
-    ;; I don't want to load this just yet.  Instead, I'll set
-    ;; OS-specific variables first.
-    :defer t
-    :if (eq system-type 'gnu/linux)
-    :custom
-    (bib-file '("~/GoogleDrive/research/My Library.bib"
-                "~/GoogleDrive/research/library-time_scales.bib"
-                "~/GoogleDrive/research/library-tight_frames-association_schemes.bib"
-                "~/GoogleDrive/research/library-tight_frames-algorithms.bib")))
+  (setq bib-file "~/GoogleDrive/research/library.bib")
+       (use-package bib-mode
+         ;; I don't want to load this just yet.  Instead, I'll set
+         ;; OS-specific variables first.
+         :defer t
+         :if (eq system-type 'gnu/linux)
+         :custom
+         (bib-file '("~/GoogleDrive/research/library.bib"
+                     "~/GoogleDrive/research/library-time_scales.bib"
+                     "~/GoogleDrive/research/library-tight_frames-association_schemes.bib"
+                     "~/GoogleDrive/research/library-tight_frames-algorithms.bib")))
 
-  (use-package org
-    :custom
-    (org-cite-global-bibliography bib-file)
-    (org-cite-insert-processor 'citar)
-    (org-cite-follow-processor 'citar)
-    (org-cite-activate-processor 'citar))
+       (use-package org
+         :custom
+         (org-cite-global-bibliography bib-file)
+         (org-cite-insert-processor 'citar)
+         (org-cite-follow-processor 'citar)
+         (org-cite-activate-processor 'citar))
 
-  (use-package citar
-    ;; I don't want to load this just yet.  Instead, I'll set
-    ;; OS-specific variables first.
-    :defer t
-    :if (eq system-type 'darwin)
-    :custom
-    (citar-library-paths '("~/Google Drive/My Drive/research"
-                           "~/Documents/zotero"))
-    (citar-notes-paths '("~/Google Drive/My Drive/research")))
+       (use-package citar
+         ;; I don't want to load this just yet.  Instead, I'll set
+         ;; OS-specific variables first.
+         :defer t
+         :if (eq system-type 'darwin)
+         :custom
+         (citar-library-paths '("~/Google Drive/My Drive/research"
+                                "~/Documents/zotero"))
+         (citar-notes-paths '("~/Google Drive/My Drive/research")))
 
-  (use-package citar
-    ;; I don't want to load this just yet.  Instead, I'll set
-    ;; OS-specific variables first.
-    :defer t
-    :if (eq system-type 'gnu/linux)
-    :custom
-    (citar-library-paths '("~/GoogleDrive/research"))
-    (citar-notes-paths '("~/GoogleDrive/research")))
+       (use-package citar
+         ;; I don't want to load this just yet.  Instead, I'll set
+         ;; OS-specific variables first.
+         :defer t
+         :if (eq system-type 'gnu/linux)
+         :custom
+         (citar-library-paths '("~/GoogleDrive/research"))
+         (citar-notes-paths '("~/GoogleDrive/research")))
 
-  (use-package citar
-    :ensure t
-    :diminish
-    :custom
-    (citar-bibliography org-cite-global-bibliography)
-    :hook
-    (LaTeX-mode . citar-capf-setup)
-    (org-mode . citar-capf-setup))
+       (use-package citar
+         :ensure t
+         :diminish
+         :custom
+         (citar-bibliography org-cite-global-bibliography)
+         :hook
+         (LaTeX-mode . citar-capf-setup)
+         (org-mode . citar-capf-setup))
 
-  (use-package citar-org-roam
-    :ensure t
-    :diminish
-    :custom
-    (citar-org-roam-capture-template-key "n")
-    :after (org-roam citar)
-    :config (citar-org-roam-mode))
+       (use-package citar-org-roam
+         :ensure t
+         :diminish
+         :custom
+         (citar-org-roam-capture-template-key "n")
+         :after (org-roam citar)
+         :config (citar-org-roam-mode))
 
-  (use-package citar-embark
-    :ensure t
-    :diminish
-    :after (citar embark)
-    :no-require
-    :config (citar-embark-mode))
+       (use-package citar-embark
+         :ensure t
+         :diminish
+         :after (citar embark)
+         :no-require
+         :config (citar-embark-mode))
 #+end_src
 ** =org-babel= settings
 We need to configure =org-babel= for evaluation of ~SRC~ blocks in Org mode.
@@ -1863,8 +1868,7 @@ These functions can be accessed using =C-c C-g= (mnemonic: [c]ompile
       (insert (format "Total Score: *%s*" total))))
 
   (defun my/org-grading-broadcast-item (heading-name item-text points-text)
-    "Add ITEM-TEXT to HEADING-NAME in all .org files in the current
-  directory."
+    "Add ITEM-TEXT to HEADING-NAME in all .org files in the current directory."
     ;;(interactive "sHeading Name (exact match): \nsRubric Item (e.g., '- [ ] Foo :: -1'):")
     ;; FIXME: Not quite working right
     (interactive (list (read-string "Enter heading name (exact match): " (org-get-heading))
@@ -1889,7 +1893,7 @@ These functions can be accessed using =C-c C-g= (mnemonic: [c]ompile
 
   (defun my/grading-generate-summary-report ()
     "Generate a summary grade report from all .org files in the 'students/' directory.
-              Calculates scores on the fly and prepares a buffer for PDF export."
+   Calculates scores on the fly and prepares a buffer for PDF export."
     (interactive)
     (let ((files (directory-files "students" t "\\.org$"))
           (results '()))
@@ -1944,7 +1948,7 @@ These functions can be accessed using =C-c C-g= (mnemonic: [c]ompile
 
   (defun my/grading-distribution-histogram (&optional bin-size)
     "Generate a grade distribution histogram (frequency table) and Gnuplot header.
-           BIN-SIZE defaults to 5 if not provided."
+   BIN-SIZE defaults to 5 if not provided."
     (interactive "nBin size (default 5): ")
     (let ((size (if (or (not bin-size) (zerop bin-size)) 5 bin-size))
           (files (directory-files "students" t "\\.org$"))
