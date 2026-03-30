@@ -1877,6 +1877,8 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
            (widen)
            points)))
 
+     ;; TODO: Introduce calculate-score question that implements below
+     ;; regex?  This could also be used above in my/org-grading-calculate-score.
      (defun org-dblock-write:grading-score (params)
        "Dynamic block to summarize grades."
        (let ((total 0))
@@ -1902,9 +1904,17 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
                (if (re-search-forward (format "^\\*+ .*\\b%s\\b" (regexp-quote
                                                                   heading-name)) nil t)
                    (progn
-                     ;; Move to end of this subtree to append the item
+                     ;; Move to end of this item list to append the item
+                     ;; TODO: See if we can use org-end-of-item-list
+                     ;; instead.  Right now, it doesn't work if this
+                     ;; function is called since the point is located at
+                     ;; the beginning of the subtree and, therefore,
+                     ;; outside of the list.
                      (org-end-of-subtree)
-                     (insert (format "%s%s%s" (progn (org-insert-item t) "") item-text points-text))
+                     (insert (format "%s%s" (progn (org-insert-item t) "") item-text))
+                     (end-of-line)
+                     (insert (format " %s" points-text))
+                     ;; TODO: Align on :: here
                      (save-buffer)
                      (message "Updated %s" (file-name-nondirectory file)))
                  (message "Heading '%s' not found in %s" heading-name (file-name-nondirectory
