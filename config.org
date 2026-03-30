@@ -170,9 +170,8 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        (which-key-mode))
 
      ;;: Avy bindings
-     ;; Override smartparens use of "M-j" so I can use it.
      (with-eval-after-load 'smartparens
-       (setq sp-override-key-bindings '(("M-j" . avy-goto-char-time)))
+       (setq sp-override-key-bindings '(("M-j" . avy-goto-char-timer)))
        (sp--update-override-key-bindings))
 
      (use-package avy
@@ -289,6 +288,12 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
              mac-option-modifier 'super
              mac-control-modifier 'control))
 
+     ;; For use with MacBook trackpad. This allows the track pad to be used with
+     ;; fly spell-mode. This uses Option+click for Mouse-2 and Cmd+click for
+     ;; mouse-3.
+     (when (eq system-type 'darwin)
+       (setq mac-emulate-three-button-mouse t))
+
      (global-set-key "\M-p" 'backward-paragraph)
      (global-set-key "\M-n" 'forward-paragraph)
 
@@ -297,11 +302,6 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;; only work with right-command, as left-control (on laptop) has different
      ;; result.
      (windmove-default-keybindings 'ctrl)
-
-     ;; For use with MacBook trackpad. This allows the track pad to be used with
-     ;; fly spell-mode. This uses Option+click for Mouse-2 and Cmd+click for
-     ;; mouse-3.
-     (setq mac-emulate-three-button-mouse t)
 
      ;; Meow-mode setup.
      ;; (require 'meow)
@@ -1815,6 +1815,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
    #+begin_src org :tangle "no" :results code
      ,#+TITLE: Grading - Alice Smith
      ,#+PROPERTY: header-args :exports none :results value
+     ,#+OPTIONS: toc:nil author:nil date:nil
 
      ,* Problem 1 - Derivatives
        :PROPERTIES:
