@@ -1,4 +1,4 @@
-# Created 2026-03-30 Mon 14:18
+# Created 2026-03-31 Tue 16:06
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -171,9 +171,8 @@ commands.  I'm also including =casual= for its menus, which are based on
     (which-key-mode))
 
   ;;: Avy bindings
-  ;; Override smartparens use of "M-j" so I can use it.
   (with-eval-after-load 'smartparens
-    (setq sp-override-key-bindings '(("M-j" . avy-goto-char-time)))
+    (setq sp-override-key-bindings '(("M-j" . avy-goto-char-timer)))
     (sp--update-override-key-bindings))
 
   (use-package avy
@@ -289,6 +288,12 @@ default minor modes can be set via the ~meow-mode-state-list~ variable.
           mac-option-modifier 'super
           mac-control-modifier 'control))
 
+  ;; For use with MacBook trackpad. This allows the track pad to be used with
+  ;; fly spell-mode. This uses Option+click for Mouse-2 and Cmd+click for
+  ;; mouse-3.
+  (when (eq system-type 'darwin)
+    (setq mac-emulate-three-button-mouse t))
+
   (global-set-key "\M-p" 'backward-paragraph)
   (global-set-key "\M-n" 'forward-paragraph)
 
@@ -297,11 +302,6 @@ default minor modes can be set via the ~meow-mode-state-list~ variable.
   ;; only work with right-command, as left-control (on laptop) has different
   ;; result.
   (windmove-default-keybindings 'ctrl)
-
-  ;; For use with MacBook trackpad. This allows the track pad to be used with
-  ;; fly spell-mode. This uses Option+click for Mouse-2 and Cmd+click for
-  ;; mouse-3.
-  (setq mac-emulate-three-button-mouse t)
 
   ;; Meow-mode setup.
   ;; (require 'meow)
@@ -820,6 +820,7 @@ Elfeed is a web feed reader for Emacs.  Some of the code below is taken from
 the suggested code at [[https://github.com/skeeto/elfeed][Elfeed's GitHub repo]].
 #+begin_src emacs-lisp :tangle "general-settings.el"
   (use-package elfeed
+    :ensure t
     :bind (("C-c E" . elfeed))
     :config
     (setq elfeed-feeds '(("https://archlinux.org/feeds/news/" archlinux news)
@@ -1582,6 +1583,8 @@ the WSL settings require a symlink from the Windows Google Drive folder to
    ((eq system-type 'darwin)
     (setq org-agenda-files '("~/Documents/org"
                              "~/Google Drive/My Drive/org"
+                             "~/Google Drive/My Drive/org/roam/"
+                             "~/Google Drive/My Drive/org/roam/daily/"
                              "~/Sync/beorg"))
     (setq org-default-notes-file
           (expand-file-name "~/Sync/beorg/inbox.org")))
@@ -1802,6 +1805,7 @@ A basic rubric template is given by the following code:
 #+begin_src org :tangle "no" :results code
   ,#+TITLE: Grading - Alice Smith
   ,#+PROPERTY: header-args :exports none :results value
+  ,#+OPTIONS: toc:nil author:nil date:nil
 
   ,* Problem 1 - Derivatives
     :PROPERTIES:
@@ -1863,6 +1867,8 @@ These functions can be accessed using =C-c C-g= (mnemonic: [c]ompile
         (widen)
         points)))
 
+  ;; TODO: Introduce calculate-score question that implements below
+  ;; regex?  This could also be used above in my/org-grading-calculate-score.
   (defun org-dblock-write:grading-score (params)
     "Dynamic block to summarize grades."
     (let ((total 0))
@@ -1888,9 +1894,17 @@ These functions can be accessed using =C-c C-g= (mnemonic: [c]ompile
             (if (re-search-forward (format "^\\*+ .*\\b%s\\b" (regexp-quote
                                                                heading-name)) nil t)
                 (progn
-                  ;; Move to end of this subtree to append the item
+                  ;; Move to end of this item list to append the item
+                  ;; TODO: See if we can use org-end-of-item-list
+                  ;; instead.  Right now, it doesn't work if this
+                  ;; function is called since the point is located at
+                  ;; the beginning of the subtree and, therefore,
+                  ;; outside of the list.
                   (org-end-of-subtree)
-                  (insert (format "%s%s%s" (progn (org-insert-item t) "") item-text points-text))
+                  (insert (format "%s%s" (progn (org-insert-item t) "") item-text))
+                  (end-of-line)
+                  (insert (format " %s" points-text))
+                  ;; TODO: Align on :: here
                   (save-buffer)
                   (message "Updated %s" (file-name-nondirectory file)))
               (message "Heading '%s' not found in %s" heading-name (file-name-nondirectory
