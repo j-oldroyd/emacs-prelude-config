@@ -1830,33 +1830,40 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        :PROPERTIES:
        :max_points: 10
        :END:
+     ,** Comments
+     Put comments here.  This makes use of a general rubric.  Check boxes as
+     appropriate, then run the dynamic code block at the end of the rubric to compute
+     the total.
 
-       - [X] Correct method               :: +5
-       - [X] Correct final answer         :: +5
-       - [ ] Minor algebra mistake        :: -1
-       - [ ] Wrong method                 :: -5
-
-       ,#+BEGIN_SRC emacs-lisp
-         (my/org-grading-calculate-score)
-       ,#+END_SRC
+       - [ ] The solution is *essentially perfect*.                       :: +5
+       - [X] The solution has *minor errors*                              :: +4
+       - [ ] The solution identifies an *effective approach*              :: +3
+       - [ ] The solution displays some understanding of *relevant ideas* :: +2
+       - [ ] The solution displays understanding of *some ideas*          :: +1
+       - [ ] Typos/incorrect \( \LaTeX{} \)                               :: -1
 
      ,* Problem 2 - Integrals
        :PROPERTIES:
        :max_points: 15
        :END:
+     ,** Comments
+     Put comments here.  We can also format code nicely, too, either in a ~src~
+     block:
+     ,#+begin_src octave :tangle "no" :results code
+       x = rand(4); % Octave code
+     ,#+end_src
+     or inline: src_OCTAVE[:exports code]{x = rand(4)}.
 
-       - [X] Correct bounds               :: +5
-       - [X] Correct integration          :: +5
-       - [ ] Final answer simplified      :: +5
-       - [ ] Incorrect bounds             :: -5
-
-       ,#+BEGIN_SRC emacs-lisp
-         (my/org-grading-calculate-score)
-       ,#+END_SRC
+       - [ ] The solution is *essentially perfect*.                       :: +5
+       - [ ] The solution has *minor errors*                              :: +4
+       - [ ] The solution identifies an *effective approach*              :: +3
+       - [X] The solution displays some understanding of *relevant ideas* :: +2
+       - [ ] The solution displays understanding of *some ideas*          :: +1
+       - [X] Typos/incorrect \( \LaTeX{} \)                               :: -1
 
      ,* Total Grade
        ,#+BEGIN: grading-score
-       Total Score: *20*
+       Total Score: *5*
        ,#+END:
    #+end_src
    The functions ~my/grading-generate-summary-report~ and
