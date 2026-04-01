@@ -57,7 +57,9 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
 
      (use-package emacs
        :init
-       (setq user-full-name "Jesse Ernest Oldroyd"))
+       (setq user-full-name "Jesse Ernest Oldroyd")
+       :custom
+       (package-review-policy t "Review package updates before install."))
 
      ;; macOS-specific config
       (use-package emacs

@@ -1,4 +1,4 @@
-# Created 2026-03-31 Tue 16:06
+# Created 2026-04-01 Wed 10:13
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -58,7 +58,9 @@ General settings for =emacs=.
 
   (use-package emacs
     :init
-    (setq user-full-name "Jesse Ernest Oldroyd"))
+    (setq user-full-name "Jesse Ernest Oldroyd")
+    :custom
+    (package-review-policy t "Review package updates before install."))
 
   ;; macOS-specific config
    (use-package emacs
@@ -896,7 +898,11 @@ work with AUCTeX below.
     (pdf-tools-install)
     (setq-default pdf-view-display-size 'fit-page)
     :hook
-    ((pdf-view-mode . pdf-view-roll-minor-mode)))
+    ((pdf-view-mode . pdf-view-roll-minor-mode)
+     ;; hl-line-mode clashes with pdf-view-roll-minor-mode
+     (pdf-view-mode . (lambda ()
+                        (setq-local global-hl-line-mode
+                                    nil)))))
 
   ;; Apparently line numbers break horizontal scrolling in PDF Tools.
   ;; Code below taken from
