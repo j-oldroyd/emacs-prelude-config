@@ -900,7 +900,11 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        (pdf-tools-install)
        (setq-default pdf-view-display-size 'fit-page)
        :hook
-       ((pdf-view-mode . pdf-view-roll-minor-mode)))
+       ((pdf-view-mode . pdf-view-roll-minor-mode)
+        ;; hl-line-mode clashes with pdf-view-roll-minor-mode
+        (pdf-view-mode . (lambda ()
+                           (setq-local global-hl-line-mode
+                                       nil)))))
 
      ;; Apparently line numbers break horizontal scrolling in PDF Tools.
      ;; Code below taken from
