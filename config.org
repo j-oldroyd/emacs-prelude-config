@@ -57,7 +57,9 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
 
      (use-package emacs
        :init
-       (setq user-full-name "Jesse Ernest Oldroyd"))
+       (setq user-full-name "Jesse Ernest Oldroyd")
+       :custom
+       (package-review-policy t "Review package updates before install."))
 
      ;; macOS-specific config
       (use-package emacs
@@ -901,7 +903,11 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        (pdf-tools-install)
        (setq-default pdf-view-display-size 'fit-page)
        :hook
-       ((pdf-view-mode . pdf-view-roll-minor-mode)))
+       ((pdf-view-mode . pdf-view-roll-minor-mode)
+        ;; hl-line-mode clashes with pdf-view-roll-minor-mode
+        (pdf-view-mode . (lambda ()
+                           (setq-local global-hl-line-mode
+                                       nil)))))
 
      ;; Apparently line numbers break horizontal scrolling in PDF Tools.
      ;; Code below taken from
@@ -1824,33 +1830,40 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        :PROPERTIES:
        :max_points: 10
        :END:
+     ,** Comments
+     Put comments here.  This makes use of a general rubric.  Check boxes as
+     appropriate, then run the dynamic code block at the end of the rubric to compute
+     the total.
 
-       - [X] Correct method               :: +5
-       - [X] Correct final answer         :: +5
-       - [ ] Minor algebra mistake        :: -1
-       - [ ] Wrong method                 :: -5
-
-       ,#+BEGIN_SRC emacs-lisp
-         (my/org-grading-calculate-score)
-       ,#+END_SRC
+       - [ ] The solution is *essentially perfect*.                       :: +5
+       - [X] The solution has *minor errors*                              :: +4
+       - [ ] The solution identifies an *effective approach*              :: +3
+       - [ ] The solution displays some understanding of *relevant ideas* :: +2
+       - [ ] The solution displays understanding of *some ideas*          :: +1
+       - [ ] Typos/incorrect \( \LaTeX{} \)                               :: -1
 
      ,* Problem 2 - Integrals
        :PROPERTIES:
        :max_points: 15
        :END:
+     ,** Comments
+     Put comments here.  We can also format code nicely, too, either in a ~src~
+     block:
+     ,#+begin_src octave :tangle "no" :results code
+       x = rand(4); % Octave code
+     ,#+end_src
+     or inline: src_OCTAVE[:exports code]{x = rand(4)}.
 
-       - [X] Correct bounds               :: +5
-       - [X] Correct integration          :: +5
-       - [ ] Final answer simplified      :: +5
-       - [ ] Incorrect bounds             :: -5
-
-       ,#+BEGIN_SRC emacs-lisp
-         (my/org-grading-calculate-score)
-       ,#+END_SRC
+       - [ ] The solution is *essentially perfect*.                       :: +5
+       - [ ] The solution has *minor errors*                              :: +4
+       - [ ] The solution identifies an *effective approach*              :: +3
+       - [X] The solution displays some understanding of *relevant ideas* :: +2
+       - [ ] The solution displays understanding of *some ideas*          :: +1
+       - [X] Typos/incorrect \( \LaTeX{} \)                               :: -1
 
      ,* Total Grade
        ,#+BEGIN: grading-score
-       Total Score: *20*
+       Total Score: *5*
        ,#+END:
    #+end_src
    The functions ~my/grading-generate-summary-report~ and
@@ -1907,17 +1920,17 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
                (if (re-search-forward (format "^\\*+ .*\\b%s\\b" (regexp-quote
                                                                   heading-name)) nil t)
                    (progn
-                     ;; Move to end of this item list to append the item
-                     ;; TODO: See if we can use org-end-of-item-list
-                     ;; instead.  Right now, it doesn't work if this
-                     ;; function is called since the point is located at
-                     ;; the beginning of the subtree and, therefore,
-                     ;; outside of the list.
+                     ;; Move to end of this item list to append the item.
+                     ;; This assumes that the item list is the final
+                     ;; component of the question subtree!
                      (org-end-of-subtree)
                      (insert (format "%s%s" (progn (org-insert-item t) "") item-text))
                      (end-of-line)
                      (insert (format " %s" points-text))
-                     ;; TODO: Align on :: here
+                     ;; FIXME: Align isn't quite right yet when adding new item
+                     (org-mark-subtree)
+                     (align-regexp (region-beginning) (region-end)
+                                   "\\(\\s-*\\)::" 1 align-default-spacing t)
                      (save-buffer)
                      (message "Updated %s" (file-name-nondirectory file)))
                  (message "Heading '%s' not found in %s" heading-name (file-name-nondirectory
