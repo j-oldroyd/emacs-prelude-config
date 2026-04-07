@@ -1698,6 +1698,9 @@ The configuration below is taken from the previously mentioned repository.
     ;; Where org-gtd will keep its files (defaults to ~/gtd/)
     ;; (setq org-gtd-directory "~/my-gtd/")
 
+    ;; A Prelude map currently lives in C-c d, and I want to use that for GTD maps
+    (unbind-key "C-c d" prelude-mode-map)
+
     :custom
     ;; Configure TODO keyword states (options like "TODO(t)" or "DONE(d!)" are fine)
     (org-todo-keywords '((sequence "TODO" "NEXT" "WAIT" "|" "DONE" "CNCL")))
@@ -1717,11 +1720,11 @@ The configuration below is taken from the previously mentioned repository.
 
     :bind
     ;; Global keybindings (work anywhere in Emacs)
-    (("C-c D c" . org-gtd-capture)
-     ("C-c D e" . org-gtd-engage)
-     ("C-c D p" . org-gtd-process-inbox)
-     ("C-c D n" . org-gtd-show-all-next)
-     ("C-c D s" . org-gtd-reflect-stuck-projects)
+    (("C-c d c" . org-gtd-capture)
+     ("C-c d e" . org-gtd-engage)
+     ("C-c d p" . org-gtd-process-inbox)
+     ("C-c d n" . org-gtd-show-all-next)
+     ("C-c d s" . org-gtd-reflect-stuck-projects)
 
      ;; Keybinding for organizing items (only works in clarify buffers)
      :map org-gtd-clarify-mode-map
