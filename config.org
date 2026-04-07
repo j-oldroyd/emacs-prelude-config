@@ -1683,6 +1683,55 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        :ensure t)
    #+END_SRC
 
+** GTD
+Org mode is a very useful tool for the "Getting Things Done" (GTD) workflow.
+One such implementation of this process is =org-gtd= (see their [[https://github.com/Trevoke/org-gtd.el][GitHub repo]]).
+The configuration below is taken from the previously mentioned repository.
+#+begin_src emacs-lisp :tangle "org-settings.el"
+  (use-package org-gtd
+    :ensure t
+    :after org
+    :demand t
+    :init
+    ;; Suppress upgrade warnings (must be set before package loads)
+    (setq org-gtd-update-ack "4.0.0")
+    ;; Where org-gtd will keep its files (defaults to ~/gtd/)
+    ;; (setq org-gtd-directory "~/my-gtd/")
+
+    :custom
+    ;; Configure TODO keyword states (options like "TODO(t)" or "DONE(d!)" are fine)
+    (org-todo-keywords '((sequence "TODO" "NEXT" "WAIT" "|" "DONE" "CNCL")))
+
+    ;; Map GTD semantic states to your keywords
+    (org-gtd-keyword-mapping '((todo . "TODO")
+                               (next . "NEXT")
+                               (wait . "WAIT")
+                               (canceled . "CNCL")))
+
+    :config
+    ;; REQUIRED: Enable org-edna for project dependencies
+    (org-edna-mode 1)
+
+    ;; Add org-gtd files to your agenda (must be in :config so org-gtd-directory is defined)
+    (setq org-agenda-files (list org-gtd-directory))
+
+    :bind
+    ;; Global keybindings (work anywhere in Emacs)
+    (("C-c D c" . org-gtd-capture)
+     ("C-c D e" . org-gtd-engage)
+     ("C-c D p" . org-gtd-process-inbox)
+     ("C-c D n" . org-gtd-show-all-next)
+     ("C-c D s" . org-gtd-reflect-stuck-projects)
+
+     ;; Keybinding for organizing items (only works in clarify buffers)
+     :map org-gtd-clarify-mode-map
+     ("C-c c" . org-gtd-organize)
+
+     ;; Quick actions on tasks in agenda views (optional but recommended)
+     :map org-agenda-mode-map
+     ("C-c ." . org-gtd-agenda-transient)))
+#+end_src
+
 ** BibTeX
    The location of the bibliography file needs to be set. We can use the
    variable =bib-file= which is part of =bib-mode.el=. This might be used by
