@@ -1317,6 +1317,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;; set a global Python venv for Emacs to use.  I need to do this to
      ;; use rassumfrassum with eglot.  The configuration below also
      ;; integrates with projectile-mode
+     ;; TODO: I think I need pyvenv instead...
      (use-package pyenv-mode
        :ensure t)
 
