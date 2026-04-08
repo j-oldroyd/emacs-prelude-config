@@ -1703,7 +1703,8 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
 ** GTD
 Org mode is a very useful tool for the "Getting Things Done" (GTD) workflow.
 One such implementation of this process is =org-gtd= (see their [[https://github.com/Trevoke/org-gtd.el][GitHub repo]]).
-The configuration below is taken from the previously mentioned repository.
+The configuration below is mostly taken from the previously mentioned
+repository.
 #+begin_src emacs-lisp :tangle "org-settings.el"
   (use-package org-gtd
     :ensure t
@@ -1741,6 +1742,7 @@ The configuration below is taken from the previously mentioned repository.
      ("C-c d e" . org-gtd-engage)
      ("C-c d p" . org-gtd-process-inbox)
      ("C-c d n" . org-gtd-show-all-next)
+     ("C-c d r" . org-gtd-command-center)
      ("C-c d s" . org-gtd-reflect-stuck-projects)
 
      ;; Keybinding for organizing items (only works in clarify buffers)
