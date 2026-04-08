@@ -1,4 +1,4 @@
-# Created 2026-04-08 Wed 11:53
+# Created 2026-04-08 Wed 15:20
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -835,12 +835,26 @@ the suggested code at [[https://github.com/skeeto/elfeed][Elfeed's GitHub repo]]
 * Enhancing modes for files
 The packages here improve/replace how emacs handles certain files.
 ** Language server protocol
-Prelude now uses Eglot by default, so this configuration reflects that.
+Prelude now uses Eglot by default, so this configuration reflects that.  I
+also use =rass= (see [[https://github.com/joaotavora/rassumfrassum][here]]) to allow for using multiple LSPs with =eglot=.
+Right now, I only need multiple LSPs for working with \( \LaTeX{} \) files
+(=digestif= for \( \TeX{} \) syntax and =harper-ls= for language processing).
 #+begin_src emacs-lisp :tangle "lsp-settings.el"
   (use-package eglot
     :hook
     (latex-mode . eglot-ensure)
     (LaTeX-mode . eglot-ensure))
+
+  ;; This assumes that a "global" venv is being used by the system (as
+  ;; pip doesn't want to install packages system-wide anymore).  I
+  ;; currently use pyenv and pyenv-virtualenv to manage Python versions
+  ;; on my system.  Rassumfrassum is installed in the global venv.
+  (with-eval-after-load 'eglot
+    (add-to-list
+     'eglot-server-programs
+     '((latex-mode LaTeX-mode) . ("rass"
+                                  "--" "digestif"
+                                  "--" "harper-ls" "--stdio"))))
 
   ;; (use-package lsp-mode
   ;;   :init
@@ -1306,23 +1320,6 @@ setting in =core/ultrab.py=.
     (setq python-indent-offset 4
           python-indent-guess-indent-offset-verbose nil
           python-shell-interpreter "python"))
-
-  ;; Pyenv is used to work with venvs with Emacs.  In particular, I can
-  ;; set a global Python venv for Emacs to use.  I need to do this to
-  ;; use rassumfrassum with eglot.  The configuration below also
-  ;; integrates with projectile-mode
-  ;; TODO: I think I need pyvenv instead...
-  (use-package pyenv-mode
-    :ensure t)
-
-  (defun projectile-pyenv-mode-set ()
-    "Set pyenv version matching project name."
-    (let ((project (projectile-project-name)))
-      (if (member project (pyenv-mode-versions))
-          (pyenv-mode-set project)
-        (pyenv-mode-unset))))
-
-  (add-hook 'projectile-after-switch-project-hook 'projectile-pyenv-mode-set)
 #+end_src
 ** =hledger=
 =hledger= is a plaintext accounting tool that is designed to be run from the
