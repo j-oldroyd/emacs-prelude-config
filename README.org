@@ -1,4 +1,4 @@
-# Created 2026-04-08 Wed 15:20
+# Created 2026-04-10 Fri 13:20
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1444,11 +1444,11 @@ For pretty-printing, there is also =sgml-mode= which contains the function
   ;; https://groups.google.com/g/pretext-support/c/ts2Xcbkyj9k/m/i-cEX-A_CQAJ
   ;; This requires imenu-list and mmm-mode, which are not currently part
   ;; of my config.
-  (use-package pretext-mode
-    :load-path "personal/packages/"
-    :mode "\\.ptx\\'")
+  ;; (use-package pretext-mode
+  ;;   :load-path "personal/packages/"
+  ;;   :mode "\\.ptx\\'")
 
-  (add-to-list 'auto-mode-alist '("\\.ptx" . pretext-mode))
+  ;; (add-to-list 'auto-mode-alist '("\\.ptx" . pretext-mode))
 
   ;; pretext-mode allows for using asy-mode and AUCTeX within a .ptx
   ;; file, so for now we load asy-mode here.
@@ -1720,7 +1720,7 @@ repository.
     (org-edna-mode 1)
 
     ;; Add org-gtd files to your agenda (must be in :config so org-gtd-directory is defined)
-    (setq org-agenda-files (list org-gtd-directory))
+    (push org-gtd-directory org-agenda-files)
 
     :bind
     ;; Global keybindings (work anywhere in Emacs)

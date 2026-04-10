@@ -1452,11 +1452,11 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;; https://groups.google.com/g/pretext-support/c/ts2Xcbkyj9k/m/i-cEX-A_CQAJ
      ;; This requires imenu-list and mmm-mode, which are not currently part
      ;; of my config.
-     (use-package pretext-mode
-       :load-path "personal/packages/"
-       :mode "\\.ptx\\'")
+     ;; (use-package pretext-mode
+     ;;   :load-path "personal/packages/"
+     ;;   :mode "\\.ptx\\'")
 
-     (add-to-list 'auto-mode-alist '("\\.ptx" . pretext-mode))
+     ;; (add-to-list 'auto-mode-alist '("\\.ptx" . pretext-mode))
 
      ;; pretext-mode allows for using asy-mode and AUCTeX within a .ptx
      ;; file, so for now we load asy-mode here.
@@ -1731,7 +1731,7 @@ repository.
     (org-edna-mode 1)
 
     ;; Add org-gtd files to your agenda (must be in :config so org-gtd-directory is defined)
-    (setq org-agenda-files (list org-gtd-directory))
+    (push org-gtd-directory org-agenda-files)
 
     :bind
     ;; Global keybindings (work anywhere in Emacs)
