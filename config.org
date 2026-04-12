@@ -1719,7 +1719,10 @@ repository.
     ;; Suppress upgrade warnings (must be set before package loads)
     (setq org-gtd-update-ack "4.0.0")
     ;; Where org-gtd will keep its files (defaults to ~/gtd/)
-    (setq org-gtd-directory "~/beorg/gtd/")
+    (cond ((eq system-type 'gnu/linux)
+           (setq org-gtd-directory "~/beorg/gtd/"))
+          ((eq system-type 'darwin)
+           (setq org-gtd-directory "~/Sync/beorg/gtd/")))
 
     ;; A Prelude map currently lives in C-c d, and I want to use that for GTD maps
     (unbind-key "C-c d" prelude-mode-map)

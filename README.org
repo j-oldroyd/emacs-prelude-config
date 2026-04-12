@@ -1,4 +1,4 @@
-# Created 2026-04-10 Fri 13:20
+# Created 2026-04-12 Sun 15:13
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -353,6 +353,10 @@ default minor modes can be set via the ~meow-mode-state-list~ variable.
      '("3" . meow-expand-3)
      '("2" . meow-expand-2)
      '("1" . meow-expand-1)
+     '(")" . sp-forward-slurp-sexp)
+     '("(" . sp-forward-barf-sexp)
+     '("{" . sp-backward-slurp-sexp)
+     '("}" . sp-backward-barf-sexp)
      '("-" . negative-argument)
      '(";" . meow-reverse)
      '("," . meow-inner-of-thing)
@@ -439,6 +443,10 @@ default minor modes can be set via the ~meow-mode-state-list~ variable.
      '("7" . meow-expand-7)
      '("8" . meow-expand-8)
      '("9" . meow-expand-9)
+     '(")" . sp-forward-slurp-sexp)
+     '("(" . sp-forward-barf-sexp)
+     '("{" . sp-backward-slurp-sexp)
+     '("}" . sp-backward-barf-sexp)
      '("-" . negative-argument)
      '(";" . meow-reverse)
      '("," . meow-inner-of-thing)
@@ -1515,11 +1523,11 @@ in =snippets/org-mode=.
 
   ;; Org-modern clashes with org-indent, so we add org-modern-indent to
   ;; address this.
-  (use-package org-modern-indent
-    :vc (org-modern-indent :url https://github.com/jdtsmith/org-modern-indent
-                           :branch main)
-    :config ; add late to hook
-    (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
+  ;; (use-package org-modern-indent
+  ;;   :vc (org-modern-indent :url https://github.com/jdtsmith/org-modern-indent
+  ;;                          :branch main)
+  ;;   :config ; add late to hook
+  ;;   (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
 
   ;; Buffer previews and spellcheck
   (setq org-src-fontify-natively t)
@@ -1700,7 +1708,10 @@ repository.
     ;; Suppress upgrade warnings (must be set before package loads)
     (setq org-gtd-update-ack "4.0.0")
     ;; Where org-gtd will keep its files (defaults to ~/gtd/)
-    (setq org-gtd-directory "~/beorg/gtd/")
+    (cond ((eq system-type 'gnu/linux)
+           (setq org-gtd-directory "~/beorg/gtd/"))
+          ((eq system-type 'darwin)
+           (setq org-gtd-directory "~/Sync/beorg/gtd/")))
 
     ;; A Prelude map currently lives in C-c d, and I want to use that for GTD maps
     (unbind-key "C-c d" prelude-mode-map)
@@ -1763,76 +1774,75 @@ now, a decent workflow seems to be the following:
    to refer to outside of the paper.
 
 #+begin_src emacs-lisp :tangle "bibtex-settings.el"
-       (use-package bib-mode
-         ;; I don't want to load this just yet.  Instead, I'll set
-         ;; OS-specific variables first.
-         :defer t
-         :if (eq system-type 'darwin)
-         :custom
-         (bib-file '("~/Google Drive/My Drive/research/library.bib"
-                     "~/Documents/zotero/library.bib")))
+  (use-package bib-mode
+    ;; I don't want to load this just yet.  Instead, I'll set
+    ;; OS-specific variables first.
+    :defer t
+    :if (eq system-type 'darwin)
+    :custom
+    (bib-file '("~/Google Drive/My Drive/research/library.bib"
+                "~/Documents/zotero/library.bib")))
 
-  (setq bib-file "~/GoogleDrive/research/library.bib")
-       (use-package bib-mode
-         ;; I don't want to load this just yet.  Instead, I'll set
-         ;; OS-specific variables first.
-         :defer t
-         :if (eq system-type 'gnu/linux)
-         :custom
-         (bib-file '("~/GoogleDrive/research/library.bib"
-                     "~/GoogleDrive/research/library-time_scales.bib"
-                     "~/GoogleDrive/research/library-tight_frames-association_schemes.bib"
-                     "~/GoogleDrive/research/library-tight_frames-algorithms.bib")))
+  (use-package bib-mode
+    ;; I don't want to load this just yet.  Instead, I'll set
+    ;; OS-specific variables first.
+    :defer t
+    :if (eq system-type 'gnu/linux)
+    :custom
+    (bib-file '("~/GoogleDrive/research/library.bib"
+                "~/GoogleDrive/research/library-time_scales.bib"
+                "~/GoogleDrive/research/library-tight_frames-association_schemes.bib"
+                "~/GoogleDrive/research/library-tight_frames-algorithms.bib")))
 
-       (use-package org
-         :custom
-         (org-cite-global-bibliography bib-file)
-         (org-cite-insert-processor 'citar)
-         (org-cite-follow-processor 'citar)
-         (org-cite-activate-processor 'citar))
+  (use-package org
+    :custom
+    (org-cite-global-bibliography bib-file)
+    (org-cite-insert-processor 'citar)
+    (org-cite-follow-processor 'citar)
+    (org-cite-activate-processor 'citar))
 
-       (use-package citar
-         ;; I don't want to load this just yet.  Instead, I'll set
-         ;; OS-specific variables first.
-         :defer t
-         :if (eq system-type 'darwin)
-         :custom
-         (citar-library-paths '("~/Google Drive/My Drive/research"
-                                "~/Documents/zotero"))
-         (citar-notes-paths '("~/Google Drive/My Drive/research")))
+  (use-package citar
+    ;; I don't want to load this just yet.  Instead, I'll set
+    ;; OS-specific variables first.
+    :defer t
+    :if (eq system-type 'darwin)
+    :custom
+    (citar-library-paths '("~/Google Drive/My Drive/research"
+                           "~/Documents/zotero"))
+    (citar-notes-paths '("~/Google Drive/My Drive/research")))
 
-       (use-package citar
-         ;; I don't want to load this just yet.  Instead, I'll set
-         ;; OS-specific variables first.
-         :defer t
-         :if (eq system-type 'gnu/linux)
-         :custom
-         (citar-library-paths '("~/GoogleDrive/research"))
-         (citar-notes-paths '("~/GoogleDrive/research")))
+  (use-package citar
+    ;; I don't want to load this just yet.  Instead, I'll set
+    ;; OS-specific variables first.
+    :defer t
+    :if (eq system-type 'gnu/linux)
+    :custom
+    (citar-library-paths '("~/GoogleDrive/research"))
+    (citar-notes-paths '("~/GoogleDrive/research")))
 
-       (use-package citar
-         :ensure t
-         :diminish
-         :custom
-         (citar-bibliography org-cite-global-bibliography)
-         :hook
-         (LaTeX-mode . citar-capf-setup)
-         (org-mode . citar-capf-setup))
+  (use-package citar
+    :ensure t
+    :diminish
+    :custom
+    (citar-bibliography org-cite-global-bibliography)
+    :hook
+    (LaTeX-mode . citar-capf-setup)
+    (org-mode . citar-capf-setup))
 
-       (use-package citar-org-roam
-         :ensure t
-         :diminish
-         :custom
-         (citar-org-roam-capture-template-key "n")
-         :after (org-roam citar)
-         :config (citar-org-roam-mode))
+  (use-package citar-org-roam
+    :ensure t
+    :diminish
+    :custom
+    (citar-org-roam-capture-template-key "n")
+    :after (org-roam citar)
+    :config (citar-org-roam-mode))
 
-       (use-package citar-embark
-         :ensure t
-         :diminish
-         :after (citar embark)
-         :no-require
-         :config (citar-embark-mode))
+  (use-package citar-embark
+    :ensure t
+    :diminish
+    :after (citar embark)
+    :no-require
+    :config (citar-embark-mode))
 #+end_src
 ** =org-babel= settings
 We need to configure =org-babel= for evaluation of ~SRC~ blocks in Org mode.
