@@ -1,4 +1,4 @@
-# Created 2026-04-01 Wed 10:13
+# Created 2026-04-10 Fri 13:20
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -835,12 +835,26 @@ the suggested code at [[https://github.com/skeeto/elfeed][Elfeed's GitHub repo]]
 * Enhancing modes for files
 The packages here improve/replace how emacs handles certain files.
 ** Language server protocol
-Prelude now uses Eglot by default, so this configuration reflects that.
+Prelude now uses Eglot by default, so this configuration reflects that.  I
+also use =rass= (see [[https://github.com/joaotavora/rassumfrassum][here]]) to allow for using multiple LSPs with =eglot=.
+Right now, I only need multiple LSPs for working with \( \LaTeX{} \) files
+(=digestif= for \( \TeX{} \) syntax and =harper-ls= for language processing).
 #+begin_src emacs-lisp :tangle "lsp-settings.el"
   (use-package eglot
     :hook
     (latex-mode . eglot-ensure)
     (LaTeX-mode . eglot-ensure))
+
+  ;; This assumes that a "global" venv is being used by the system (as
+  ;; pip doesn't want to install packages system-wide anymore).  I
+  ;; currently use pyenv and pyenv-virtualenv to manage Python versions
+  ;; on my system.  Rassumfrassum is installed in the global venv.
+  (with-eval-after-load 'eglot
+    (add-to-list
+     'eglot-server-programs
+     '((latex-mode LaTeX-mode) . ("rass"
+                                  "--" "digestif"
+                                  "--" "harper-ls" "--stdio"))))
 
   ;; (use-package lsp-mode
   ;;   :init
@@ -1430,11 +1444,11 @@ For pretty-printing, there is also =sgml-mode= which contains the function
   ;; https://groups.google.com/g/pretext-support/c/ts2Xcbkyj9k/m/i-cEX-A_CQAJ
   ;; This requires imenu-list and mmm-mode, which are not currently part
   ;; of my config.
-  (use-package pretext-mode
-    :load-path "personal/packages/"
-    :mode "\\.ptx\\'")
+  ;; (use-package pretext-mode
+  ;;   :load-path "personal/packages/"
+  ;;   :mode "\\.ptx\\'")
 
-  (add-to-list 'auto-mode-alist '("\\.ptx" . pretext-mode))
+  ;; (add-to-list 'auto-mode-alist '("\\.ptx" . pretext-mode))
 
   ;; pretext-mode allows for using asy-mode and AUCTeX within a .ptx
   ;; file, so for now we load asy-mode here.
@@ -1672,6 +1686,59 @@ is.
   (use-package org-noter
     :ensure t)
 #+end_src
+** GTD
+Org mode is a very useful tool for the "Getting Things Done" (GTD) workflow.
+One such implementation of this process is =org-gtd= (see their [[https://github.com/Trevoke/org-gtd.el][GitHub repo]]).
+The configuration below is mostly taken from the previously mentioned
+repository.
+#+begin_src emacs-lisp :tangle "org-settings.el"
+  (use-package org-gtd
+    :ensure t
+    :after org
+    :demand t
+    :init
+    ;; Suppress upgrade warnings (must be set before package loads)
+    (setq org-gtd-update-ack "4.0.0")
+    ;; Where org-gtd will keep its files (defaults to ~/gtd/)
+    (setq org-gtd-directory "~/beorg/gtd/")
+
+    ;; A Prelude map currently lives in C-c d, and I want to use that for GTD maps
+    (unbind-key "C-c d" prelude-mode-map)
+
+    :custom
+    ;; Configure TODO keyword states (options like "TODO(t)" or "DONE(d!)" are fine)
+    (org-todo-keywords '((sequence "TODO" "NEXT" "WAIT" "|" "DONE" "CNCL")))
+
+    ;; Map GTD semantic states to your keywords
+    (org-gtd-keyword-mapping '((todo . "TODO")
+                               (next . "NEXT")
+                               (wait . "WAIT")
+                               (canceled . "CNCL")))
+
+    :config
+    ;; REQUIRED: Enable org-edna for project dependencies
+    (org-edna-mode 1)
+
+    ;; Add org-gtd files to your agenda (must be in :config so org-gtd-directory is defined)
+    (push org-gtd-directory org-agenda-files)
+
+    :bind
+    ;; Global keybindings (work anywhere in Emacs)
+    (("C-c d c" . org-gtd-capture)
+     ("C-c d e" . org-gtd-engage)
+     ("C-c d p" . org-gtd-process-inbox)
+     ("C-c d n" . org-gtd-show-all-next)
+     ("C-c d r" . org-gtd-command-center)
+     ("C-c d s" . org-gtd-reflect-stuck-projects)
+
+     ;; Keybinding for organizing items (only works in clarify buffers)
+     :map org-gtd-clarify-mode-map
+     ("C-c c" . org-gtd-organize)
+
+     ;; Quick actions on tasks in agenda views (optional but recommended)
+     :map org-agenda-mode-map
+     ("C-c ." . org-gtd-agenda-transient)))
+#+end_src
 ** BibTeX
 The location of the bibliography file needs to be set. We can use the
 variable =bib-file= which is part of =bib-mode.el=. This might be used by
@@ -1817,33 +1884,40 @@ A basic rubric template is given by the following code:
     :PROPERTIES:
     :max_points: 10
     :END:
+  ,** Comments
+  Put comments here.  This makes use of a general rubric.  Check boxes as
+  appropriate, then run the dynamic code block at the end of the rubric to compute
+  the total.
 
-    - [X] Correct method               :: +5
-    - [X] Correct final answer         :: +5
-    - [ ] Minor algebra mistake        :: -1
-    - [ ] Wrong method                 :: -5
-
-    ,#+BEGIN_SRC emacs-lisp
-      (my/org-grading-calculate-score)
-    ,#+END_SRC
+    - [ ] The solution is *essentially perfect*.                       :: +5
+    - [X] The solution has *minor errors*                              :: +4
+    - [ ] The solution identifies an *effective approach*              :: +3
+    - [ ] The solution displays some understanding of *relevant ideas* :: +2
+    - [ ] The solution displays understanding of *some ideas*          :: +1
+    - [ ] Typos/incorrect \( \LaTeX{} \)                               :: -1
 
   ,* Problem 2 - Integrals
     :PROPERTIES:
     :max_points: 15
     :END:
+  ,** Comments
+  Put comments here.  We can also format code nicely, too, either in a ~src~
+  block:
+  ,#+begin_src octave :tangle "no" :results code
+    x = rand(4); % Octave code
+  ,#+end_src
+  or inline: src_OCTAVE[:exports code]{x = rand(4)}.
 
-    - [X] Correct bounds               :: +5
-    - [X] Correct integration          :: +5
-    - [ ] Final answer simplified      :: +5
-    - [ ] Incorrect bounds             :: -5
-
-    ,#+BEGIN_SRC emacs-lisp
-      (my/org-grading-calculate-score)
-    ,#+END_SRC
+    - [ ] The solution is *essentially perfect*.                       :: +5
+    - [ ] The solution has *minor errors*                              :: +4
+    - [ ] The solution identifies an *effective approach*              :: +3
+    - [X] The solution displays some understanding of *relevant ideas* :: +2
+    - [ ] The solution displays understanding of *some ideas*          :: +1
+    - [X] Typos/incorrect \( \LaTeX{} \)                               :: -1
 
   ,* Total Grade
     ,#+BEGIN: grading-score
-    Total Score: *20*
+    Total Score: *5*
     ,#+END:
 #+end_src
 The functions ~my/grading-generate-summary-report~ and
@@ -1900,17 +1974,17 @@ These functions can be accessed using =C-c C-g= (mnemonic: [c]ompile
             (if (re-search-forward (format "^\\*+ .*\\b%s\\b" (regexp-quote
                                                                heading-name)) nil t)
                 (progn
-                  ;; Move to end of this item list to append the item
-                  ;; TODO: See if we can use org-end-of-item-list
-                  ;; instead.  Right now, it doesn't work if this
-                  ;; function is called since the point is located at
-                  ;; the beginning of the subtree and, therefore,
-                  ;; outside of the list.
+                  ;; Move to end of this item list to append the item.
+                  ;; This assumes that the item list is the final
+                  ;; component of the question subtree!
                   (org-end-of-subtree)
                   (insert (format "%s%s" (progn (org-insert-item t) "") item-text))
                   (end-of-line)
                   (insert (format " %s" points-text))
-                  ;; TODO: Align on :: here
+                  ;; FIXME: Align isn't quite right yet when adding new item
+                  (org-mark-subtree)
+                  (align-regexp (region-beginning) (region-end)
+                                "\\(\\s-*\\)::" 1 align-default-spacing t)
                   (save-buffer)
                   (message "Updated %s" (file-name-nondirectory file)))
               (message "Heading '%s' not found in %s" heading-name (file-name-nondirectory

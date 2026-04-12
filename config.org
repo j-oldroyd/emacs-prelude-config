@@ -840,12 +840,26 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
 * Enhancing modes for files
   The packages here improve/replace how emacs handles certain files.
 ** Language server protocol
-   Prelude now uses Eglot by default, so this configuration reflects that.
+   Prelude now uses Eglot by default, so this configuration reflects that.  I
+   also use =rass= (see [[https://github.com/joaotavora/rassumfrassum][here]]) to allow for using multiple LSPs with =eglot=.
+   Right now, I only need multiple LSPs for working with \( \LaTeX{} \) files
+   (=digestif= for \( \TeX{} \) syntax and =harper-ls= for language processing).
    #+begin_src emacs-lisp :tangle "lsp-settings.el"
      (use-package eglot
        :hook
        (latex-mode . eglot-ensure)
        (LaTeX-mode . eglot-ensure))
+
+     ;; This assumes that a "global" venv is being used by the system (as
+     ;; pip doesn't want to install packages system-wide anymore).  I
+     ;; currently use pyenv and pyenv-virtualenv to manage Python versions
+     ;; on my system.  Rassumfrassum is installed in the global venv.
+     (with-eval-after-load 'eglot
+       (add-to-list
+        'eglot-server-programs
+        '((latex-mode LaTeX-mode) . ("rass"
+                                     "--" "digestif"
+                                     "--" "harper-ls" "--stdio"))))
 
      ;; (use-package lsp-mode
      ;;   :init
@@ -1438,11 +1452,11 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      ;; https://groups.google.com/g/pretext-support/c/ts2Xcbkyj9k/m/i-cEX-A_CQAJ
      ;; This requires imenu-list and mmm-mode, which are not currently part
      ;; of my config.
-     (use-package pretext-mode
-       :load-path "personal/packages/"
-       :mode "\\.ptx\\'")
+     ;; (use-package pretext-mode
+     ;;   :load-path "personal/packages/"
+     ;;   :mode "\\.ptx\\'")
 
-     (add-to-list 'auto-mode-alist '("\\.ptx" . pretext-mode))
+     ;; (add-to-list 'auto-mode-alist '("\\.ptx" . pretext-mode))
 
      ;; pretext-mode allows for using asy-mode and AUCTeX within a .ptx
      ;; file, so for now we load asy-mode here.
@@ -1682,6 +1696,60 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (use-package org-noter
        :ensure t)
    #+END_SRC
+
+** GTD
+Org mode is a very useful tool for the "Getting Things Done" (GTD) workflow.
+One such implementation of this process is =org-gtd= (see their [[https://github.com/Trevoke/org-gtd.el][GitHub repo]]).
+The configuration below is mostly taken from the previously mentioned
+repository.
+#+begin_src emacs-lisp :tangle "org-settings.el"
+  (use-package org-gtd
+    :ensure t
+    :after org
+    :demand t
+    :init
+    ;; Suppress upgrade warnings (must be set before package loads)
+    (setq org-gtd-update-ack "4.0.0")
+    ;; Where org-gtd will keep its files (defaults to ~/gtd/)
+    (setq org-gtd-directory "~/beorg/gtd/")
+
+    ;; A Prelude map currently lives in C-c d, and I want to use that for GTD maps
+    (unbind-key "C-c d" prelude-mode-map)
+
+    :custom
+    ;; Configure TODO keyword states (options like "TODO(t)" or "DONE(d!)" are fine)
+    (org-todo-keywords '((sequence "TODO" "NEXT" "WAIT" "|" "DONE" "CNCL")))
+
+    ;; Map GTD semantic states to your keywords
+    (org-gtd-keyword-mapping '((todo . "TODO")
+                               (next . "NEXT")
+                               (wait . "WAIT")
+                               (canceled . "CNCL")))
+
+    :config
+    ;; REQUIRED: Enable org-edna for project dependencies
+    (org-edna-mode 1)
+
+    ;; Add org-gtd files to your agenda (must be in :config so org-gtd-directory is defined)
+    (push org-gtd-directory org-agenda-files)
+
+    :bind
+    ;; Global keybindings (work anywhere in Emacs)
+    (("C-c d c" . org-gtd-capture)
+     ("C-c d e" . org-gtd-engage)
+     ("C-c d p" . org-gtd-process-inbox)
+     ("C-c d n" . org-gtd-show-all-next)
+     ("C-c d r" . org-gtd-command-center)
+     ("C-c d s" . org-gtd-reflect-stuck-projects)
+
+     ;; Keybinding for organizing items (only works in clarify buffers)
+     :map org-gtd-clarify-mode-map
+     ("C-c c" . org-gtd-organize)
+
+     ;; Quick actions on tasks in agenda views (optional but recommended)
+     :map org-agenda-mode-map
+     ("C-c ." . org-gtd-agenda-transient)))
+#+end_src
 
 ** BibTeX
    The location of the bibliography file needs to be set. We can use the
