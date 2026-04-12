@@ -58,8 +58,28 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
      (use-package emacs
        :init
        (setq user-full-name "Jesse Ernest Oldroyd")
+       :config
+       ;; The settings below are suggested by Emacs Redux (the creator of
+       ;; Prelude).  See
+       ;; https://emacsredux.com/blog/2026/04/07/stealing-from-the-best-emacs-configs/
+       (setq-default bidi-display-reordering 'left-to-right
+                     bidi-paragraph-direction 'left-to-right)
+       (setq bidi-inhibit-bpa t)
+       (setq redisplay-skip-fontification-on-input t)
+       (setq save-interprogram-paste-before-kill t)
+       (setq-default cursor-in-non-selected-windows nil)
+       (setq highlight-nonselected-windows nil)
+       (setq kill-do-not-save-duplicates t)
+       (setq savehist-additional-variables
+             '(search-ring regexp-search-ring kill-ring))
        :custom
-       (package-review-policy t "Review package updates before install."))
+       (package-review-policy t "Review package updates before install.")
+       :hook
+       ;; See above from Emacs Redux.
+       (save-hist . (lambda ()
+                      (setq kill-ring
+                            (mapcar #'substring-no-properties
+                                    (cl-remove-if-not #'stringp kill-ring))))))
 
      ;; macOS-specific config
       (use-package emacs
@@ -854,6 +874,10 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
    (=digestif= for \( \TeX{} \) syntax and =harper-ls= for language processing).
    #+begin_src emacs-lisp :tangle "lsp-settings.el"
      (use-package eglot
+       :config
+       ;; Taken from Emacs Redux blog post.  See use-package declaration
+       ;; for emacs.
+       (setq read-process-output-max (* 4 1024 1024)) ; 4MB
        :hook
        (latex-mode . eglot-ensure)
        (LaTeX-mode . eglot-ensure))
