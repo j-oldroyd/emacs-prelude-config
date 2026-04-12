@@ -1716,7 +1716,6 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        (bib-file '("~/Google Drive/My Drive/research/library.bib"
                    "~/Documents/zotero/library.bib")))
 
-(setq bib-file "~/GoogleDrive/research/library.bib")
      (use-package bib-mode
        ;; I don't want to load this just yet.  Instead, I'll set
        ;; OS-specific variables first.
