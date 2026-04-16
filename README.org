@@ -1,4 +1,4 @@
-# Created 2026-04-13 Mon 07:35
+# Created 2026-04-14 Tue 19:25
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -881,15 +881,17 @@ Right now, I only need multiple LSPs for working with \( \LaTeX{} \) files
   ;; pip doesn't want to install packages system-wide anymore).  I
   ;; currently use pyenv and pyenv-virtualenv to manage Python versions
   ;; on my system.  Rassumfrassum is installed in the global venv.
-  (with-eval-after-load 'eglot
-    (add-to-list
-     'eglot-server-programs
-     '((latex-mode LaTeX-mode) . ("rass"
-                                  "--" "digestif"
-                                  "--" "harper-ls" "--stdio"))))
+  ;; FIXME: Right now using eglot with harper and digestif starts
+  ;; lagging TeX files after a while, so I need to determine what's
+  ;; going on here.
 
-  ;; (use-package lsp-mode
-  ;;   :init
+  ;; (with-eval-after-load 'eglot
+  ;; (add-to-list 'eglot-server-programs '((latex-mode LaTeX-mode)
+  ;; . ("rass" "--" "digestif" "--" "harper-ls" "--stdio"))))
+
+  ;; ;; (use-package lsp-mode
+  ;; ;;
+  :init
   ;;   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   ;;   ;; (setq lsp-keymap-prefix "C-c l")
   ;;   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
