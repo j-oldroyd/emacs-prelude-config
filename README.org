@@ -1,4 +1,4 @@
-# Created 2026-04-14 Tue 19:25
+# Created 2026-04-16 Thu 13:38
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -891,7 +891,7 @@ Right now, I only need multiple LSPs for working with \( \LaTeX{} \) files
 
   ;; ;; (use-package lsp-mode
   ;; ;;
-  :init
+  ;; :init
   ;;   ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
   ;;   ;; (setq lsp-keymap-prefix "C-c l")
   ;;   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
@@ -1654,6 +1654,20 @@ the WSL settings require a symlink from the Windows Google Drive folder to
   (setq org-refile-targets
         '((nil :maxlevel . 3)
           (org-agenda-files :maxlevel . 3)))
+
+  ;; Set effort estimates globally
+  (setq org-global-properties
+        '(("Effort_ALL". "0 0:10 0:30 1:00 2:00 3:00 4:00 8:00")))
+
+  ;; Include effort in Agenda views.  Code modified from
+  ;; https://emacs.stackexchange.com/a/60889/45800
+
+  ;; We use setopt since this is a user option (i.e., it uses the
+  ;; customize interface)
+  (setopt org-agenda-prefix-format '((agenda . " %i %-12:c%?-12t%-6e% s")
+                                   (todo . " %i %-12:c %-6e")
+                                   (tags . " %i %-12:c")
+                                   (search . " %i %-12:c")))
 #+end_src
 ** Note-taking
 This config is adapted from the recommended config for [[https://github.com/org-roam/org-roam-bibtex][=org-roam=]]. The
