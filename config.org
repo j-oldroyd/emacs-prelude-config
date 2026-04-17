@@ -1655,7 +1655,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
        (setq org-agenda-files '("~/org"
                                 "~/beorg"
                                 "~/beorg/projects"
-                                "~/GoogleDrive/wvwc-teaching"
+                                "~/GoogleDrive/org"
                                 "~/GoogleDrive/org/roam/daily/"))
        (setq org-default-notes-file
              (expand-file-name "~/beorg/inbox.org"))))
