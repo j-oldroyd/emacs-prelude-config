@@ -1,4 +1,4 @@
-# Created 2026-04-16 Thu 13:38
+# Created 2026-04-18 Sat 08:43
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1646,7 +1646,7 @@ the WSL settings require a symlink from the Windows Google Drive folder to
     (setq org-agenda-files '("~/org"
                              "~/beorg"
                              "~/beorg/projects"
-                             "~/GoogleDrive/wvwc-teaching"
+                             "~/GoogleDrive/org"
                              "~/GoogleDrive/org/roam/daily/"))
     (setq org-default-notes-file
           (expand-file-name "~/beorg/inbox.org"))))
@@ -1758,7 +1758,8 @@ repository.
 
     :custom
     ;; Configure TODO keyword states (options like "TODO(t)" or "DONE(d!)" are fine)
-    (org-todo-keywords '((sequence "TODO" "NEXT" "WAIT" "|" "DONE" "CNCL")))
+    (org-todo-keywords '((sequence "TODO(T)" "NEXT(N)" "WAIT(W)" "|"
+                                   "DONE(D)" "CNCL(C)")))
 
     ;; Map GTD semantic states to your keywords
     (org-gtd-keyword-mapping '((todo . "TODO")
