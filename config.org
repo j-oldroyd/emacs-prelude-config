@@ -1847,6 +1847,9 @@ repository.
                    "~/GoogleDrive/research/library-tight_frames-association_schemes.bib"
                    "~/GoogleDrive/research/library-tight_frames-algorithms.bib")))
 
+     (use-package bib-mode
+       :ensure t)
+
      (use-package org
        :custom
        (org-cite-global-bibliography bib-file)
