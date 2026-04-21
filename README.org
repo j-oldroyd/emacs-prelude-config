@@ -1,4 +1,4 @@
-# Created 2026-04-18 Sat 08:43
+# Created 2026-04-21 Tue 13:37
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1791,6 +1791,15 @@ repository.
      :map org-agenda-mode-map
      ("C-c ." . org-gtd-agenda-transient)))
 #+end_src
+As part of my task management, I also want to make use of [[https://taskjuggler.org/][TaskJuggler]] and Org
+Mode to create Gantt charts.  This is done by making use of
+[[https://github.com/h-oll/ox-taskjuggler][=ox-taskjuggler=]]. There is a tutorial [[https://orgmode.org/worg/org-tutorials/org-taskjuggler.html][here]] for integrating the two, but it's out
+of date as it relies on a version of =ox-taskjuggler= that is no longer
+supported by =org-contrib=.
+#+begin_src emacs-lisp :tangle "org-settings.el"
+  (add-to-list 'load-path "lisp/ox-taskjuggler/lisp")
+  (require 'ox-taskjuggler)
+#+end_src
 ** BibTeX
 The location of the bibliography file needs to be set. We can use the
 variable =bib-file= which is part of =bib-mode.el=. This might be used by
@@ -1834,6 +1843,9 @@ now, a decent workflow seems to be the following:
                 "~/GoogleDrive/research/library-time_scales.bib"
                 "~/GoogleDrive/research/library-tight_frames-association_schemes.bib"
                 "~/GoogleDrive/research/library-tight_frames-algorithms.bib")))
+
+  (use-package bib-mode
+    :ensure t)
 
   (use-package org
     :custom
