@@ -1690,7 +1690,8 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
 
    My basic organization for Org-roam is taken from [[https://jethrokuan.github.io/org-roam-guide/][here]].  Reference notes go
    into a =references/= directory, while notes containing my own ideas go into a
-   =main/= directory.
+   =main/= directory.  "Fleeting" notes are to be handled by Org-roam's daily
+   notes functionality.
    #+BEGIN_SRC emacs-lisp :tangle "org-settings.el"
      (use-package org-roam
        :ensure t
@@ -1728,22 +1729,37 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
                       (org-roam-graph--open (concat "file://///wsl$/Ubuntu" file)))))))
 
      ;; Org-roam templates
-     ;;; Notes template based on suggested citar config.
+     ;;; Notes template based on suggested citar config and Jethro Kuan's setup.
      (setq org-roam-capture-templates
-           '(("d" "default" plain
+           '(("m" "main" plain
               "%?"
-              :target
-              (file+head
-               "%<%Y%m%d%H%M%S>-${slug}.org"
-               "#+title: ${note-title}\n")
+              :if-new (file+head "main/${slug}.org"
+                                 "#+title: ${title}\n")
+              ;; :target
+              ;; (file+head
+              ;;  "%<%Y%m%d%H%M%S>-${slug}.org"
+              ;;  "#+title: ${note-title}\n")
               :unnarrowed t)
-             ("n" "reference note" plain
+             ("r" "reference note" plain
               "%?"
               :target
               (file+head
                "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
                "#+title: ${citar-citekey} (${citar-date}). ${note-title}.\n#+created: %U\n#+last_modified: %U\n\n* Main idea(s)\n* Key results\n* Questions")
+              :unnarrowed t)
+             ("a" "article" plain "%?"
+              :if-new
+              (file+head "articles/${title}.org" "#+title: ${title}\n#+filetags: :article:\n")
+              :immediate-finish t
               :unnarrowed t)))
+
+     ;; Org-roam dailies setup
+     (setq org-roam-dailies-directory "daily/")
+     (setq org-roam-dailies-capture-templates
+           '(("d" "default" entry
+              "* %?"
+              :target (file+head "%<%Y-%m-%d>.org"
+                                 "#+title: %<%Y-%m-%d>\n"))))
 
      (use-package org-noter
        :ensure t)
