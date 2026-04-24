@@ -1680,13 +1680,17 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
    #+END_SRC
 
 ** Note-taking
-   This config is adapted from the recommended config for [[https://github.com/org-roam/org-roam-bibtex][=org-roam=]]. The
+   This config is adapted from the recommended config for [[https://github.com/org-roam/org-roam-bibtex][Org-roam]]. The
    keybinds need to be modified slightly so as not to conflict with Prelude's
    =crux= keybinds. To avoid cursing like a sailor, note that =org-roam= is
    activated by visiting an appropriate node and then using
    ~org-roam-buffer-toggle~, which is bound to ~C-c m l~ below. This will
    activate another window that shows backlinks for a given node where the point
    is.
+
+   My basic organization for Org-roam is taken from [[https://jethrokuan.github.io/org-roam-guide/][here]].  Reference notes go
+   into a =references/= directory, while notes containing my own ideas go into a
+   =main/= directory.
    #+BEGIN_SRC emacs-lisp :tangle "org-settings.el"
      (use-package org-roam
        :ensure t
@@ -1733,7 +1737,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
                "%<%Y%m%d%H%M%S>-${slug}.org"
                "#+title: ${note-title}\n")
               :unnarrowed t)
-             ("n" "literature note" plain
+             ("n" "reference note" plain
               "%?"
               :target
               (file+head
@@ -1889,6 +1893,7 @@ supported by =org-contrib=.
        :diminish
        :custom
        (citar-bibliography org-cite-global-bibliography)
+       (citar-org-roam-subdir "references")
        :hook
        (LaTeX-mode . citar-capf-setup)
        (org-mode . citar-capf-setup))
