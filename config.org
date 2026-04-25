@@ -1828,7 +1828,7 @@ Mode to create Gantt charts.  This is done by making use of
 of date as it relies on a version of =ox-taskjuggler= that is no longer
 supported by =org-contrib=.
 #+begin_src emacs-lisp :tangle "org-settings.el"
-  (add-to-list 'load-path "lisp/ox-taskjuggler/lisp")
+  (add-to-list 'load-path "lisp/ox-taskjuggler/lisp/")
   (require 'ox-taskjuggler)
 #+end_src
 ** BibTeX
