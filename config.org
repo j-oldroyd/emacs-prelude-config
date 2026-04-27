@@ -1699,6 +1699,11 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
    into a =references/= directory, while notes containing my own ideas go into a
    =main/= directory.  "Fleeting" notes are to be handled by Org-roam's daily
    notes functionality.
+
+   Using Org-roam allows me to draw connections between different ideas (see the
+   concept of [[https://en.wikipedia.org/wiki/Zettelkasten][a /Zettelkasten/]]).  Although Org-roam provides its own graphing
+   functionality, the graph produced is rather minimal. Therefore, I also use
+   =org-roam-ui= to produce nicer graphs.
    #+BEGIN_SRC emacs-lisp :tangle "org-settings.el"
      (use-package org-roam
        :ensure t
@@ -1767,6 +1772,16 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
               "* %?"
               :target (file+head "%<%Y-%m-%d>.org"
                                  "#+title: %<%Y-%m-%d>\n"))))
+
+     ;; org-roam-ui defaults taken from GitHub
+     (use-package org-roam-ui
+       :ensure t
+       :after org-roam
+       :config
+       (setq org-roam-ui-sync-theme t
+             org-roam-ui-follow t
+             org-roam-ui-update-on-save t
+             org-roam-ui-open-on-start t))
 
      (use-package org-noter
        :ensure t)
