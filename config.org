@@ -863,7 +863,12 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
                             ("https://archlinux.org/feeds/packages/" archlinux packages)
                             ("https://aur.archlinux.org/rss" archlinux aur)
                             ("http://www.npr.org/rss/rss.php?id=1001" npr news)
-                            ("https://sachachua.com/blog/category/emacs-news/feed" emacs news))))
+                            ("https://sachachua.com/blog/category/emacs-news/feed" emacs news)
+                            ("https://derangedmathematician.substack.com/feed" math)
+                            ("https://erincarmody.substack.com/feed" math art substack)
+                            ("https://3blue1brown.substack.com/feed" math substack)
+                            ("https://davidbessis.substack.com/feed" math substack)
+                            ("https://www.infinitelymore.xyz/feed" math substack))))
    #+end_src
 * Enhancing modes for files
   The packages here improve/replace how emacs handles certain files.
