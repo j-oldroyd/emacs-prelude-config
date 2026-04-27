@@ -1117,8 +1117,11 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
                     `(,(regexp-quote mu4e-main-buffer-name)
                       display-buffer-same-window))
        ;; Run mu4e-mailing-list-info-refresh to update mailing lists after change
-       (add-to-list 'mu4e-user-mailing-lists '(:list-id "tex-live.tug.org"
-                                                        :name "TUG")))
+       (add-to-list 'mu4e-user-mailing-lists '(:list-id "tex-live.tug.org" :name "TUG"))
+       ;; Line numbers interfere with image displays in mu4e-view-mode, so
+       ;; turn them off
+       :hook (mu4e-view-mode . (lambda ()
+                            (display-line-numbers-mode -1))))
 
      ;; for sending mails
      (require 'smtpmail)
@@ -1159,33 +1162,32 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
          (setq mu4e-contexts
                `( ,(make-mu4e-context
                     :name "gmail"
-                    :match-func (lambda (msg) (when msg
-                                                (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+                    :match-func (lambda (msg)
+                                  (when msg
+                                    (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
                     :vars '((mu4e-trash-folder . "/gmail/[Gmail]/Trash")
                             (mu4e-refile-folder . "/gmail/[Gmail]/Archive")
                             (user-mail-address . "math.oldroyd@gmail.com")
-                            (mu4e-maildir-shortcuts . ( ("/gmail/INBOX" . ?i)))
-                            ))
+                            (mu4e-maildir-shortcuts . ( ("/gmail/INBOX" . ?i)))))
                   ,(make-mu4e-context
                     :name "wvwc-mail"
-                    :match-func (lambda (msg) (when msg
-                                                (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+                    :match-func (lambda (msg)
+                                  (when msg
+                                    (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
                     :vars '((mu4e-trash-folder . "/wvwc-mail/[wvwc-mail]/Trash")
                             (mu4e-refile-folder . "/wvwc-mail/[wvwc-mail]/Archive")
                             (user-mail-address . "oldroyd.j@wvwc.edu")
-                            (mu4e-maildir-shortcuts . ( ("/wvwc-mail/INBOX" . ?i)))
-                            ))
+                            (mu4e-maildir-shortcuts . ( ("/wvwc-mail/INBOX" . ?i)))))
                   ,(make-mu4e-context
                     :name "icloud"
-                    :match-func (lambda (msg) (when msg
-                                                (string-prefix-p "/icloud" (mu4e-message-field msg :maildir))))
-                    :vars '(
-                            (mu4e-trash-folder . "/icloud/Deleted Messages")
+                    :match-func (lambda (msg)
+                                  (when msg
+                                    (string-prefix-p "/icloud" (mu4e-message-field msg :maildir))))
+                    :vars '((mu4e-trash-folder . "/icloud/Deleted Messages")
                             (mu4e-refile-folder . "/icloud/Archive")
                             (user-mail-address . "j.oldroyd@icloud.com")
-                            (mu4e-maildir-shortcuts . ( ("/icloud/INBOX" . ?i)))
-                            ))
-                  )))
+                            (mu4e-maildir-shortcuts . ( ("/icloud/INBOX" . ?i))))))))
+
         ((eq system-type 'gnu/linux)
          (setq send-mail-function 'sendmail-send-it
                sendmail-program "/usr/bin/msmtp"
@@ -1195,8 +1197,9 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
          (setq mu4e-contexts
                `(,(make-mu4e-context
                    :name "wvwc-mail"
-                   :match-func (lambda (msg) (when msg
-                                               (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+                   :match-func (lambda (msg)
+                                 (when msg
+                                   (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
                    :vars '((mu4e-trash-folder . "/wvwc-mail/[Gmail]/Trash")
                            (mu4e-refile-folder . "/wvwc-mail/[Gmail]/Archive")
                            (user-mail-address . "oldroyd.j@wvwc.edu")
@@ -1204,14 +1207,13 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
                            ))
                  ,(make-mu4e-context
                    :name "math-gmail"
-                   :match-func (lambda (msg) (when msg
-                                               (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+                   :match-func (lambda (msg)
+                                 (when msg
+                                   (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
                    :vars '((mu4e-trash-folder . "/math-gmail/[Gmail]/Trash")
                            (mu4e-refile-folder . "/math-gmail/[Gmail]/Archive")
                            (user-mail-address . "math.oldroyd@gmail.com")
-                           (mu4e-maildir-shortcuts . ( ("/math-gmail/INBOX" . ?i)))
-                           ))))
-         )))
+                           (mu4e-maildir-shortcuts . ( ("/math-gmail/INBOX" . ?i))))))))))
 
      ;; Headers can be misaligned with columns in header view, so this code
      ;; from https://www.djcbsoftware.nl/code/mu/mu4e/Known-issues.html
@@ -1826,10 +1828,14 @@ As part of my task management, I also want to make use of [[https://taskjuggler.
 Mode to create Gantt charts.  This is done by making use of
 [[https://github.com/h-oll/ox-taskjuggler][=ox-taskjuggler=]]. There is a tutorial [[https://orgmode.org/worg/org-tutorials/org-taskjuggler.html][here]] for integrating the two, but it's out
 of date as it relies on a version of =ox-taskjuggler= that is no longer
-supported by =org-contrib=.
+supported by =org-contrib=.  For actually working with TaskJuggler files, I can
+use [[https://github.com/devrintalen/taskjuggler-mode.el/tree/main][=taskjuggler-mode=]].
 #+begin_src emacs-lisp :tangle "org-settings.el"
   (add-to-list 'load-path "lisp/ox-taskjuggler/lisp/")
   (require 'ox-taskjuggler)
+
+  (use-package taskjuggler-mode
+    :bind (("C-c C-c" . compile)))
 #+end_src
 ** BibTeX
    The location of the bibliography file needs to be set. We can use the
