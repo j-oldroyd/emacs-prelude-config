@@ -1851,7 +1851,7 @@ of date as it relies on a version of =ox-taskjuggler= that is no longer
 supported by =org-contrib=.  For actually working with TaskJuggler files, I can
 use [[https://github.com/devrintalen/taskjuggler-mode.el/tree/main][=taskjuggler-mode=]].
 #+begin_src emacs-lisp :tangle "org-settings.el"
-  (add-to-list 'load-path "lisp/ox-taskjuggler/lisp/")
+  (add-to-list 'load-path "~/.emacs.d/personal/lisp/ox-taskjuggler/")
   (require 'ox-taskjuggler)
 
   (use-package taskjuggler-mode
