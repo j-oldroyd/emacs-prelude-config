@@ -1108,7 +1108,7 @@ See [[https://www.masteringemacs.org/article/how-to-get-started-tree-sitter][Mas
       ((eq system-type 'darwin)
        (setq mu4e-path (expand-file-name "/opt/homebrew/share/emacs/site-lisp/mu/mu4e")))
       ((eq system-type 'gnu/linux)
-       (setq mu4e-path (expand-file-name "/usr/local/share/emacs/site-lisp/mu4e"))))
+       (setq mu4e-path (expand-file-name "/usr/share/emacs/site-lisp/mu4e"))))
 
      (use-package mu4e
        :load-path  mu4e-path
@@ -1851,7 +1851,7 @@ of date as it relies on a version of =ox-taskjuggler= that is no longer
 supported by =org-contrib=.  For actually working with TaskJuggler files, I can
 use [[https://github.com/devrintalen/taskjuggler-mode.el/tree/main][=taskjuggler-mode=]].
 #+begin_src emacs-lisp :tangle "org-settings.el"
-  (add-to-list 'load-path "~/.emacs.d/personal/lisp/ox-taskjuggler/")
+  (add-to-list 'load-path "~/.emacs.d/personal/lisp/ox-taskjuggler/lisp")
   (require 'ox-taskjuggler)
 
   (use-package taskjuggler-mode
