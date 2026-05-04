@@ -1853,11 +1853,11 @@ of date as it relies on a version of =ox-taskjuggler= that is no longer
 supported by =org-contrib=.  For actually working with TaskJuggler files, I can
 use [[https://github.com/devrintalen/taskjuggler-mode.el/tree/main][=taskjuggler-mode=]].
 #+begin_src emacs-lisp :tangle "org-settings.el"
-  (add-to-list 'load-path "~/.emacs.d/personal/lisp/ox-taskjuggler/lisp")
-  (require 'ox-taskjuggler)
-
   (use-package taskjuggler-mode
-    :bind (("C-c C-c" . compile)))
+    :defer t
+    :bind (("C-c C-c" . compile))
+    :vc (:url "https://github.com/devrintalen/taskjuggler-mode.el.git"
+              :rev :last-release))
 #+end_src
 ** BibTeX
    The location of the bibliography file needs to be set. We can use the
