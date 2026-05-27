@@ -1,4 +1,4 @@
-# Created 2026-05-04 Mon 13:13
+# Created 2026-05-27 Wed 17:07
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1842,11 +1842,11 @@ of date as it relies on a version of =ox-taskjuggler= that is no longer
 supported by =org-contrib=.  For actually working with TaskJuggler files, I can
 use [[https://github.com/devrintalen/taskjuggler-mode.el/tree/main][=taskjuggler-mode=]].
 #+begin_src emacs-lisp :tangle "org-settings.el"
-  (add-to-list 'load-path "~/.emacs.d/personal/lisp/ox-taskjuggler/lisp")
-  (require 'ox-taskjuggler)
-
   (use-package taskjuggler-mode
-    :bind (("C-c C-c" . compile)))
+    :defer t
+    :bind (("C-c C-c" . compile))
+    :vc (:url "https://github.com/devrintalen/taskjuggler-mode.el.git"
+              :rev :last-release))
 #+end_src
 ** BibTeX
 The location of the bibliography file needs to be set. We can use the
@@ -1878,8 +1878,7 @@ now, a decent workflow seems to be the following:
     :defer t
     :if (eq system-type 'darwin)
     :custom
-    (bib-file '("~/Google Drive/My Drive/research/library.bib"
-                "~/Documents/zotero/library.bib")))
+    (bib-file '("~/Google Drive/My Drive/research/My Library.bib")))
 
   (use-package bib-mode
     ;; I don't want to load this just yet.  Instead, I'll set
@@ -1908,8 +1907,7 @@ now, a decent workflow seems to be the following:
     :defer t
     :if (eq system-type 'darwin)
     :custom
-    (citar-library-paths '("~/Google Drive/My Drive/research"
-                           "~/Documents/zotero"))
+    (citar-library-paths '("~/Google Drive/My Drive/research"))
     (citar-notes-paths '("~/Google Drive/My Drive/research")))
 
   (use-package citar

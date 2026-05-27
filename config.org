@@ -1889,8 +1889,7 @@ use [[https://github.com/devrintalen/taskjuggler-mode.el/tree/main][=taskjuggler
        :defer t
        :if (eq system-type 'darwin)
        :custom
-       (bib-file '("~/Google Drive/My Drive/research/library.bib"
-                   "~/Documents/zotero/library.bib")))
+       (bib-file '("~/Google Drive/My Drive/research/My Library.bib")))
 
      (use-package bib-mode
        ;; I don't want to load this just yet.  Instead, I'll set
@@ -1919,8 +1918,7 @@ use [[https://github.com/devrintalen/taskjuggler-mode.el/tree/main][=taskjuggler
        :defer t
        :if (eq system-type 'darwin)
        :custom
-       (citar-library-paths '("~/Google Drive/My Drive/research"
-                              "~/Documents/zotero"))
+       (citar-library-paths '("~/Google Drive/My Drive/research"))
        (citar-notes-paths '("~/Google Drive/My Drive/research")))
 
      (use-package citar
