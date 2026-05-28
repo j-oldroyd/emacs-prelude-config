@@ -1,4 +1,4 @@
-# Created 2026-05-27 Wed 17:07
+# Created 2026-05-28 Thu 12:56
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1886,10 +1886,7 @@ now, a decent workflow seems to be the following:
     :defer t
     :if (eq system-type 'gnu/linux)
     :custom
-    (bib-file '("~/GoogleDrive/research/library.bib"
-                "~/GoogleDrive/research/library-time_scales.bib"
-                "~/GoogleDrive/research/library-tight_frames-association_schemes.bib"
-                "~/GoogleDrive/research/library-tight_frames-algorithms.bib")))
+    (bib-file '("~/GoogleDrive/research/My Library.bib")))
 
   (use-package bib-mode
     :ensure t)

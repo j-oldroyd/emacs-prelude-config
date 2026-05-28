@@ -1897,10 +1897,7 @@ use [[https://github.com/devrintalen/taskjuggler-mode.el/tree/main][=taskjuggler
        :defer t
        :if (eq system-type 'gnu/linux)
        :custom
-       (bib-file '("~/GoogleDrive/research/library.bib"
-                   "~/GoogleDrive/research/library-time_scales.bib"
-                   "~/GoogleDrive/research/library-tight_frames-association_schemes.bib"
-                   "~/GoogleDrive/research/library-tight_frames-algorithms.bib")))
+       (bib-file '("~/GoogleDrive/research/My Library.bib")))
 
      (use-package bib-mode
        :ensure t)
