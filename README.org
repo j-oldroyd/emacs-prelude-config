@@ -1,4 +1,4 @@
-# Created 2026-06-02 Tue 12:19
+# Created 2026-06-03 Wed 12:33
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1932,7 +1932,7 @@ now, a decent workflow seems to be the following:
     :ensure t
     :diminish
     :custom
-    (citar-org-roam-capture-template-key "n")
+    (citar-org-roam-capture-template-key "r")
     :after (org-roam citar)
     :config (citar-org-roam-mode))
 
