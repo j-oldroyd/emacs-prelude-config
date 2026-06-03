@@ -1944,7 +1944,7 @@ use [[https://github.com/devrintalen/taskjuggler-mode.el/tree/main][=taskjuggler
        :ensure t
        :diminish
        :custom
-       (citar-org-roam-capture-template-key "n")
+       (citar-org-roam-capture-template-key "r")
        :after (org-roam citar)
        :config (citar-org-roam-mode))
 
