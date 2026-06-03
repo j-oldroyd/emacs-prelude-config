@@ -1,4 +1,4 @@
-# Created 2026-06-03 Wed 15:48
+# Created 2026-06-03 Wed 16:04
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -926,7 +926,9 @@ Right now, I only need multiple LSPs for working with \( \LaTeX{} \) files
   ;; (setq lsp-tex-server 'digestif)
 
   ;; Make Emacs/digestif aware of TeX info paths.
-  (add-to-list 'Info-directory-list "/usr/local/texlive/2025/texmf-dist/doc/info")
+  (eval-after-load 'info
+    '(add-to-list 'Info-additional-directory-list
+                  "/usr/local/texlive/2025/texmf-dist/doc/info"))
 
   ;; Auto-activate ts-modes when available
   ;; (use-package treesit-auto
@@ -1886,10 +1888,7 @@ now, a decent workflow seems to be the following:
     :defer t
     :if (eq system-type 'gnu/linux)
     :custom
-    (bib-file '("~/GoogleDrive/research/library.bib"
-                "~/GoogleDrive/research/library-time_scales.bib"
-                "~/GoogleDrive/research/library-tight_frames-association_schemes.bib"
-                "~/GoogleDrive/research/library-tight_frames-algorithms.bib")))
+    (bib-file '("~/GoogleDrive/research/My Library.bib")))
 
   (use-package bib-mode
     :ensure t)
