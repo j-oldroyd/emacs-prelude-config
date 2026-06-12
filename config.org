@@ -1000,7 +1000,14 @@ good breakdown of this process.
                               (setq adaptive-wrap-extra-indent 2)))
               (LaTeX-mode . (lambda () (auto-fill-mode -1)))
               (LaTeX-mode . flyspell-mode)
-              (LaTeX-mode . turn-on-reftex)))
+              (LaTeX-mode . turn-on-reftex))
+       :custom
+       (reftex-plug-into-AUCTeX t)
+       (TeX-error-overview-open-after-TeX-run t)
+       (TeX-electric-math (cons "\\(" ""))
+       (cdlatex-use-dollar-to-ensure-math nil)
+       (TeX-open-quote "``")
+       (TeX-close-quote "''"))
 
      ;; LaTeX-mode settings
      ;; (add-hook 'LaTeX-mode-hook 'visual-line-mode)
@@ -1017,7 +1024,7 @@ good breakdown of this process.
      ;;             (setq sp-override-key-bindings '(("M-j" . avy-goto-char-timer)))
      ;;             (sp--update-override-key-bindings)))
 
-     (setq reftex-plug-into-AUCTeX t)
+     ;; (setq reftex-plug-into-AUCTeX t)
 
      ;; Enables rainbow-highlighters for LaTeX.
      ;; (add-hook 'LaTeX-mode-hook #'rainbow-delimiters-mode)
@@ -1029,17 +1036,17 @@ good breakdown of this process.
      (when (eq system-type 'darwin)
        (setq preview-gs-command "/usr/homebrew/bin/gs"))
 
-     ;; I want the error overview to appear whenever the document is compiled
-     (setq TeX-error-overview-open-after-TeX-run t)
+     ;; If I want the error overview to appear whenever the document is compiled
+     ;; (setq TeX-error-overview-open-after-TeX-run t)
 
      ;; Change inline math delimiters that AUCTeX and CDLaTeX
      ;; insert from $...$ to \(...\)
-     (setq TeX-electric-math (cons "\\(" ""))
-     (setq cdlatex-use-dollar-to-ensure-math nil)
+     ;; (setq TeX-electric-math (cons "\\(" ""))
+     ;; (setq cdlatex-use-dollar-to-ensure-math nil)
 
      ;; Reset TeX-open/close-quote from Prelude definitions
-     (setq TeX-open-quote "``")
-     (setq TeX-close-quote "''")
+     ;; (setq TeX-open-quote "``")
+     ;; (setq TeX-close-quote "''")
 
      ;; latexmk settings
      ;; Use Skim as viewer, enable source <-> PDF sync

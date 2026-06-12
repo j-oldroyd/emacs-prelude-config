@@ -1,4 +1,4 @@
-# Created 2026-06-12 Fri 18:49
+# Created 2026-06-12 Fri 19:14
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -990,11 +990,19 @@ AUCTeX, which is included with Prelude modules.
   (use-package tex-site
     :defer t
     :hook ((LaTeX-mode . visual-line-mode)
-           (LaTeX-mode . adaptive-wrap-prefix-mode)
+           (LaTeX-mode . (lambda ()
+                           (adaptive-wrap-prefix-mode t)
+                           (setq adaptive-wrap-extra-indent 2)))
            (LaTeX-mode . (lambda () (auto-fill-mode -1)))
            (LaTeX-mode . flyspell-mode)
            (LaTeX-mode . turn-on-reftex))
-    :config (adaptive-wrap-extra-indent 2))
+    :custom
+    (reftex-plug-into-AUCTeX t)
+    (TeX-error-overview-open-after-TeX-run t)
+    (TeX-electric-math (cons "\\(" ""))
+    (cdlatex-use-dollar-to-ensure-math nil)
+    (TeX-open-quote "``")
+    (TeX-close-quote "''"))
 
   ;; LaTeX-mode settings
   ;; (add-hook 'LaTeX-mode-hook 'visual-line-mode)
@@ -1011,7 +1019,7 @@ AUCTeX, which is included with Prelude modules.
   ;;             (setq sp-override-key-bindings '(("M-j" . avy-goto-char-timer)))
   ;;             (sp--update-override-key-bindings)))
 
-  (setq reftex-plug-into-AUCTeX t)
+  ;; (setq reftex-plug-into-AUCTeX t)
 
   ;; Enables rainbow-highlighters for LaTeX.
   ;; (add-hook 'LaTeX-mode-hook #'rainbow-delimiters-mode)
@@ -1023,17 +1031,17 @@ AUCTeX, which is included with Prelude modules.
   (when (eq system-type 'darwin)
     (setq preview-gs-command "/usr/homebrew/bin/gs"))
 
-  ;; I want the error overview to appear whenever the document is compiled
-  (setq TeX-error-overview-open-after-TeX-run t)
+  ;; If I want the error overview to appear whenever the document is compiled
+  ;; (setq TeX-error-overview-open-after-TeX-run t)
 
   ;; Change inline math delimiters that AUCTeX and CDLaTeX
   ;; insert from $...$ to \(...\)
-  (setq TeX-electric-math (cons "\\(" ""))
-  (setq cdlatex-use-dollar-to-ensure-math nil)
+  ;; (setq TeX-electric-math (cons "\\(" ""))
+  ;; (setq cdlatex-use-dollar-to-ensure-math nil)
 
   ;; Reset TeX-open/close-quote from Prelude definitions
-  (setq TeX-open-quote "``")
-  (setq TeX-close-quote "''")
+  ;; (setq TeX-open-quote "``")
+  ;; (setq TeX-close-quote "''")
 
   ;; latexmk settings
   ;; Use Skim as viewer, enable source <-> PDF sync
