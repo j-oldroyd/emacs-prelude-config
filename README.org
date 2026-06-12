@@ -1,4 +1,4 @@
-# Created 2026-06-12 Fri 19:14
+# Created 2026-06-12 Fri 19:24
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -176,7 +176,9 @@ commands.  I'm also including =casual= for its menus, which are based on
 
   ;; Toggle whitespace visibility
   (use-package whitespace
-    :diminish)
+    :diminish
+    :custom
+    (whitespace-style '(face tabs empty trailing)))
 
   ;; Default to fullscreen. Taken from
   ;; https://stackoverflow.com/questions/78245398/how-can-i-make-emacsclient-open-in-native-fullscreen-every-time-i-launch-it-fr

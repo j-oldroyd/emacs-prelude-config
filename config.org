@@ -175,7 +175,9 @@ good breakdown of this process.
 
      ;; Toggle whitespace visibility
      (use-package whitespace
-       :diminish)
+       :diminish
+       :custom
+       (whitespace-style '(face tabs empty trailing)))
 
      ;; Default to fullscreen. Taken from
      ;; https://stackoverflow.com/questions/78245398/how-can-i-make-emacsclient-open-in-native-fullscreen-every-time-i-launch-it-fr
