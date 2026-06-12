@@ -992,14 +992,15 @@ good breakdown of this process.
    These are settings for working with LaTeX documents in emacs. This requires
    AUCTeX, which is included with Prelude modules.
    #+BEGIN_SRC emacs-lisp :tangle "latex-settings.el"
-     (use-package tex
-       :ensure t
+     (use-package tex-site
+       :defer t
        :hook ((LaTeX-mode . visual-line-mode)
-              (LaTeX-mode . adaptive-wrap-prefix-mode)
+              (LaTeX-mode . (lambda ()
+                              (adaptive-wrap-prefix-mode t)
+                              (setq adaptive-wrap-extra-indent 2)))
               (LaTeX-mode . (lambda () (auto-fill-mode -1)))
               (LaTeX-mode . flyspell-mode)
-              (LaTeX-mode . turn-on-reftex))
-       :config (adaptive-wrap-extra-indent 2))
+              (LaTeX-mode . turn-on-reftex)))
 
      ;; LaTeX-mode settings
      ;; (add-hook 'LaTeX-mode-hook 'visual-line-mode)
