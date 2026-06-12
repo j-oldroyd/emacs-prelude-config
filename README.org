@@ -1,4 +1,4 @@
-# Created 2026-06-03 Wed 16:04
+# Created 2026-06-12 Fri 18:28
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -88,15 +88,7 @@ General settings for =emacs=.
    (use-package emacs
     :if (eq system-type 'darwin)
     :init
-    (setq trash-directory "~/.Trash")
-    :config
-    ;; On macOS, running emacsclient -nw causes the theme to load incorrectly.  See
-    ;; https://www.reddit.com/r/emacs/comments/1jie2cc/colors_not_loading_properly_when_launched_from/
-    (when (server-running-p)
-      (add-hook 'after-make-frame-functions
-                (lambda (frame)
-                  (with-selected-frame frame
-                    (load-theme 'modus-vivendi-tinted t))))))
+    (setq trash-directory "~/.Trash"))
 
   ;; Windows-specific config
   (use-package emacs
@@ -107,9 +99,12 @@ General settings for =emacs=.
   ;; The following are taken from Prot's basic config at
   ;; https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
   (use-package modus-themes
+    :ensure t)
+
+  (use-package ef-themes
     :ensure t
     :config
-    (load-theme 'modus-vivendi-tinted :no-confirm-loading))
+    (load-theme 'ef-light :no-confirm-loading))
 
   ;; Prelude configuration
   (use-package prelude-custom
@@ -172,6 +167,12 @@ commands.  I'm also including =casual= for its menus, which are based on
   (global-hl-line-mode 1)
   (set-face-foreground 'highlight nil)
 
+  ;; Enable adaptive-wrap to indent wrapped lines in modes that do not use auto-fill-mode
+  (use-package adaptive-wrap
+    :ensure t
+    :config
+    (adaptive-wrap-extra-indent 2))
+
   ;; Prelude hides the toolbar, so turn it back on with code below.
   ;; (tool-bar-mode 1)
 
@@ -195,14 +196,13 @@ commands.  I'm also including =casual= for its menus, which are based on
     (which-key-mode))
 
   ;;: Avy bindings
-  (with-eval-after-load 'smartparens
-    (setq sp-override-key-bindings '(("M-j" . avy-goto-char-timer)))
-    (sp--update-override-key-bindings))
+  ;; (with-eval-after-load 'smartparens
+  ;;   (setq sp-override-key-bindings '(("M-j" . avy-goto-char-timer)))
+  ;;   (sp--update-override-key-bindings))
 
   (use-package avy
     :ensure t
-    :bind (("M-j"   .   avy-goto-char-timer)
-           :map isearch-mode-map
+    :bind (:map isearch-mode-map
            ("M-j"     . avy-isearch)))
 
   ;;: Casual Suite
@@ -213,6 +213,7 @@ commands.  I'm also including =casual= for its menus, which are based on
   ;; downloaded from MELPA.
   (use-package casual
     :ensure t)
+
   (require 'casual-agenda)
   (keymap-set org-agenda-mode-map "C-o" #'casual-agenda-tmenu)
   (keymap-set org-agenda-mode-map "M-j" #'org-agenda-clock-goto) ; optional
@@ -990,15 +991,19 @@ AUCTeX, which is included with Prelude modules.
 #+begin_src emacs-lisp :tangle "latex-settings.el"
   ;; LaTeX-mode settings
   (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+  (add-hook 'LaTeX-mode-hook 'adaptive-wrap-prefix-mode)
   (add-hook 'LaTeX-mode-hook 'flyspell-mode)
   (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+  (add-hook 'LaTeX-mode-hook (lambda ()
+                               (auto-fill-mode -1)))
 
   ;; Smartparens uses M-j for join sexp, but I want to use that for Avy
   ;; instead.
-  (add-hook 'LaTeX-mode-hook
-            (lambda ()
-              (setq sp-override-key-bindings '(("M-j" . avy-goto-char-timer)))
-              (sp--update-override-key-bindings)))
+  ;; (add-hook 'LaTeX-mode-hook
+  ;;           (lambda ()
+  ;;             (setq sp-override-key-bindings '(("M-j" . avy-goto-char-timer)))
+  ;;             (sp--update-override-key-bindings)))
+
   (setq reftex-plug-into-AUCTeX t)
 
   ;; Enables rainbow-highlighters for LaTeX.
@@ -1066,6 +1071,7 @@ AUCTeX, which is included with Prelude modules.
   ;; sage-shell-sagetex:tex-master-maybe.
   (advice-add 'sage-shell-sagetex:tex-master-maybe
               :around #'my-sage-shell-sagetex:tex-master-maybe)
+
   (defun my-sage-shell-sagetex:tex-master-maybe (sage-shell-sagetex:tex-master-maybe f &optional nondir)
     (let* ((b (get-file-buffer f))
            (tm (when (and (bufferp b)
@@ -1087,8 +1093,8 @@ argument. In particular, we replace ~sage_tex_load~.  =CDLaTeX= also allows
 for extensive customizations and abbreviations.
 #+begin_src emacs-lisp :tangle "latex-settings.el"
   (add-hook 'LaTeX-mode-hook #'cdlatex-mode)
-  (setq cdlatex-math-symbol-alist
-        '((?0 ("\\emptyset" "\\varnothing"))))
+
+  (setq cdlatex-math-symbol-alist '((?0 ("\\emptyset" "\\varnothing"))))
 #+end_src
 ** =mu4e=
 Mail configuration with =emacs=, =mu= and =mu4e=.  Currently in the process

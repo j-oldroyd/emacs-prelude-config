@@ -98,9 +98,12 @@ good breakdown of this process.
      ;; The following are taken from Prot's basic config at
      ;; https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
      (use-package modus-themes
+       :ensure t)
+
+     (use-package ef-themes
        :ensure t
        :config
-       (load-theme 'modus-vivendi-tinted :no-confirm-loading))
+       (load-theme 'ef-light :no-confirm-loading))
 
      ;; Prelude configuration
      (use-package prelude-custom
