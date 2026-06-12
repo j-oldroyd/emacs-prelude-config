@@ -164,7 +164,10 @@ good breakdown of this process.
      (set-face-foreground 'highlight nil)
 
      ;; Enable adaptive-wrap to indent wrapped lines in modes that do not use auto-fill-mode
-     (use-package adaptive-wrap)
+     (use-package adaptive-wrap
+       :ensure t
+       :config
+       (adaptive-wrap-extra-indent 2))
 
      ;; Prelude hides the toolbar, so turn it back on with code below.
      ;; (tool-bar-mode 1)
@@ -990,6 +993,7 @@ good breakdown of this process.
    #+BEGIN_SRC emacs-lisp :tangle "latex-settings.el"
      ;; LaTeX-mode settings
      (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+     (add-hook 'LaTeX-mode-hook 'adaptive-wrap-prefix-mode)
      (add-hook 'LaTeX-mode-hook 'flyspell-mode)
      (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
      (add-hook 'LaTeX-mode-hook (lambda ()
