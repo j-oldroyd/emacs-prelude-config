@@ -186,14 +186,13 @@ good breakdown of this process.
        (which-key-mode))
 
      ;;: Avy bindings
-     (with-eval-after-load 'smartparens
-       (setq sp-override-key-bindings '(("M-j" . avy-goto-char-timer)))
-       (sp--update-override-key-bindings))
+     ;; (with-eval-after-load 'smartparens
+     ;;   (setq sp-override-key-bindings '(("M-j" . avy-goto-char-timer)))
+     ;;   (sp--update-override-key-bindings))
 
      (use-package avy
        :ensure t
-       :bind (("M-j"   .   avy-goto-char-timer)
-              :map isearch-mode-map
+       :bind (:map isearch-mode-map
               ("M-j"     . avy-isearch)))
 
      ;;: Casual Suite
@@ -989,13 +988,16 @@ good breakdown of this process.
      (add-hook 'LaTeX-mode-hook 'visual-line-mode)
      (add-hook 'LaTeX-mode-hook 'flyspell-mode)
      (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+     (add-hook 'LaTeX-mode-hook (lambda ()
+                                  (auto-fill-mode -1)))
 
      ;; Smartparens uses M-j for join sexp, but I want to use that for Avy
      ;; instead.
-     (add-hook 'LaTeX-mode-hook
-               (lambda ()
-                 (setq sp-override-key-bindings '(("M-j" . avy-goto-char-timer)))
-                 (sp--update-override-key-bindings)))
+     ;; (add-hook 'LaTeX-mode-hook
+     ;;           (lambda ()
+     ;;             (setq sp-override-key-bindings '(("M-j" . avy-goto-char-timer)))
+     ;;             (sp--update-override-key-bindings)))
+
      (setq reftex-plug-into-AUCTeX t)
 
      ;; Enables rainbow-highlighters for LaTeX.
@@ -1063,6 +1065,7 @@ good breakdown of this process.
      ;; sage-shell-sagetex:tex-master-maybe.
      (advice-add 'sage-shell-sagetex:tex-master-maybe
                  :around #'my-sage-shell-sagetex:tex-master-maybe)
+
      (defun my-sage-shell-sagetex:tex-master-maybe (sage-shell-sagetex:tex-master-maybe f &optional nondir)
        (let* ((b (get-file-buffer f))
               (tm (when (and (bufferp b)
@@ -1084,8 +1087,8 @@ good breakdown of this process.
    for extensive customizations and abbreviations.
    #+begin_src emacs-lisp :tangle "latex-settings.el"
      (add-hook 'LaTeX-mode-hook #'cdlatex-mode)
-     (setq cdlatex-math-symbol-alist
-           '((?0 ("\\emptyset" "\\varnothing"))))
+
+     (setq cdlatex-math-symbol-alist '((?0 ("\\emptyset" "\\varnothing"))))
    #+end_src
 
 ** =mu4e=
