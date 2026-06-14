@@ -1,4 +1,4 @@
-# Created 2026-06-12 Fri 19:24
+# Created 2026-06-14 Sun 14:01
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1947,6 +1947,7 @@ now, a decent workflow seems to be the following:
     :custom
     (citar-bibliography org-cite-global-bibliography)
     (citar-org-roam-subdir "references")
+    (bibtex-dialect "biblatex")
     :hook
     (LaTeX-mode . citar-capf-setup)
     (org-mode . citar-capf-setup))

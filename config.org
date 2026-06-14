@@ -1958,6 +1958,7 @@ use [[https://github.com/devrintalen/taskjuggler-mode.el/tree/main][=taskjuggler
        :custom
        (citar-bibliography org-cite-global-bibliography)
        (citar-org-roam-subdir "references")
+       (bibtex-dialect "biblatex")
        :hook
        (LaTeX-mode . citar-capf-setup)
        (org-mode . citar-capf-setup))
