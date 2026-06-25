@@ -50,7 +50,7 @@ good breakdown of this process.
 
 * General settings and packages
 ** =Emacs= settings
-   General settings for =emacs=.
+General settings for =emacs=.
    #+begin_src emacs-lisp :tangle "general-settings.el"
      ;; On Windows, commands like rgrep appear to use the wrong "find" command:
      ;; https://stackoverflow.com/questions/3918341/find-parameter-format-not-correct
@@ -84,10 +84,12 @@ good breakdown of this process.
                                     (cl-remove-if-not #'stringp kill-ring))))))
 
      ;; macOS-specific config
-      (use-package emacs
+     (use-package emacs
        :if (eq system-type 'darwin)
        :init
-       (setq trash-directory "~/.Trash"))
+       (setq trash-directory "~/.Trash")
+       :custom
+       (server-start))
 
      ;; Windows-specific config
      (use-package emacs

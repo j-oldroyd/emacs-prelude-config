@@ -1,4 +1,4 @@
-# Created 2026-06-14 Sun 14:01
+# Created 2026-06-15 Mon 18:29
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -85,10 +85,12 @@ General settings for =emacs=.
                                  (cl-remove-if-not #'stringp kill-ring))))))
 
   ;; macOS-specific config
-   (use-package emacs
+  (use-package emacs
     :if (eq system-type 'darwin)
     :init
-    (setq trash-directory "~/.Trash"))
+    (setq trash-directory "~/.Trash")
+    :custom
+    (server-start))
 
   ;; Windows-specific config
   (use-package emacs
