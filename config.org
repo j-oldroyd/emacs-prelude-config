@@ -890,7 +890,9 @@ General settings for =emacs=.
        (setq read-process-output-max (* 4 1024 1024)) ; 4MB
        :hook
        (latex-mode . eglot-ensure)
-       (LaTeX-mode . eglot-ensure))
+       (LaTeX-mode . eglot-ensure)
+       (python-mode . eglot-ensure)
+       (python-ts-mode . eglot-ensure))
 
      ;; This assumes that a "global" venv is being used by the system (as
      ;; pip doesn't want to install packages system-wide anymore).  I
@@ -1369,33 +1371,24 @@ General settings for =emacs=.
      ;;                       (display-buffer (current-buffer))))))))))
    #+end_src
 ** Python
-   Settings for Python programming.  Virtual environments are handled using
-   =pyvenv= (the Emacs package) in conjunction with =pyenv= (the Python
-   package).  The Python configuration is adapted from the configuration located
-   [[https://emacs.stackexchange.com/questions/59905/how-can-i-start-ipython-from-emacs][here]].  Note that using the =IPython= shell causes an issue with the =ef-owl=
-   theme as errors are highlighted using =ansiyellow= which is almost unreadable
-   against the background.  This can be dealt with by adjusting =IPython= itself
-   as described [[https://emacs.stackexchange.com/questions/76652/overlay-makes-text-unreadable-where-does-it-come-from-overlay-face-is-undef][here]], but the jist is that we need to alter the ~bg:ansiyellow~
-   setting in =core/ultrab.py=.
+   Settings for Python programming.  Virtual environments are handled using a
+   combination of the following tools:
+   1. [[https://github.com/pyenv/pyenv][=pyenv=]] for global handling of Python virtual environments.
+   2. [[https://direnv.net/][=direnv=]] for managing activation of virtual environments on entering
+      directories via =.envrc= files.
+   3. [[https://github.com/purcell/envrc][=envrc.el=]] for integrating =.envrc= files with Emacs.
    #+begin_src emacs-lisp :tangle "python-settings.el"
+     (use-package envrc
+       :hook
+       (after-init . envrc-global-mode))
+
      (use-package python
        :ensure nil
        :mode
-       ("\\.py\\'" . python-mode)
+       ("\\.py\\'" . python-ts-mode)
 
        :init
-       (setq-default indent-tabs-mode nil)
-
-       :hook
-       ((python-mode . smartparens-mode)
-        (python-mode . company-mode)
-        (python-mode . flycheck-mode)
-        (inferior-python-mode . smartparens-mode))
-
-       :config
-       (setq python-indent-offset 4
-             python-indent-guess-indent-offset-verbose nil
-             python-shell-interpreter "python"))
+       (setq-default indent-tabs-mode nil))
    #+end_src
 ** =hledger=
    =hledger= is a plaintext accounting tool that is designed to be run from the
