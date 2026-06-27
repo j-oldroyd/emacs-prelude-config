@@ -894,6 +894,10 @@ General settings for =emacs=.
        (python-mode . eglot-ensure)
        (python-ts-mode . eglot-ensure))
 
+     (with-eval-after-load 'eglot
+       (add-to-list 'eglot-server-programs
+                    '(python-ts-mode . ("pylsp"))))
+
      ;; This assumes that a "global" venv is being used by the system (as
      ;; pip doesn't want to install packages system-wide anymore).  I
      ;; currently use pyenv and pyenv-virtualenv to manage Python versions
@@ -1384,6 +1388,9 @@ General settings for =emacs=.
 
      (use-package python
        :ensure nil
+       :custom
+       (python-shell-interpreter "ipython3")
+       (python-shell-interpreter-args "-i --simple-prompt")
        :mode
        ("\\.py\\'" . python-ts-mode)
 
