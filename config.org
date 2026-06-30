@@ -1989,7 +1989,10 @@ use [[https://github.com/devrintalen/taskjuggler-mode.el/tree/main][=taskjuggler
        :defer t)
 
      (org-babel-do-load-languages
-      'org-babel-load-languages '((octave . t) (gnuplot . t)))
+      'org-babel-load-languages '((octave . t)
+                                  (gnuplot . t)
+                                  (python . t)
+                                  (latex . t)))
    #+end_src
 
 *** =ox-hugo=

@@ -1,4 +1,4 @@
-# Created 2026-06-24 Wed 21:56
+# Created 2026-06-30 Tue 18:43
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -889,6 +889,10 @@ Right now, I only need multiple LSPs for working with \( \LaTeX{} \) files
     (python-mode . eglot-ensure)
     (python-ts-mode . eglot-ensure))
 
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs
+                 '(python-ts-mode . ("pylsp"))))
+
   ;; This assumes that a "global" venv is being used by the system (as
   ;; pip doesn't want to install packages system-wide anymore).  I
   ;; currently use pyenv and pyenv-virtualenv to manage Python versions
@@ -1378,6 +1382,9 @@ combination of the following tools:
 
   (use-package python
     :ensure nil
+    :custom
+    (python-shell-interpreter "ipython3")
+    (python-shell-interpreter-args "-i --simple-prompt")
     :mode
     ("\\.py\\'" . python-ts-mode)
 
@@ -1970,7 +1977,10 @@ We need to configure =org-babel= for evaluation of ~SRC~ blocks in Org mode.
     :defer t)
 
   (org-babel-do-load-languages
-   'org-babel-load-languages '((octave . t) (gnuplot . t)))
+   'org-babel-load-languages '((octave . t)
+                               (gnuplot . t)
+                               (python . t)
+                               (latex . t)))
 #+end_src
 *** =ox-hugo=
 We can use =ox-hugo= to quickly generate and preview websites created using
