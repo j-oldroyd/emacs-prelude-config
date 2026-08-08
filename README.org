@@ -1,4 +1,4 @@
-# Created 2026-08-07 Fri 20:13
+# Created 2026-08-07 Fri 20:41
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -658,10 +658,13 @@ config on GitHub.
     ;; package.
     (marginalia-mode))
 
-  ;; Flyspell uses "C-." and "C-;", but I want these for Embark. I can
-  ;; use "C-M-i" instead for flyspell.
-  (unbind-key "C-." flyspell-mode-map)
-  (unbind-key "C-;" flyspell-mode-map)
+  ;; Flyspell uses "C-.", but I want this for Embark. I can use "C-M-i"
+  ;; instead for flyspell.
+
+  (use-package flyspell
+    :bind
+    (:map flyspell-mode-map
+          ("C-." . nil)))
 
   (use-package embark
     :ensure t

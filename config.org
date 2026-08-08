@@ -659,10 +659,13 @@ General settings for =emacs=.
        ;; package.
        (marginalia-mode))
 
-     ;; Flyspell uses "C-." and "C-;", but I want these for Embark. I can
-     ;; use "C-M-i" instead for flyspell.
-     (unbind-key "C-." flyspell-mode-map)
-     (unbind-key "C-;" flyspell-mode-map)
+     ;; Flyspell uses "C-.", but I want this for Embark. I can use "C-M-i"
+     ;; instead for flyspell.
+
+     (use-package flyspell
+       :bind
+       (:map flyspell-mode-map
+             ("C-." . nil)))
 
      (use-package embark
        :ensure t
