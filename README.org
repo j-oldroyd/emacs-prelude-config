@@ -942,7 +942,7 @@ Right now, I only need multiple LSPs for working with \( \LaTeX{} \) files
   ;; Make Emacs/digestif aware of TeX info paths.
   (eval-after-load 'info
     '(add-to-list 'Info-additional-directory-list
-                  "/usr/local/texlive/2025/texmf-dist/doc/info"))
+                  "/usr/local/texlive/2026/texmf-dist/doc/info"))
 
   ;; Auto-activate ts-modes when available
   ;; (use-package treesit-auto
