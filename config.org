@@ -1794,7 +1794,7 @@ General settings for =emacs=.
               :target
               (file+head
                "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
-               "#+title: ${citar-citekey} (${citar-date}). ${note-title}.\n#+created: %U\n#+last_modified: %U\n\n* Main idea(s)\n* Key results\n* Questions")
+               "#+title: ${citar-citekey} (${citar-date}). ${note-title}.\n#+created: %U\n#+last_modified: %U\n\n* Main idea(s) and keywords\n Key definition(s)\n* Key results\n* Questions and follow-ups")
               :unnarrowed t)
              ("a" "article" plain "%?"
               :if-new
