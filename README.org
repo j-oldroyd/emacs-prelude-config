@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Created 2026-07-01 Wed 10:36
+=======
+# Created 2026-08-13 Thu 16:55
+>>>>>>> origin/main
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -658,6 +662,14 @@ config on GitHub.
     ;; package.
     (marginalia-mode))
 
+  ;; Flyspell uses "C-.", but I want this for Embark. I can use "C-M-i"
+  ;; instead for flyspell.
+
+  (use-package flyspell
+    :bind
+    (:map flyspell-mode-map
+          ("C-." . nil)))
+
   (use-package embark
     :ensure t
 
@@ -937,7 +949,7 @@ Right now, I only need multiple LSPs for working with \( \LaTeX{} \) files
   ;; Make Emacs/digestif aware of TeX info paths.
   (eval-after-load 'info
     '(add-to-list 'Info-additional-directory-list
-                  "/usr/local/texlive/2025/texmf-dist/doc/info"))
+                  "/usr/local/texlive/2026/texmf-dist/doc/info"))
 
   ;; Auto-activate ts-modes when available
   ;; (use-package treesit-auto
@@ -1383,7 +1395,7 @@ combination of the following tools:
   (use-package python
     :ensure nil
     :custom
-    (python-shell-interpreter "ipython3")
+    (python-shell-interpreter "ipython")
     (python-shell-interpreter-args "-i --simple-prompt")
     :mode
     ("\\.py\\'" . python-ts-mode)
@@ -1776,7 +1788,7 @@ functionality, the graph produced is rather minimal. Therefore, I also use
            :target
            (file+head
             "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
-            "#+title: ${citar-citekey} (${citar-date}). ${note-title}.\n#+created: %U\n#+last_modified: %U\n\n* Main idea(s)\n* Key results\n* Questions")
+            "#+title: ${citar-citekey} (${citar-date}). ${note-title}.\n#+created: %U\n#+last_modified: %U\n\n* Main idea(s) and keywords\n Key definition(s)\n* Key results\n* Questions and follow-ups")
            :unnarrowed t)
           ("a" "article" plain "%?"
            :if-new
@@ -1968,6 +1980,11 @@ now, a decent workflow seems to be the following:
     :after (citar embark)
     :no-require
     :config (citar-embark-mode))
+
+  ;; The code below allows me to use Citar and org-cite with Zotero styles.
+  ;; Taken from: https://www.reddit.com/r/orgmode/comments/umqu4o/comment/i83m6xk/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+  (setopt org-cite-export-processors '((t csl)))
+  (setopt org-cite-csl-styles-dir "~/Zotero/styles")
 #+end_src
 ** =org-babel= settings
 We need to configure =org-babel= for evaluation of ~SRC~ blocks in Org mode.

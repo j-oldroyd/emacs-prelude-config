@@ -659,6 +659,14 @@ General settings for =emacs=.
        ;; package.
        (marginalia-mode))
 
+     ;; Flyspell uses "C-.", but I want this for Embark. I can use "C-M-i"
+     ;; instead for flyspell.
+
+     (use-package flyspell
+       :bind
+       (:map flyspell-mode-map
+             ("C-." . nil)))
+
      (use-package embark
        :ensure t
 
@@ -942,7 +950,7 @@ General settings for =emacs=.
      ;; Make Emacs/digestif aware of TeX info paths.
      (eval-after-load 'info
        '(add-to-list 'Info-additional-directory-list
-                     "/usr/local/texlive/2025/texmf-dist/doc/info"))
+                     "/usr/local/texlive/2026/texmf-dist/doc/info"))
 
      ;; Auto-activate ts-modes when available
      ;; (use-package treesit-auto
@@ -1402,7 +1410,7 @@ General settings for =emacs=.
      (use-package python
        :ensure nil
        :custom
-       (python-shell-interpreter "ipython3")
+       (python-shell-interpreter "ipython")
        (python-shell-interpreter-args "-i --simple-prompt")
        :mode
        ("\\.py\\'" . python-ts-mode)
@@ -1799,7 +1807,7 @@ General settings for =emacs=.
               :target
               (file+head
                "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
-               "#+title: ${citar-citekey} (${citar-date}). ${note-title}.\n#+created: %U\n#+last_modified: %U\n\n* Main idea(s)\n* Key results\n* Questions")
+               "#+title: ${citar-citekey} (${citar-date}). ${note-title}.\n#+created: %U\n#+last_modified: %U\n\n* Main idea(s) and keywords\n Key definition(s)\n* Key results\n* Questions and follow-ups")
               :unnarrowed t)
              ("a" "article" plain "%?"
               :if-new
@@ -1992,6 +2000,11 @@ use [[https://github.com/devrintalen/taskjuggler-mode.el/tree/main][=taskjuggler
        :after (citar embark)
        :no-require
        :config (citar-embark-mode))
+
+     ;; The code below allows me to use Citar and org-cite with Zotero styles.
+     ;; Taken from: https://www.reddit.com/r/orgmode/comments/umqu4o/comment/i83m6xk/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+     (setopt org-cite-export-processors '((t csl)))
+     (setopt org-cite-csl-styles-dir "~/Zotero/styles")
    #+end_src
 
 ** =org-babel= settings
