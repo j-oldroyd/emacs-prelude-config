@@ -1147,6 +1147,7 @@ General settings for =emacs=.
 
      (use-package mu4e
        :load-path  mu4e-path
+       :vc t ;; adds symlink to elpa dir
        :bind (("C-c M" . mu4e))
        :config
        ;; mu4e likes to open in full frame, so... don't do that
@@ -1162,6 +1163,12 @@ General settings for =emacs=.
        ;; turn them off
        :hook (mu4e-view-mode . (lambda ()
                             (display-line-numbers-mode -1))))
+
+     ;; Nice looking minor mode for nano-mu4e
+     (use-package nano-mu4e
+       :defer t
+       :vc (:url "https://github.com/rougier/nano-mu4e.git"
+                 :rev :newest))
 
      ;; for sending mails
      (require 'smtpmail)
@@ -1186,6 +1193,12 @@ General settings for =emacs=.
 
      ;; Prevent line breaks in emails.  This can look weird on mobile devices.
      (setq mu4e-compose-format-flowed t)
+
+     ;; Enable message tagging
+     (add-to-list 'mu4e-headers-actions
+                  '("Tag message" . mu4e-action-retag-message))
+     (add-to-list 'mu4e-view-actions
+                  '("Tag message" . mu4e-action-retag-message))
    #+end_src
    We also need to configure =mu4e= for multiple accounts. This configuration is
    adapted from [[https://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and/#configuring-mu4e][this blog post]]. It looks like we need to set ~tls_starttls = on~
