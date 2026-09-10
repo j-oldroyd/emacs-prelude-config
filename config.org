@@ -1645,7 +1645,21 @@ General settings for =emacs=.
                     ("M-S-<up>" . org-table-kill-row)
                     ("M-S-<down>" . org-table-insert-row)))
    #+end_src
-
+** \( \LaTeX{} \) export settings
+   These settings provide new options for loading classes in Org Mode.
+   #+begin_src emacs-lisp :tangle "org-settings.el"
+     (add-to-list 'org-latex-classes
+                  '("wvwcslides"
+                    "\\documentclass{wvwcslides}
+                    [NO-DEFAULT-PACKAGES]
+                    [PACKAGES]
+                    [EXTRA]"
+                    ("\\section{%s}" . "\\section*{%s}")
+                    ("\\subsection{%s}" . "\\subsection*{%s}")
+                    ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                    ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                    ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+   #+end_src
 ** Agenda and capture settings
    Org-agenda is one of the best reasons to become familiar with Org mode.  We
    need to set up our agenda files and capture templates/keybinds.  Currently,
