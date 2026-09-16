@@ -1165,12 +1165,18 @@ General settings for =emacs=.
        (add-to-list 'display-buffer-alist
                     `(,(regexp-quote mu4e-main-buffer-name)
                       display-buffer-same-window))
+       ;; Enable message tagging
+       (add-to-list 'mu4e-headers-actions
+                    '("Tag message" . mu4e-action-retag-message))
+       (add-to-list 'mu4e-view-actions
+                    '("Tag message" . mu4e-action-retag-message))
+
        ;; Run mu4e-mailing-list-info-refresh to update mailing lists after change
        (add-to-list 'mu4e-user-mailing-lists '(:list-id "tex-live.tug.org" :name "TUG"))
        ;; Line numbers interfere with image displays in mu4e-view-mode, so
        ;; turn them off
        :hook (mu4e-view-mode . (lambda ()
-                            (display-line-numbers-mode -1))))
+                                 (display-line-numbers-mode -1))))
 
      ;; Nice looking minor mode for nano-mu4e
      (use-package nano-mu4e
@@ -1201,12 +1207,6 @@ General settings for =emacs=.
 
      ;; Prevent line breaks in emails.  This can look weird on mobile devices.
      (setq mu4e-compose-format-flowed t)
-
-     ;; Enable message tagging
-     (add-to-list 'mu4e-headers-actions
-                  '("Tag message" . mu4e-action-retag-message))
-     (add-to-list 'mu4e-view-actions
-                  '("Tag message" . mu4e-action-retag-message))
    #+end_src
    We also need to configure =mu4e= for multiple accounts. This configuration is
    adapted from [[https://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and/#configuring-mu4e][this blog post]]. It looks like we need to set ~tls_starttls = on~
@@ -1640,14 +1640,15 @@ General settings for =emacs=.
    =move-text= commands.  This unfortunately overrides org-table keybinds for
    inserting rows, so I reset them here.
    #+begin_src emacs-lisp :tangle "org-settings.el"
-      (use-package org
-        :bind (:map org-mode-map
-                    ("M-S-<up>" . org-table-kill-row)
-                    ("M-S-<down>" . org-table-insert-row)))
+     (use-package org
+       :bind (:map org-mode-map
+                   ("M-S-<up>" . org-table-kill-row)
+                   ("M-S-<down>" . org-table-insert-row)))
    #+end_src
 ** \( \LaTeX{} \) export settings
    These settings provide new options for loading classes in Org Mode.
    #+begin_src emacs-lisp :tangle "org-settings.el"
+     (require 'ox-latex)
      (add-to-list 'org-latex-classes
                   '("wvwcslides"
                     "\\documentclass{wvwcslides}
