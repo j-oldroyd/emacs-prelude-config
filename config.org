@@ -1167,6 +1167,11 @@ General settings for =emacs=.
                       display-buffer-same-window))
        ;; Run mu4e-mailing-list-info-refresh to update mailing lists after change
        (add-to-list 'mu4e-user-mailing-lists '(:list-id "tex-live.tug.org" :name "TUG"))
+       ;; Enable message tagging
+       (add-to-list 'mu4e-headers-actions
+                    '("Tag message" . mu4e-action-retag-message))
+       (add-to-list 'mu4e-view-actions
+                    '("Tag message" . mu4e-action-retag-message))
        ;; Line numbers interfere with image displays in mu4e-view-mode, so
        ;; turn them off
        :hook (mu4e-view-mode . (lambda ()
@@ -1201,12 +1206,6 @@ General settings for =emacs=.
 
      ;; Prevent line breaks in emails.  This can look weird on mobile devices.
      (setq mu4e-compose-format-flowed t)
-
-     ;; Enable message tagging
-     (add-to-list 'mu4e-headers-actions
-                  '("Tag message" . mu4e-action-retag-message))
-     (add-to-list 'mu4e-view-actions
-                  '("Tag message" . mu4e-action-retag-message))
    #+end_src
    We also need to configure =mu4e= for multiple accounts. This configuration is
    adapted from [[https://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and/#configuring-mu4e][this blog post]]. It looks like we need to set ~tls_starttls = on~
