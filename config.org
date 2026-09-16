@@ -1173,6 +1173,11 @@ General settings for =emacs=.
 
        ;; Run mu4e-mailing-list-info-refresh to update mailing lists after change
        (add-to-list 'mu4e-user-mailing-lists '(:list-id "tex-live.tug.org" :name "TUG"))
+       ;; Enable message tagging
+       (add-to-list 'mu4e-headers-actions
+                    '("Tag message" . mu4e-action-retag-message))
+       (add-to-list 'mu4e-view-actions
+                    '("Tag message" . mu4e-action-retag-message))
        ;; Line numbers interfere with image displays in mu4e-view-mode, so
        ;; turn them off
        :hook (mu4e-view-mode . (lambda ()
