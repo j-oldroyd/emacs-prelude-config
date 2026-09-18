@@ -1,4 +1,4 @@
-# Created 2026-09-16 Wed 08:59
+# Created 2026-09-18 Fri 13:18
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1811,7 +1811,7 @@ functionality, the graph produced is rather minimal. Therefore, I also use
            :target
            (file+head
             "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
-            "#+title: ${citar-citekey} (${citar-date}). ${note-title}.\n#+created: %U\n#+last_modified: %U\n\n* Main idea(s) and keywords\n Key definition(s)\n* Key results\n* Questions and follow-ups")
+            "#+title: ${citar-citekey}. ${note-title}.\n#+created: %U\n#+last_modified: %U\n\n* Main idea(s) and keywords\n* Key definition(s)\n* Key results\n* Questions and follow-ups")
            :unnarrowed t)
           ("a" "article" plain "%?"
            :if-new
