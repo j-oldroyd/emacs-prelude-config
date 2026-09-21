@@ -1,4 +1,4 @@
-# Created 2026-09-18 Fri 13:18
+# Created 2026-09-21 Mon 14:04
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1159,6 +1159,12 @@ and [[https://frostyx.cz/posts/synchronize-your-2fa-gmail-with-mbsync][here]].
     (add-to-list 'display-buffer-alist
                  `(,(regexp-quote mu4e-main-buffer-name)
                    display-buffer-same-window))
+    ;; Enable message tagging
+    (add-to-list 'mu4e-headers-actions
+                 '("Tag message" . mu4e-action-retag-message))
+    (add-to-list 'mu4e-view-actions
+                 '("Tag message" . mu4e-action-retag-message))
+
     ;; Run mu4e-mailing-list-info-refresh to update mailing lists after change
     (add-to-list 'mu4e-user-mailing-lists '(:list-id "tex-live.tug.org" :name "TUG"))
     ;; Enable message tagging
@@ -1169,7 +1175,7 @@ and [[https://frostyx.cz/posts/synchronize-your-2fa-gmail-with-mbsync][here]].
     ;; Line numbers interfere with image displays in mu4e-view-mode, so
     ;; turn them off
     :hook (mu4e-view-mode . (lambda ()
-                         (display-line-numbers-mode -1))))
+                              (display-line-numbers-mode -1))))
 
   ;; Nice looking minor mode for nano-mu4e
   (use-package nano-mu4e
@@ -1639,6 +1645,7 @@ inserting rows, so I reset them here.
 ** \( \LaTeX{} \) export settings
 These settings provide new options for loading classes in Org Mode.
 #+begin_src emacs-lisp :tangle "org-settings.el"
+  (require 'ox-latex)
   (add-to-list 'org-latex-classes
                '("wvwcslides"
                  "\\documentclass{wvwcslides}
