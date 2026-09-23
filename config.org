@@ -1052,7 +1052,7 @@ General settings for =emacs=.
      ;; find it on macOS. Live preview on Windows is very troublesome, so we
      ;; don't worry about it.
      (when (eq system-type 'darwin)
-       (setq preview-gs-command "/usr/homebrew/bin/gs"))
+       (setq preview-gs-command "/opt/homebrew/bin/gs"))
 
      ;; If I want the error overview to appear whenever the document is compiled
      ;; (setq TeX-error-overview-open-after-TeX-run t)
