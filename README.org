@@ -1,4 +1,4 @@
-# Created 2026-09-16 Wed 08:59
+# Created 2026-09-23 Wed 14:06
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -432,7 +432,7 @@ default minor modes can be set via the ~meow-mode-state-list~ variable.
      '("y" . meow-save)
      '("Y" . meow-sync-grab)
      '("z" . meow-pop-selection)
-     '("/" . avy-goto-char-timer)
+     '("/" . consult-line)
      '("'" . repeat)
      '("<escape>" . ignore)))
 
@@ -540,8 +540,8 @@ default minor modes can be set via the ~meow-mode-state-list~ variable.
     ;; LaTeX settings for meow. Taken from
     ;; https://aatmunbaxi.netlify.app/comp/configuring_meow_friendly_latex/
     (meow-thing-register 'inline-math
-                       '(pair ("\\(") ("\\)"))
-                       '(pair ("\\(") ("\\)") ) )
+                         '(pair ("\\(") ("\\)"))
+                         '(pair ("\\(") ("\\)") ) )
     (add-to-list 'meow-char-thing-table '(?m . inline-math))
     ;; Default states for modes
     (add-to-list 'meow-mode-state-list '(mu4e-main-mode . insert))
@@ -1159,6 +1159,12 @@ and [[https://frostyx.cz/posts/synchronize-your-2fa-gmail-with-mbsync][here]].
     (add-to-list 'display-buffer-alist
                  `(,(regexp-quote mu4e-main-buffer-name)
                    display-buffer-same-window))
+    ;; Enable message tagging
+    (add-to-list 'mu4e-headers-actions
+                 '("Tag message" . mu4e-action-retag-message))
+    (add-to-list 'mu4e-view-actions
+                 '("Tag message" . mu4e-action-retag-message))
+
     ;; Run mu4e-mailing-list-info-refresh to update mailing lists after change
     (add-to-list 'mu4e-user-mailing-lists '(:list-id "tex-live.tug.org" :name "TUG"))
     ;; Enable message tagging
@@ -1169,7 +1175,7 @@ and [[https://frostyx.cz/posts/synchronize-your-2fa-gmail-with-mbsync][here]].
     ;; Line numbers interfere with image displays in mu4e-view-mode, so
     ;; turn them off
     :hook (mu4e-view-mode . (lambda ()
-                         (display-line-numbers-mode -1))))
+                              (display-line-numbers-mode -1))))
 
   ;; Nice looking minor mode for nano-mu4e
   (use-package nano-mu4e
@@ -1639,6 +1645,7 @@ inserting rows, so I reset them here.
 ** \( \LaTeX{} \) export settings
 These settings provide new options for loading classes in Org Mode.
 #+begin_src emacs-lisp :tangle "org-settings.el"
+  (require 'ox-latex)
   (add-to-list 'org-latex-classes
                '("wvwcslides"
                  "\\documentclass{wvwcslides}
@@ -1811,7 +1818,7 @@ functionality, the graph produced is rather minimal. Therefore, I also use
            :target
            (file+head
             "%(expand-file-name (or citar-org-roam-subdir \"\") org-roam-directory)/${citar-citekey}.org"
-            "#+title: ${citar-citekey} (${citar-date}). ${note-title}.\n#+created: %U\n#+last_modified: %U\n\n* Main idea(s) and keywords\n Key definition(s)\n* Key results\n* Questions and follow-ups")
+            "#+title: ${citar-citekey}. ${note-title}.\n#+created: %U\n#+last_modified: %U\n\n* Main idea(s) and keywords\n* Key definition(s)\n* Key results\n* Questions and follow-ups")
            :unnarrowed t)
           ("a" "article" plain "%?"
            :if-new
