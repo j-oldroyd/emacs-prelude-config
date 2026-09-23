@@ -1,4 +1,4 @@
-# Created 2026-09-23 Wed 14:06
+# Created 2026-09-23 Wed 19:19
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1047,7 +1047,7 @@ AUCTeX, which is included with Prelude modules.
   ;; find it on macOS. Live preview on Windows is very troublesome, so we
   ;; don't worry about it.
   (when (eq system-type 'darwin)
-    (setq preview-gs-command "/usr/homebrew/bin/gs"))
+    (setq preview-gs-command "/opt/homebrew/bin/gs"))
 
   ;; If I want the error overview to appear whenever the document is compiled
   ;; (setq TeX-error-overview-open-after-TeX-run t)
