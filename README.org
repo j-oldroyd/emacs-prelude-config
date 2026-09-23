@@ -1,4 +1,4 @@
-# Created 2026-09-21 Mon 14:04
+# Created 2026-09-23 Wed 14:06
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -432,7 +432,7 @@ default minor modes can be set via the ~meow-mode-state-list~ variable.
      '("y" . meow-save)
      '("Y" . meow-sync-grab)
      '("z" . meow-pop-selection)
-     '("/" . avy-goto-char-timer)
+     '("/" . consult-line)
      '("'" . repeat)
      '("<escape>" . ignore)))
 
@@ -540,8 +540,8 @@ default minor modes can be set via the ~meow-mode-state-list~ variable.
     ;; LaTeX settings for meow. Taken from
     ;; https://aatmunbaxi.netlify.app/comp/configuring_meow_friendly_latex/
     (meow-thing-register 'inline-math
-                       '(pair ("\\(") ("\\)"))
-                       '(pair ("\\(") ("\\)") ) )
+                         '(pair ("\\(") ("\\)"))
+                         '(pair ("\\(") ("\\)") ) )
     (add-to-list 'meow-char-thing-table '(?m . inline-math))
     ;; Default states for modes
     (add-to-list 'meow-mode-state-list '(mu4e-main-mode . insert))

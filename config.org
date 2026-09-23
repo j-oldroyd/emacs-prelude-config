@@ -432,7 +432,7 @@ General settings for =emacs=.
         '("y" . meow-save)
         '("Y" . meow-sync-grab)
         '("z" . meow-pop-selection)
-        '("/" . avy-goto-char-timer)
+        '("/" . consult-line)
         '("'" . repeat)
         '("<escape>" . ignore)))
 
@@ -540,8 +540,8 @@ General settings for =emacs=.
        ;; LaTeX settings for meow. Taken from
        ;; https://aatmunbaxi.netlify.app/comp/configuring_meow_friendly_latex/
        (meow-thing-register 'inline-math
-                          '(pair ("\\(") ("\\)"))
-                          '(pair ("\\(") ("\\)") ) )
+                            '(pair ("\\(") ("\\)"))
+                            '(pair ("\\(") ("\\)") ) )
        (add-to-list 'meow-char-thing-table '(?m . inline-math))
        ;; Default states for modes
        (add-to-list 'meow-mode-state-list '(mu4e-main-mode . insert))
