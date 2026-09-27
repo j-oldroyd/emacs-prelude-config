@@ -1,4 +1,4 @@
-# Created 2026-09-23 Wed 19:19
+# Created 2026-09-27 Sun 13:06
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -169,6 +169,9 @@ commands.  I'm also including =casual= for its menus, which are based on
   (global-hl-line-mode 1)
   (set-face-foreground 'highlight nil)
 
+  ;; Enable relative line numbers
+  (setq-default display-line-numbers-type 'relative)
+
   ;; Enable adaptive-wrap to indent wrapped lines in modes that do not use auto-fill-mode
   (use-package adaptive-wrap
     :ensure t)
@@ -205,7 +208,28 @@ commands.  I'm also including =casual= for its menus, which are based on
   (use-package avy
     :ensure t
     :bind (:map isearch-mode-map
-           ("M-j"     . avy-isearch)))
+                ("M-j"     . avy-isearch)))
+
+  ;; treemacs implements a directory window into Emacs to make navigation easier
+  ;; See GitHub page for many, many other options:
+  ;; https://github.com/Alexander-Miller/treemacs
+  (use-package treemacs
+    :ensure t
+    :defer t
+    :config
+    (treemacs-follow-mode t)
+    (treemacs-filewatch-mode t)
+    :bind (("C-c T" . treemacs)))
+
+  (use-package treemacs-icons-dired
+    :hook (dired-mode . treemacs-icons-dired-enable-once)
+    :ensure t)
+
+  (use-package treemacs-magit
+    :after (treemacs magit)
+    :ensure t)
+
+  (treemacs-start-on-boot)
 
   ;;: Casual Suite
   ;; See GitHub configuration for suggested org-agenda binds The agenda
@@ -331,7 +355,6 @@ default minor modes can be set via the ~meow-mode-state-list~ variable.
   (windmove-default-keybindings 'ctrl)
 
   ;; Meow-mode setup.
-  ;; (require 'meow)
   (use-package meow
     :ensure t
     ; We already have special icons for Meow from Doom Modeline
@@ -522,11 +545,6 @@ default minor modes can be set via the ~meow-mode-state-list~ variable.
      '("'" . repeat)
      '("<escape>" . ignore)))
 
-  ;; Meow hints are disabled in Org mode by default. Since I only use
-  ;; fixed-width fonts and the same size, this shouldn't be an
-  ;; issue. This can be done by removing org-mode from the variable
-  ;; meow-expand-exclude-mode-list.
-
   ;; (cond
   ;;  ((eq system-type 'darwin) (meow-setup-colemak))
   ;;  ((eq system-type 'gnu/linux) (meow-setup)))
@@ -534,6 +552,8 @@ default minor modes can be set via the ~meow-mode-state-list~ variable.
   ;; Magit/angle config adapted from
   ;; https://github.com/mclear-tools/dotemacs/blob/master/cpm-setup-meow.el
   (use-package meow
+    :custom
+    (meow-expand-exclude-mode-list '(markdown-mode))
     :config
     (meow-thing-register 'angle '(regexp "<" ">") '(regexp "<" ">"))
     (add-to-list 'meow-char-thing-table '(?a . angle))
