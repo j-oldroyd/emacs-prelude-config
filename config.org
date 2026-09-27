@@ -1577,7 +1577,7 @@ General settings for =emacs=.
      ;; pretext-mode allows for using asy-mode and AUCTeX within a .ptx
      ;; file, so for now we load asy-mode here.
      (use-package asy-mode
-       :load-path "/usr/local/texlive/2025/texmf-dist/asymptote/"
+       :load-path "/usr/local/texlive/2026/texmf-dist/asymptote/"
        :mode "\\.asy\\'")
    #+end_src
 ** =lean4-mode=
