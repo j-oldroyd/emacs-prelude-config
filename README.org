@@ -1,4 +1,4 @@
-# Created 2026-09-27 Sun 13:06
+# Created 2026-09-27 Sun 13:41
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1343,34 +1343,63 @@ Windows to preview messages created in Emacs/WSL.
   ;; Config taken from org-msg github page.
   (use-package org-msg
     :ensure t
-    :bind (("C-c C-m C-b" . message-goto-bcc)
-           ("C-c C-m C-c" . message-goto-cc))
-    )
-
-  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvisvgm"
-        org-msg-startup "hidestars indent inlineimages"
-        org-msg-greeting-fmt "\nHi%s,\n\n"
-        ;;org-msg-recipient-names '(("jeremy.compostella@gmail.com" . "Jérémy"))
-        org-msg-greeting-name-limit 3
-        org-msg-default-alternatives '((new          . (text html))
-                                       (reply-to-html     . (text html))
-                                       (reply-to-text     . (text)))
-        org-msg-convert-citation t
-        org-msg-signature "
+    :after mu4e
+    :custom
+    (org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvisvgm")
+    (org-msg-startup "hidestars indent inlineimages")
+    (org-msg-greeting-fmt "\nHi%s,\n\n")
+    ;;org-msg-recipient-names '(("jeremy.compostella@gmail.com" . "Jérémy"))
+    (org-msg-greeting-name-limit 3)
+    (org-msg-default-alternatives '((new          . (text html))
+                                    (reply-to-html     . (text html))
+                                    (reply-to-text     . (text))))
+    (org-msg-convert-citation t)
+    (org-msg-signature "
 
   ,#+begin_signature
   --Jesse
-  ,#+end_signature"
-        )
+  ,#+end_signature")
 
-  (add-hook 'message-mode-hook 'org-msg-mode)
+    :bind (("C-c C-g b" . message-goto-bcc)
+           ("C-c C-g c" . message-goto-cc)
+           ("C-c C-g f" . message-goto-from)
+           ("C-c C-g m" . message-goto-body)
+           ("C-c C-g s" . message-goto-subject)
+           ("C-c C-g t" . message-goto-to))
+
+    :hook ((message-mode . org-msg-mode)))
+
+  ;; (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvisvgm"
+  ;;       org-msg-startup "hidestars indent inlineimages"
+  ;;       org-msg-greeting-fmt "\nHi%s,\n\n"
+  ;;       ;;org-msg-recipient-names '(("jeremy.compostella@gmail.com" . "Jérémy"))
+  ;;       org-msg-greeting-name-limit 3
+  ;;       org-msg-default-alternatives '((new          . (text html))
+  ;;                                      (reply-to-html     . (text html))
+  ;;                                      (reply-to-text     . (text)))
+  ;;       org-msg-convert-citation t
+  ;;       org-msg-signature "
+
+  ;; #+begin_signature
+  ;; --Jesse
+  ;; #+end_signature"
+  ;;       )
+
+  ;; (add-hook 'message-mode-hook 'org-msg-mode)
 
   ;; Disable fill-paragraph in org-msg to allow mu4e to format=flowed
   ;; each message.  See relevant documentation in mu4e block.
-  (require 'messages-are-flowing)
-  (add-hook 'org-msg-edit-mode-hook 'turn-off-auto-fill)
-  (add-hook 'org-msg-edit-mode-hook 'visual-line-mode)
-  (add-hook 'org-msg-edit-mode-hook 'messages-are-flowing-use-and-mark-hard-newlines)
+  (use-package messages-are-flowing
+    :ensure t
+    :defer t
+    :after org-msg
+    :hook ((org-msg-edit-mode . turn-off-auto-fill)
+           (org-msg-edit-mode . visual-line-mode)
+           (org-msg-edit-mode . messages-are-flowing-use-and-mark-hard-newlines)))
+  ;; (require 'messages-are-flowing)
+  ;; (add-hook 'org-msg-edit-mode-hook 'turn-off-auto-fill)
+  ;; (add-hook 'org-msg-edit-mode-hook 'visual-line-mode)
+  ;; (add-hook 'org-msg-edit-mode-hook 'messages-are-flowing-use-and-mark-hard-newlines)
 
 
   ;; Org-msg by default uses /tmp/ for storing message previews.  This
@@ -1569,7 +1598,7 @@ For pretty-printing, there is also =sgml-mode= which contains the function
   ;; pretext-mode allows for using asy-mode and AUCTeX within a .ptx
   ;; file, so for now we load asy-mode here.
   (use-package asy-mode
-    :load-path "/usr/local/texlive/2025/texmf-dist/asymptote/"
+    :load-path "/usr/local/texlive/2026/texmf-dist/asymptote/"
     :mode "\\.asy\\'")
 #+end_src
 ** =lean4-mode=
