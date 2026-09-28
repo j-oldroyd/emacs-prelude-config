@@ -2061,6 +2061,9 @@ use [[https://github.com/devrintalen/taskjuggler-mode.el/tree/main][=taskjuggler
        (citar-bibliography org-cite-global-bibliography)
        (citar-org-roam-subdir "references")
        (bibtex-dialect "biblatex")
+       ;; This assumes that you use Zotero with Better BibTeX.  If not,
+       ;; just use the default.
+       (citar-open-entry-function 'citar-open-entry-in-zotero)
        :hook
        (LaTeX-mode . citar-capf-setup)
        (org-mode . citar-capf-setup))
@@ -2100,7 +2103,7 @@ use [[https://github.com/devrintalen/taskjuggler-mode.el/tree/main][=taskjuggler
                                   (latex . t)))
    #+end_src
 
-*** =ox-hugo=
+** =ox-hugo=
     We can use =ox-hugo= to quickly generate and preview websites created using
     Hugo.  This is currently on the backburner since I haven't been working on a
     website.
@@ -2451,9 +2454,7 @@ use [[https://github.com/devrintalen/taskjuggler-mode.el/tree/main][=taskjuggler
                 ("c" . my/org-grading-calculate-score))
    #+end_src
 * Packages to consider adding
-** =org-reveal=
-   Create ~reveal.js~ based slideshows using Org mode.
 ** =matlab=mode=
    This will be useful for using MATLAB in Org files.
-** =org-super-agenda=
-   This package will improve Org agenda views. See [[https://github.com/alphapapa/org-super-agenda][=org-super-agenda=]].
+** Elpaca
+   This could be a useful =package.el= replacement.
