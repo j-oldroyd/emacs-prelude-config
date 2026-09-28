@@ -1477,7 +1477,7 @@ General settings for =emacs=.
    terminal. We use =heldger-mode= and =flycheck-hledger= to support working
    with =hledger= journal files in Emacs. These settings are adapted from the
    provided configuration for =hledger-mode=.
-   #+begin_src emacs-lisp :tangle "accounting.el"
+   #+begin_src emacs-lisp :tangle no
      (use-package hledger-mode
        :ensure t
        :after (htmlize)
