@@ -1,4 +1,4 @@
-# Created 2026-09-27 Sun 13:41
+# Created 2026-09-28 Mon 21:57
 #+title: Emacs/Prelude configuration
 #+author: Jesse Ernest Oldroyd
 #+property: header-args :results output silent
@@ -1360,14 +1360,16 @@ Windows to preview messages created in Emacs/WSL.
   --Jesse
   ,#+end_signature")
 
-    :bind (("C-c C-g b" . message-goto-bcc)
-           ("C-c C-g c" . message-goto-cc)
-           ("C-c C-g f" . message-goto-from)
-           ("C-c C-g m" . message-goto-body)
-           ("C-c C-g s" . message-goto-subject)
-           ("C-c C-g t" . message-goto-to))
+    :bind (:map org-msg-edit-mode-map
+                ("C-c C-g b" . message-goto-bcc)
+                ("C-c C-g c" . message-goto-cc)
+                ("C-c C-g f" . message-goto-from)
+                ("C-c C-g m" . message-goto-body)
+                ("C-c C-g s" . message-goto-subject)
+                ("C-c C-g t" . message-goto-to))
 
-    :hook ((message-mode . org-msg-mode)))
+    :hook ((message-mode . (lambda ()
+                             (org-msg-mode 'toggle)))))
 
   ;; (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvisvgm"
   ;;       org-msg-startup "hidestars indent inlineimages"
@@ -1471,7 +1473,7 @@ combination of the following tools:
 terminal. We use =heldger-mode= and =flycheck-hledger= to support working
 with =hledger= journal files in Emacs. These settings are adapted from the
 provided configuration for =hledger-mode=.
-#+begin_src emacs-lisp :tangle "accounting.el"
+#+begin_src emacs-lisp :tangle no
   (use-package hledger-mode
     :ensure t
     :after (htmlize)
@@ -1645,11 +1647,21 @@ in =snippets/org-mode=.
     ;; Org mode 80 character limit.  Taken from
     ;; https://emacs.stackexchange.com/questions/35266/org-mode-auto-new-line-at-80th-column
     ((org-mode . (lambda () (setq fill-column 80)))
-     (org-mode . auto-fill-mode))
+     (org-mode . auto-fill-mode)
+     (org-mode . flyspell-mode))
     :config
     ;; Toggle TeX input method with C-\
     (setq default-input-method "TeX")
-    (toggle-input-method))
+    (toggle-input-method)
+    :custom
+    (org-src-fontify-natively t)
+    (org-preview-latex-default-process 'dvipng)
+    (org-adapt-indentation t)
+    ;; Override default prelude-mode bindings in favor of org-table
+    ;; commands
+    :bind (:map org-mode-map
+                ("M-S-<up>" . org-table-kill-row)
+                ("M-S-<down>" . org-table-insert-row)))
 
   ;; Make Org mode look a little nicer.
   (use-package org-modern
@@ -1667,29 +1679,20 @@ in =snippets/org-mode=.
   ;;   (add-hook 'org-mode-hook #'org-modern-indent-mode 90))
 
   ;; Buffer previews and spellcheck
-  (setq org-src-fontify-natively t)
-  (add-hook 'org-mode-hook 'flyspell-mode)
-  (setq org-preview-latex-default-process 'dvipng)
+  ;; (setq org-src-fontify-natively t)
+  ;; (add-hook 'org-mode-hook 'flyspell-mode)
+  ;; (setq org-preview-latex-default-process 'dvipng)
 
   ;; Default dvipng alist setting caused issues with org LaTeX previews. This
   ;; is fixed by implementing code below, taken from:
   ;; https://emacs.stackexchange.com/questions/57898/getting-latex-preview-to-work-with-org-mode-dvi-not-found
   (let ((png (cdr (assoc 'dvipng org-preview-latex-process-alist))))
-    (plist-put png :latex-compiler '("latex -interaction nonstopmode -output-directory %o %F"))
+    (plist-put png :latex-compiler '("dvilualatex -interaction nonstopmode -output-directory %o %F"))
     (plist-put png :image-converter '("dvipng -D %D -T tight -o %O %F"))
     (plist-put png :transparent-image-converter '("dvipng -D %D -T tight -bg Transparent -o %O %F")))
 
   ;; Set Org-mode indentation
-  (setq org-adapt-indentation t)
-#+end_src
-Be default, =prelude-mode= redefines =M-S-<UP>= and =M-S-<DOWN>= to
-=move-text= commands.  This unfortunately overrides org-table keybinds for
-inserting rows, so I reset them here.
-#+begin_src emacs-lisp :tangle "org-settings.el"
-  (use-package org
-    :bind (:map org-mode-map
-                ("M-S-<up>" . org-table-kill-row)
-                ("M-S-<down>" . org-table-insert-row)))
+  ;; (setq org-adapt-indentation t)
 #+end_src
 ** \( \LaTeX{} \) export settings
 These settings provide new options for loading classes in Org Mode.
@@ -1819,24 +1822,33 @@ functionality, the graph produced is rather minimal. Therefore, I also use
     :ensure t
     :bind (("C-c m l" . org-roam-buffer-toggle)
            ("C-c m f" . org-roam-node-find)
-           ("C-c m g" . org-roam-graph)
+           ;; ("C-c m g" . org-roam-graph)
+           ("C-c m g" . org-roam-ui-open)
            ("C-c m i" . org-roam-node-insert)
            ("C-c m c" . org-roam-capture)
            ;; Dailies for journaling
-           ("C-c m j" . org-roam-dailies-capture-today))
+           ("C-c m j" . org-roam-dailies-capture-date))
     :config
     ;; If you're using a vertical completion framework, you might want a
     ;; more informative completion interface
-    (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+    (setq org-roam-node-display-template
+          (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
     (org-roam-db-autosync-mode)
     ;; If using org-roam-protocol
-    (require 'org-roam-protocol))
+    (require 'org-roam-protocol)
+
+    :custom
+    ;; Dailies setup
+    (org-roam-dailies-directory "daily/")
+    (org-roam-dailies-capture-templates
+     '(("d" "default" entry "* %?"
+        :target (file+head "%<%Y-%m-%d>.org" "#+title: %<%Y-%m-%d>\n")))))
 
   ;; Set directory for roam notes based on Windows, WSL or Mac.  This
   ;; assumes that a Windows-based Emacs config is making use of iCloud
   ;; Drive.  For WSL, this code has been changed to no longer require
-  ;; iCloud Drive.  The intent now is to use rsync to keep org-roam up
-  ;; to date between WSL and other machines.
+  ;; iCloud Drive.  The intent now is to use Google Drive to keep Org
+  ;; roam up to date between machines.
 
   (cond ((eq system-type 'darwin)
          (setq org-roam-directory "~/Google Drive/My Drive/org/roam"))
@@ -1876,12 +1888,12 @@ functionality, the graph produced is rather minimal. Therefore, I also use
            :unnarrowed t)))
 
   ;; Org-roam dailies setup
-  (setq org-roam-dailies-directory "daily/")
-  (setq org-roam-dailies-capture-templates
-        '(("d" "default" entry
-           "* %?"
-           :target (file+head "%<%Y-%m-%d>.org"
-                              "#+title: %<%Y-%m-%d>\n"))))
+  ;; (setq org-roam-dailies-directory "daily/")
+  ;; (setq org-roam-dailies-capture-templates
+  ;;       '(("d" "default" entry
+  ;;          "* %?"
+  ;;          :target (file+head "%<%Y-%m-%d>.org"
+  ;;                             "#+title: %<%Y-%m-%d>\n"))))
 
   ;; org-roam-ui defaults taken from GitHub
   (use-package org-roam-ui
@@ -2041,6 +2053,9 @@ now, a decent workflow seems to be the following:
     (citar-bibliography org-cite-global-bibliography)
     (citar-org-roam-subdir "references")
     (bibtex-dialect "biblatex")
+    ;; This assumes that you use Zotero with Better BibTeX.  If not,
+    ;; just use the default.
+    (citar-open-entry-function 'citar-open-entry-in-zotero)
     :hook
     (LaTeX-mode . citar-capf-setup)
     (org-mode . citar-capf-setup))
@@ -2078,7 +2093,7 @@ We need to configure =org-babel= for evaluation of ~SRC~ blocks in Org mode.
                                (python . t)
                                (latex . t)))
 #+end_src
-*** =ox-hugo=
+** =ox-hugo=
 We can use =ox-hugo= to quickly generate and preview websites created using
 Hugo.  This is currently on the backburner since I haven't been working on a
 website.
@@ -2429,9 +2444,7 @@ These functions can be accessed using =C-c C-g= (mnemonic: [c]ompile
              ("c" . my/org-grading-calculate-score))
 #+end_src
 * Packages to consider adding
-** =org-reveal=
-Create ~reveal.js~ based slideshows using Org mode.
 ** =matlab=mode=
 This will be useful for using MATLAB in Org files.
-** =org-super-agenda=
-This package will improve Org agenda views. See [[https://github.com/alphapapa/org-super-agenda][=org-super-agenda=]].
+** Elpaca
+This could be a useful =package.el= replacement.

@@ -1366,14 +1366,16 @@ General settings for =emacs=.
      --Jesse
      ,#+end_signature")
 
-       :bind (("C-c C-g b" . message-goto-bcc)
-              ("C-c C-g c" . message-goto-cc)
-              ("C-c C-g f" . message-goto-from)
-              ("C-c C-g m" . message-goto-body)
-              ("C-c C-g s" . message-goto-subject)
-              ("C-c C-g t" . message-goto-to))
+       :bind (:map org-msg-edit-mode-map
+                   ("C-c C-g b" . message-goto-bcc)
+                   ("C-c C-g c" . message-goto-cc)
+                   ("C-c C-g f" . message-goto-from)
+                   ("C-c C-g m" . message-goto-body)
+                   ("C-c C-g s" . message-goto-subject)
+                   ("C-c C-g t" . message-goto-to))
 
-       :hook ((message-mode . org-msg-mode)))
+       :hook ((message-mode . (lambda ()
+                                (org-msg-mode 'toggle)))))
 
      ;; (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t tex:dvisvgm"
      ;;       org-msg-startup "hidestars indent inlineimages"
@@ -1693,7 +1695,7 @@ General settings for =emacs=.
      ;; is fixed by implementing code below, taken from:
      ;; https://emacs.stackexchange.com/questions/57898/getting-latex-preview-to-work-with-org-mode-dvi-not-found
      (let ((png (cdr (assoc 'dvipng org-preview-latex-process-alist))))
-       (plist-put png :latex-compiler '("latex -interaction nonstopmode -output-directory %o %F"))
+       (plist-put png :latex-compiler '("dvilualatex -interaction nonstopmode -output-directory %o %F"))
        (plist-put png :image-converter '("dvipng -D %D -T tight -o %O %F"))
        (plist-put png :transparent-image-converter '("dvipng -D %D -T tight -bg Transparent -o %O %F")))
 
