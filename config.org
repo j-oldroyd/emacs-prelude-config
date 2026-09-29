@@ -86,16 +86,13 @@ General settings for =emacs=.
      ;; macOS-specific config
      (use-package emacs
        :if (eq system-type 'darwin)
-       :init
-       (setq trash-directory "~/.Trash")
-       :custom
-       (server-start))
+       :init (setq trash-directory "~/.Trash")
+       :custom (server-start))
 
      ;; Windows-specific config
-     (use-package emacs
-       :if (eq system-type 'windows-nt)
-       :init
-       (setq find-program "C:\\msys64\\usr\\bin\\find.exe"))
+     ;; (use-package emacs
+     ;;   :if (eq system-type 'windows-nt)
+     ;;   :init (setq find-program "C:\\msys64\\usr\\bin\\find.exe"))
 
      ;; The following are taken from Prot's basic config at
      ;; https://protesilaos.com/codelog/2024-11-28-basic-emacs-configuration/
@@ -104,13 +101,11 @@ General settings for =emacs=.
 
      (use-package ef-themes
        :ensure t
-       :config
-       (load-theme 'ef-light :no-confirm-loading))
+       :config (load-theme 'ef-light :no-confirm-loading))
 
      ;; Prelude configuration
      (use-package prelude-custom
-       :custom
-       (prelude-undo-tree nil))
+       :custom (prelude-undo-tree nil))
 
      (use-package nerd-icons
        :ensure t)
@@ -118,8 +113,8 @@ General settings for =emacs=.
      (use-package nerd-icons-completion
        :ensure t
        :after marginalia
-       :config
-       (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
+       :config (add-hook 'marginalia-mode-hook
+                         #'nerd-icons-completion-marginalia-setup))
 
      (use-package nerd-icons-dired
        :ensure t
@@ -129,9 +124,8 @@ General settings for =emacs=.
      (use-package dired
        :ensure nil
        :commands (dired)
-       :hook
-       ((dired-mode . dired-hide-details-mode)
-        (dired-mode . hl-line-mode))
+       :hook ((dired-mode . dired-hide-details-mode)
+              (dired-mode . hl-line-mode))
        :config
        (setq dired-recursive-copies 'always)
        (setq dired-recursive-deletes 'always)
@@ -142,13 +136,12 @@ General settings for =emacs=.
        :ensure t
        :after dired
        :bind
-       ( :map dired-mode-map
+       (:map dired-mode-map
          ("<tab>" . dired-subtree-toggle)
          ("TAB" . dired-subtree-toggle)
          ("<backtab>" . dired-subtree-remove)
          ("S-TAB" . dired-subtree-remove))
-       :config
-       (setq dired-subtree-use-backgrounds nil))
+       :config (setq dired-subtree-use-backgrounds nil))
 
      (use-package trashed
        :ensure t
@@ -171,7 +164,8 @@ General settings for =emacs=.
      ;; Enable relative line numbers
      (setq-default display-line-numbers-type 'relative)
 
-     ;; Enable adaptive-wrap to indent wrapped lines in modes that do not use auto-fill-mode
+     ;; Enable adaptive-wrap to indent wrapped lines in modes that do not
+     ;; use auto-fill-mode
      (use-package adaptive-wrap
        :ensure t)
 
@@ -181,8 +175,7 @@ General settings for =emacs=.
      ;; Toggle whitespace visibility
      (use-package whitespace
        :diminish
-       :custom
-       (whitespace-style '(face tabs empty trailing)))
+       :custom (whitespace-style '(face tabs empty trailing)))
 
      ;; Default to fullscreen. Taken from
      ;; https://stackoverflow.com/questions/78245398/how-can-i-make-emacsclient-open-in-native-fullscreen-every-time-i-launch-it-fr
@@ -196,18 +189,12 @@ General settings for =emacs=.
      ;; Provide keybinding completions.
      (use-package which-key
        :diminish
-       :config
-       (which-key-mode))
-
-     ;;: Avy bindings
-     ;; (with-eval-after-load 'smartparens
-     ;;   (setq sp-override-key-bindings '(("M-j" . avy-goto-char-timer)))
-     ;;   (sp--update-override-key-bindings))
+       :config (which-key-mode))
 
      (use-package avy
        :ensure t
        :bind (:map isearch-mode-map
-                   ("M-j"     . avy-isearch)))
+                   ("M-j" . avy-isearch)))
 
      ;; treemacs implements a directory window into Emacs to make navigation easier
      ;; See GitHub page for many, many other options:
@@ -221,7 +208,8 @@ General settings for =emacs=.
        :bind (("C-c T" . treemacs)))
 
      (use-package treemacs-icons-dired
-       :hook (dired-mode . treemacs-icons-dired-enable-once)
+       :hook
+       (dired-mode . treemacs-icons-dired-enable-once)
        :ensure t)
 
      (use-package treemacs-magit
@@ -247,7 +235,8 @@ General settings for =emacs=.
      (require 'casual-bookmarks)
      (keymap-set bookmark-bmenu-mode-map "C-o" #'casual-bookmarks-tmenu)
      (keymap-set bookmark-bmenu-mode-map "J" #'bookmark-jump)
-     (easy-menu-add-item global-map '(menu-bar)
+     (easy-menu-add-item global-map
+                         '(menu-bar)
                          casual-bookmarks-main-menu
                          "Tools")
      (add-hook 'bookmark-bmenu-mode-hook #'hl-line-mode)
@@ -590,7 +579,8 @@ General settings for =emacs=.
                    ("DEL" . vertico-directory-delete-char)
                    ("M-DEL" . vertico-directory-delete-word))
        ;; Tidy shadowed file names
-       :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+       :hook
+       (rfn-eshadow-update-overlay . vertico-directory-tidy))
 
      ;; Enable YASnippet.
      (use-package yasnippet
@@ -598,8 +588,6 @@ General settings for =emacs=.
        :diminish yas-minor-mode
        :config
        (yas-global-mode))
-
-     ;; (yas-global-mode 1)
 
      ;; karthink's code for integrating CDLaTeX with YASnippet.  Taken from
      ;; https://gist.github.com/karthink/7d89df35ee9b7ac0c93d0177b862dadb
@@ -665,38 +653,30 @@ General settings for =emacs=.
      ;; Enable rich annotations using the Marginalia package
      (use-package marginalia
        :ensure t
-       ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
-       ;; available in the *Completions* buffer, add it to the
+       ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the
+       ;; binding available in the *Completions* buffer, add it to the
        ;; `completion-list-mode-map'.
        :bind (:map minibuffer-local-map
                    ("M-A" . marginalia-cycle))
-
        ;; The :init section is always executed.
        :init
-
-       ;; Marginalia must be activated in the :init section of use-package such that
-       ;; the mode gets enabled right away. Note that this forces loading the
-       ;; package.
+       ;; Marginalia must be activated in the :init section of use-package
+       ;; such that the mode gets enabled right away. Note that this forces
+       ;; loading the package.
        (marginalia-mode))
 
      ;; Flyspell uses "C-.", but I want this for Embark. I can use "C-M-i"
      ;; instead for flyspell.
-
      (use-package flyspell
-       :bind
-       (:map flyspell-mode-map
-             ("C-." . nil)))
+       :bind (:map flyspell-mode-map
+                   ("C-." . nil)))
 
      (use-package embark
        :ensure t
-
-       :bind
-       (("C-." . embark-act)         ;; pick some comfortable binding
-        ("C-;" . embark-dwim)        ;; good alternative: M-.
-        ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
-
+       :bind (("C-." . embark-act)         ;; pick some comfortable binding
+              ("C-;" . embark-dwim)        ;; good alternative: M-.
+              ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
        :init
-
        ;; Optionally replace the key help with a completing-read interface
        (setq prefix-help-command #'embark-prefix-help-command)
 
@@ -710,7 +690,6 @@ General settings for =emacs=.
        ;; (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
 
        :config
-
        ;; Hide the mode line of the Embark live/completions buffers
        (add-to-list 'display-buffer-alist
                     '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
