@@ -589,6 +589,16 @@ General settings for =emacs=.
        :config
        (yas-global-mode))
 
+     (defun get-exercise-labels ()
+       "Helper function for ;xxref snippet.
+     This function finds labels for exercises created using XSIM."
+       (interactive)
+       (save-excursion
+         (goto-char (point-min))
+         (let ((matches '()))
+           (while (re-search-forward "ID=\\([a-zA-Z0-9:\\-]*\\)" (point-max) t)
+             (add-to-list 'matches (match-string-no-properties 1) t)) matches)))
+
      ;; karthink's code for integrating CDLaTeX with YASnippet.  Taken from
      ;; https://gist.github.com/karthink/7d89df35ee9b7ac0c93d0177b862dadb
      (use-package cdlatex
