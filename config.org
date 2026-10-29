@@ -735,16 +735,6 @@ General settings for =emacs=.
                 (,(kbd "C-c s L") . sage-shell-sagetex:load-file)
                 (,(kbd "C-c C-z") . sage-shell-edit:pop-to-process-buffer))))
    #+end_src
-
-** LLM integration
-   Emacs has several packages based around the use of AI/LLMs within Emacs
-   itself.  I make use of karthink's =gptel= [[https://github.com/karthink/gptel][package]] along with Google Gemini.
-   This will require getting an appropriate API key (NOT saved to this repo,
-   obviously).
-   #+begin_src emacs-lisp :tangle "llm-settings.el"
-     (require 'gptel)
-   #+end_src
-
 ** Miscellaneous packages and settings
    Packages that don't fit anywhere else just yet. Note that ~nroff~ errors on
    Windows appear to be caused by the MSYS2 installation of ~aspell~. We need to
@@ -759,7 +749,6 @@ General settings for =emacs=.
 
      ;; Set ispell and args for spellchecking
      (setq ispell-program-name "aspell")
-     ;;(setq ispell-extra-args '("--lang=en_US"))
 
      ;; Set flyspell to use mouse-3 instead of mouse-2.
      ;; Taken from
@@ -768,18 +757,6 @@ General settings for =emacs=.
        '(progn
           (define-key flyspell-mouse-map [down-mouse-3] #'flyspell-correct-word)
           (define-key flyspell-mouse-map [mouse-3] #'undefined)))
-
-     ;; Tell ispell to chill so it doesn't slow down my buffer.
-     ;; Taken from
-     ;; https://github.com/syl20bnr/spacemacs/issues/311#issuecomment-215110131
-     ;; (with-eval-after-load 'flyspell
-     ;;   (require 'flyspell-lazy)
-     ;;   (flyspell-lazy-mode 1)
-     ;;   (setq ;; Be a little more aggressive than the lazy defaults
-     ;;    flyspell-lazy-idle-seconds 2 ;; This scans just the recent changes
-     ;;    flyspell-lazy-window-idle-seconds 6 ;; This scans the whole window
-     ;;    )
-     ;;   )
 
      ;; Create nice html exports of buffers
      (use-package htmlize
@@ -865,13 +842,7 @@ General settings for =emacs=.
        :config
        (setq-default format-all-formatters
                      '(("LaTeX" (latexindent "-m")))))
-
-     ;;; Patches
-     ;; This package is useful for patching other packages.  I currently
-     ;; need it for patching org-msg on WSL.
-     ;; (use-package el-patch
-     ;;   :ensure t)
-   #+end_src
+        #+end_src
 
 ** Elfeed
    Elfeed is a web feed reader for Emacs.  Some of the code below is taken from
@@ -1037,14 +1008,6 @@ General settings for =emacs=.
        (TeX-open-quote "``")
        (TeX-close-quote "''"))
 
-     ;; LaTeX-mode settings
-     ;; (add-hook 'LaTeX-mode-hook 'visual-line-mode)
-     ;; (add-hook 'LaTeX-mode-hook 'adaptive-wrap-prefix-mode)
-     ;; (add-hook 'LaTeX-mode-hook 'flyspell-mode)
-     ;; (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-     ;; (add-hook 'LaTeX-mode-hook (lambda ()
-     ;;                              (auto-fill-mode -1)))
-
      ;; Smartparens uses M-j for join sexp, but I want to use that for Avy
      ;; instead.
      ;; (add-hook 'LaTeX-mode-hook
@@ -1132,7 +1095,7 @@ General settings for =emacs=.
              ms))))
 
      (advice-add 'sage-shell-sagetex:tex-master-maybe
-      :filter-return #'shell-quote-argument)
+                 :filter-return #'shell-quote-argument)
    #+END_SRC
 
    The above fix for =sage-shell-mode= also requires editing
@@ -1559,16 +1522,16 @@ General settings for =emacs=.
    complains about the hook not existing.  I also want to use =magit-todos= for
    tracking ~TODO~ and ~FIXME~ comments in code.
    #+begin_src emacs-lisp :tangle "magit-settings.el"
-     (with-eval-after-load "magit"
-       (magit-add-section-hook
-        'magit-status-sections-hook
-        'magit-insert-tracked-files
-        nil
-        'append))
+   (with-eval-after-load "magit"
+     (magit-add-section-hook
+      'magit-status-sections-hook
+      'magit-insert-tracked-files
+      nil
+      'append))
 
-     (use-package magit-todos
-       :after magit
-       :config (magit-todos-mode 1))
+   (use-package magit-todos
+     :after magit
+     :config (magit-todos-mode 1))
         #+end_src
 
 ** PreTeXt
@@ -1626,8 +1589,6 @@ General settings for =emacs=.
      (use-package nov
        :ensure t)
 
-     (add-hook 'nov-mode-hook 'visual-line-mode)
-     (add-hook 'nov-mode-hook 'visual-fill-column-mode)
      (add-hook 'nov-mode-hook 'visual-line-mode)
      (add-hook 'nov-mode-hook 'visual-fill-column-mode)
      (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
