@@ -1021,6 +1021,26 @@ General settings for =emacs=.
      ;; (add-hook 'LaTeX-mode-hook #'rainbow-delimiters-mode)
      (add-hook 'TeX-mode-hook #'rainbow-delimiters-mode)
 
+     ;; Remove error/help windows when no longer needed
+     ;; Taken from
+     ;; https://emacs.stackexchange.com/a/28695/45800
+     (defun TeX-error-delete-window ()
+       "Delete TeX error window when there are no errors to show."
+       (let ((w (get-buffer-window))
+             (b (get-buffer "*TeX Help*")))
+         (when w
+           (delete-window w))
+         (when b
+           (setq w (get-buffer-window b))
+           (when w
+             (delete-window w)))))
+
+     (defun TeX-error-install-delete-window-hook ()
+       "Install `TeX-error-delete-window' in buffer-local `kill-buffer-hook'."
+       (add-hook 'kill-buffer-hook #'TeX-error-delete-window nil t))
+
+     (add-hook 'TeX-error-overview-mode-hook #'TeX-error-install-delete-window-hook)
+
      ;; AUCTeX's live preview requires ghostscript, so we tell AUCTeX where to
      ;; find it on macOS. Live preview on Windows is very troublesome, so we
      ;; don't worry about it.
@@ -1788,6 +1808,8 @@ General settings for =emacs=.
               ("C-c m c" . org-roam-capture)
               ;; Dailies for journaling
               ("C-c m j" . org-roam-dailies-capture-date)
+              ;; Open note for bib file
+              ("C-c m b" . citar-open)
               ;; Helper functions
               ("C-c m u" . my/org-roam-update-metadata))
        :config
@@ -1838,11 +1860,13 @@ General settings for =emacs=.
               :unnarrowed t)
              ("r" "reference note" plain
               "%?"
+              :clock-in t
+              :clock-resume t
               :target
               (file+head
                "%(expand-file-name (or citar-org-roam-subdir \"\")
                 org-roam-directory)/${citar-citekey}.org"
-               ":PROPERTIES:\n:ROAM_REFS:\n:END:\n#+title: ${citar-title}\n#+filetags: :${citar-type}:\n#+created: %U\n\n* Metadata\n- Last Modified: %U\n- Author: ${citar-author}\n- Year: ${citar-date}\n-URL: ${citar-url}\n- Status: %^{Status|Reading|Completed|Abandoned|To Read}\n- Rating: %^{Rating|N/A|★☆☆☆☆|★★☆☆☆|★★★☆☆|★★★★☆|★★★★★}\n- Date Finished: %U\n\n\n* Summary\n\n* Key Definitions & Takeaways\n\n* Detailed Notes & Breakdown\n** %^{Division|Section|Chapter} 1\n\n* Atomic Concepts & Links\n\n* Quotes & Highlights\n#+begin_quote\n\n#+end_quote\n")
+               ":PROPERTIES:\n:ROAM_REFS:\n:END:\n#+title: ${citar-title}\n#+filetags: :${citar-type}:\n#+created: %U\n\n* Metadata\n- Last Modified: %U\n- Author: ${citar-author}\n- Year: ${citar-date}\n- Pages: ${citar-pages}\n- URL: ${citar-url}\n- Status: %^{Status|Reading|Completed|Abandoned|To Read}\n- Progress: %^{Progress|0|50|100}\n- Rating: %^{Rating|N/A|★☆☆☆☆|★★☆☆☆|★★★☆☆|★★★★☆|★★★★★}\n- Date Finished: %U\n\n\n* Summary\n\n* Key Definitions & Takeaways\n\n* Detailed Notes & Breakdown\n** %^{Division|Section|Chapter} 1\n\n* Atomic Concepts & Links\n\n* Quotes & Highlights\n#+begin_quote\n\n#+end_quote\n")
               :unnarrowed t)
              ("a" "article" plain "%?"
               :if-new
@@ -1867,12 +1891,14 @@ General settings for =emacs=.
        "Interactively prompt to update Status, Rating, Date Finished, and Last Modified."
        (interactive)
        (let* ((status (completing-read "Status: " '("Reading" "Completed" "Abandoned" "To Read") nil t))
+              (progress (read-string "Progress: " "0" nil t))
               (rating (completing-read "Rating: " '("N/A" "★☆☆☆☆" "★★☆☆☆" "★★★☆☆" "★★★★☆" "★★★★★") nil t))
               (timestamp (format-time-string "[%Y-%m-%d %a %H:%M]")))
 
          ;; Update bullet list metadata
          (my/org-roam-update-bullet "Status" status)
          (my/org-roam-update-bullet "Rating" rating)
+         (my/org-roam-update-bullet "Progress" progress)
          (my/org-roam-update-bullet "Last Modified" timestamp)
 
          ;; Set Date Finished automatically if marked Completed
@@ -1883,7 +1909,7 @@ General settings for =emacs=.
          (org-with-point-at 1
            (org-entry-put (point) "LAST_MODIFIED" timestamp))
 
-         (message "Book metadata updated.")))
+         (message "Metadata updated.")))
 
      (defun my/org-roam-auto-update-last-modified ()
        "Automatically update the :LAST_MODIFIED: property in top property drawer on save."
